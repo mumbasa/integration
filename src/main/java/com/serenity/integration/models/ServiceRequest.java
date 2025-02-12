@@ -23,7 +23,7 @@ public class ServiceRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private String uuid;
     private String visitId;
     private String patientId;
     private UUID encounterId;

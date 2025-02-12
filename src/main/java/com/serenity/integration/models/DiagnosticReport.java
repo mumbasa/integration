@@ -11,26 +11,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 
 @Entity
 @Table(name = "diagnostic_report")
 @NoArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
 public class DiagnosticReport {
 
      @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private String uuid;
     
-    private ZonedDateTime issuedDate;
-    private UUID patientId;
+    private String issuedDate;
+    private String patientId;
     private String performerName;
-    private UUID performerId;
+    private String performerId;
     
     @CreationTimestamp
-    private ZonedDateTime createdAt;
+    private String createdAt;
     
     @ElementCollection
     private List<String> results;
@@ -38,7 +42,7 @@ public class DiagnosticReport {
     @ElementCollection
     private List<String> media;
     
-    private UUID basedOnId;
+    private String basedOnId;
     private String visitId;
     private String serviceProviderId;
     private String conclusion;
