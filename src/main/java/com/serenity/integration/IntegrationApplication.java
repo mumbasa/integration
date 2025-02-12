@@ -17,6 +17,7 @@ import com.serenity.integration.repository.EncounterRepository;
 import com.serenity.integration.repository.VisitRepository;
 import com.serenity.integration.service.AdmissionService;
 import com.serenity.integration.service.DiagnosisService;
+import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.MedicalRequestService;
 import com.serenity.integration.service.NoteService;
@@ -69,7 +70,7 @@ public class IntegrationApplication {
 	PatientService patientService;
 
 	@Autowired
-	DiagnosisService diagnosisService;
+	DiagnosticReportService diagnosisService;
 
 	@Autowired
 	ServiceRequestService serviceRequestService;
@@ -111,6 +112,7 @@ public class IntegrationApplication {
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
 		serviceRequestService.getLegacyRequest(1000);
+		diagnosisService.getLegacyDiagnosticReport(1000);
 
 		// encounterService.encounterLegacythread();
 	// noteService.moveVisitNote();

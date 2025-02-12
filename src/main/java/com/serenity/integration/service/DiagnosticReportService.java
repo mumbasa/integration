@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.DiagnosticReport;
 import com.serenity.integration.models.Doctors;
@@ -20,7 +21,7 @@ import com.serenity.integration.models.ServiceRequest;
 import com.serenity.integration.repository.DiagnosticReportRepository;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.PatientRepository;
-
+@Service
 public class DiagnosticReportService {
 @Autowired
 DiagnosticReportRepository diagnosticReportRepository;
@@ -44,10 +45,10 @@ DiagnosticReportRepository diagnosticReportRepository;
     DoctorRepository doctorRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void getLegacyRequest(int batchSize) {
+    public void getLegacyDiagnosticReport(int batchSize) {
            Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        Map<String, Doctors> doc = doctorRepository.findHisPractitioners().stream()
+        Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         String sql = "SELECT count(*) from diagnostic_report";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
@@ -65,17 +66,22 @@ DiagnosticReportRepository diagnosticReportRepository;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 DiagnosticReport request = new DiagnosticReport();
-                request.setUuid(set.getString("dr.uuid"));
-                request.setBasedOnId(set.getString("sr.uuid"));
-                request.setIssuedDate(set.getString("dr.created_at"));
+                request.setUuid(set.getString(2));
+                request.setBasedOnId(set.getString(2));
                 request.setPatientId(mps.get(set.getString("mr_number")).getUuid());
+                request.setEncounterId(set.getString("encounter_id"));
                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 if (set.getString("requesting_practitioner_role_id") != null) {
+                   try{
                     request.setPerformerId(set.getString("requesting_practitioner_role_id"));
                     request.setPerformerName(doc.get(set.getString("requesting_practitioner_role_id")).getFullName());
+                   }catch (Exception e){
+                    e.printStackTrace();
+                   }
+               
                 }
                 
-                request.setCreatedAt(set.getString("dr.created_at"));
+                request.setCreatedAt(set.getString(2));
             
                 serviceRequests.add(request);
 

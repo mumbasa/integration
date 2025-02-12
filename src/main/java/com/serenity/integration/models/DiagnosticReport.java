@@ -46,4 +46,5 @@ public class DiagnosticReport {
     private String visitId;
     private String serviceProviderId;
     private String conclusion;
+    private String encounterId;
 }

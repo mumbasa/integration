@@ -63,7 +63,7 @@ public class ServiceRequestService {
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 ServiceRequest request = new ServiceRequest();
-              //  request.setAccessionNumber(set.getString("accession_number"));
+                request.setUuid(set.getString("uuid"));
                 request.setOccurence(set.getString("occurence"));
                 request.setCategory(set.getString("category"));
                 String encounterId = set.getString("encounter_id");
