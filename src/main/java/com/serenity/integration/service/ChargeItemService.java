@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -134,7 +135,7 @@ public class ChargeItemService {
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
                 request.setId(set.getLong("id"));
-                request.setUuid(set.getString("id"));
+                request.setUuid(UUID.randomUUID().toString());
                 request.setCharge(set.getDouble("charge"));
                 request.setCurrency(set.getString("currency"));
                 request.setUnitPrice(set.getDouble("unit_price"));
@@ -161,7 +162,7 @@ public class ChargeItemService {
                 serviceRequests.add(request);
 
             }
-            chargeItemRepository.saveAll(serviceRequests);
+            chargeItemRepository.saveAllAndFlush(serviceRequests);
             logger.info("Saved chargeItem");
             return batchSize;
         }

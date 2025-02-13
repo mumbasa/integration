@@ -46,6 +46,8 @@ public class ServiceRequest {
     @Column(columnDefinition = "TEXT")
 
     private String dueDate;
+    @Column(columnDefinition = "TEXT")
+
     private String purpose;
     private String sampleReceivedDateTime;
     private String priority;
@@ -53,7 +55,6 @@ public class ServiceRequest {
 
     private String healthcareServiceId;
     @Column(columnDefinition = "TEXT")
-
     private String healthcareServiceName;
     private String chargeItemId;
     private UUID priceTierId;
@@ -94,6 +95,7 @@ public class ServiceRequest {
     @Column(columnDefinition = "TEXT")
     private String practitionerId;
     private String modifiedAt;
+    @Column(columnDefinition = "TEXT")
     private String note;
     @Column(columnDefinition = "TEXT")
     private String createdAt;
