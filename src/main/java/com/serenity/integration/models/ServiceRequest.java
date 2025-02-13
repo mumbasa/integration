@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,7 +30,10 @@ public class ServiceRequest {
     private String patientId;
     private String encounterId;
     private String accessionNumber;
+    @Column(columnDefinition = "TEXT")
     private String display;
+    @Column(columnDefinition = "TEXT")
+
     private String notes;
     private String category;
     private String code;
@@ -60,8 +64,10 @@ public class ServiceRequest {
     private String patientGender;
     private String patientFullName;
     private String occurence;
-    private UUID practitionerId;
+    @Column(columnDefinition = "TEXT")
+    private String practitionerId;
     private String modifiedAt;
     private String note;
+    @Column(columnDefinition = "TEXT")
     private String createdAt;
 }
