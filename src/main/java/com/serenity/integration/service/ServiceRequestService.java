@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -85,7 +91,8 @@ public class ServiceRequestService {
                     request.setPatientFullName(mps.get(patientMrNumber).getFullName());
                     request.setPatientMobile(mps.get(patientMrNumber).getMobile());
                     request.setPatientGender(mps.get(patientMrNumber).getGender());
-                    request.setPatientId(mps.get(patientMrNumber).getMrNumber());
+                    request.setPatientMrNumber(mps.get(patientMrNumber).getMrNumber());
+                    request.setPatientId(mps.get(patientMrNumber).getUuid());
                     request.setPatientBirthDate((mps.get(patientMrNumber).getBirthDate()));
 
                 }
@@ -136,16 +143,16 @@ public class ServiceRequestService {
      healthcare_service_id, healthcare_service_name, charge_item_id, status,
      status_reason, group_identifier, intent, practitioner_name, patient_mr_number,
      patient_mobile, patient_birth_date, patient_gender, patient_full_name,
-     encounter_class, notes)
+     encounter_class, notes,is_paid)
 VALUES (
     ?::timestamp, ?::timestamp, ?::timestamp, ?, ?::timestamp,  
-    ?, ?, uuid(?), uuid(?), uuid(?),                    
+    ?, ARRAY[?], uuid(?), uuid(?), uuid(?),                    
     uuid(?), uuid(?), uuid(?), ?,                           
     ?, ?, ?, ?, ?,                                           
     uuid(?), ?, uuid(?), ?,                                
     ?, ?, ?, ?, ?,  
-    ?,?,?,?                                            
-    ? ,?                                                 
+    ?,CAST(? AS DATE),?,? ,                                           
+    ? ,? ,true                                                
 );
 
                                 """;
@@ -161,7 +168,7 @@ ps.setString(2, request.getDueDate());
 ps.setString(3, request.getSampleReceivedDateTime());
 ps.setDouble(4, request.getCharge()); // Set charge (assuming it's a numeric type)
 ps.setString(5, request.getOccurence());
-ps.setString(6, UUID.randomUUID().toString()); // ID (Generated)
+ps.setLong(6, request.getId()); // ID (Generated)
 ps.setString(7, request.getBodySite());
 ps.setString(8, request.getEncounterId().toString());
 ps.setString(9, request.getPatientId());
@@ -170,7 +177,7 @@ ps.setString(11, request.getVisitId());
 ps.setString(12, "161380e9-22d3-4627-a97f-0f918ce3e4a9"); // service_provider_id
 ps.setString(13, UUID.randomUUID().toString()); // UUID
 ps.setString(14, request.getDisplay());
-ps.setString(15, request.getCategory());
+ps.setString(15, request.getCategory()==null?"Laboratory-procedure":request.getCategory() );
 ps.setString(16, request.getCode());
 ps.setString(17, request.getDiagnosticServiceSection());
 ps.setString(18, request.getPurpose());
@@ -207,13 +214,61 @@ ps.setString(34, request.getNote());
 
 
 
-    public void migrate(){
-        List<ServiceRequest> requests  =serviceRequestRepository.findAllBy();
-        migrateServiceRequestToSerenity(requests);
+ 
 
-
-
-
-
+    public void clean(){
+        String sql="""
+                update service_request 
+set priority='routine'
+where service_request.priority is null ;
+                """;
+        vectorJdbcTemplate.update(sql);
     }
+
+
+
+      public void migrateThread(int batchSize) {
+  
+    
+    long rows = serviceRequestRepository.getParactionerIdCount();
+    logger.info("Rows size is: {}", rows);
+
+    ExecutorService executorService = Executors.newFixedThreadPool(10);
+    try {
+        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+        for (Future<Integer> future : futures) {
+            logger.info("Future result: {}", future.get());
+        }
+    } catch (InterruptedException | ExecutionException e) {
+        logger.error("Error processing batches", e);
+    } finally {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
+    }
+}
+
+public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
+    List<Callable<Integer>> callables = new ArrayList<>();
+    long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+    
+    logger.info("Total batches: {}", batches);
+    for (int i = 0; i < batches; i++) {
+        final int batchNumber = i;
+
+        callables.add(() -> {
+            int startIndex = batchNumber * batchSize;
+            logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+           migrateServiceRequestToSerenity(serviceRequestRepository.findOffset(startIndex, batchSize));
+            return 1;
+        });
+    }
+
+    return callables;
+}
 }
