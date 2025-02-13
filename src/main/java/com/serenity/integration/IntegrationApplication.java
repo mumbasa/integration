@@ -128,10 +128,10 @@ public class IntegrationApplication {
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
 		long start = System.currentTimeMillis();
-		allergyService.getLegacyAllergies(1000);
-		referalService.getLegacyReferral(1000);
-		chargeItemService.getLegacyChargeItem(1000);
-		serviceRequestService.getLegacyRequest(1000);
+		//allergyService.getLegacyAllergies(1000);
+		//referalService.getLegacyReferral(1000);
+		chargeItemService.chargeThread(1000);
+		//serviceRequestService.getLegacyRequest(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		//diagnosisService.getLegacyDiagnosticReport(1000);

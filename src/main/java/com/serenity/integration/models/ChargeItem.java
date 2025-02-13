@@ -3,6 +3,7 @@ package com.serenity.integration.models;
 
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -58,6 +59,7 @@ public class ChargeItem {
     private String canceledById;
 
     private String serviceId;
+    @Column(columnDefinition = "TEXT")
     private String serviceOrProductName;
     private String serviceRequestId;
     private double unitPrice;

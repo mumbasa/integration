@@ -1,8 +1,15 @@
 package com.serenity.integration.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -16,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.serenity.integration.models.AllergyIntolerance;
 import com.serenity.integration.models.ChargeItem;
 import com.serenity.integration.models.Doctors;
+import com.serenity.integration.models.EncounterNote;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.models.ServiceRequest;
 import com.serenity.integration.repository.AllergyRepository;
@@ -111,4 +119,106 @@ public class ChargeItemService {
        
 
     }
+
+
+    public int getLegacyChargeItemFuture(int batch,int batchSize) {
+       
+            List<ChargeItem> serviceRequests = new ArrayList<ChargeItem>();
+
+            
+            String sqlQuery = """
+                    select * from "ChargeItem" ci order by ci.id asc offset ? LIMIT ?
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, batch, batchSize);
+            while (set.next()) {
+                ChargeItem request = new ChargeItem();
+                request.setId(set.getLong("id"));
+                request.setUuid(set.getString("id"));
+                request.setCharge(set.getDouble("charge"));
+                request.setCurrency(set.getString("currency"));
+                request.setUnitPrice(set.getDouble("unit_price"));
+                request.setCategory(set.getString("category"));
+                request.setVisitId(set.getString("visit_id"));
+                request.setLocationId(set.getString("clinicid"));
+                request.setLocationName(set.getString("clinic_name"));
+                request.setProviderId(set.getString("provider_id"));
+                request.setProviderName(set.getString("providername"));
+                request.setQuantity(set.getInt("quantity"));
+                request.setServiceId(set.getString("serviceid"));
+                request.setServiceOrProductName(set.getString("service_or_product_name"));
+                request.setServiceRequestId(set.getString("servicerequestid"));
+                request.setUserFriendlyId(set.getString("user_friendly_id"));
+                request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
+               request.setPatientContribution(set.getDouble("patient_contribution"));
+               request.setRelationship(set.getString("relationship"));
+               request.setPractitionerId(set.getString("practitionerid"));
+                request.setPractitionerName(set.getString("practitionername"));
+               request.setPayerContribution(set.getDouble("requester_name"));
+                
+             
+              
+                serviceRequests.add(request);
+
+            }
+            chargeItemRepository.saveAll(serviceRequests);
+            logger.info("Saved chargeItem");
+            return batchSize;
+        }
+      
+
+
+     public void chargeThread(int batchSize) {
+        String sql = "select count(*) from \"ChargeItem\" ci ";
+      
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try {
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2( batchSize,rows));
+            for (Future<Integer> future : futures) {
+                System.out.println("future.get = " + future.get());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        executorService.shutdown();
+        System.err.println("patiend count is ");
+
+    }
+
+
+    public Set<Callable<Integer>> submitTask2(int batchSize,long rows) {
+    
+        Set<Callable<Integer>> callables = new HashSet<>();
+        long totalSize = rows;
+        int batches = (int)(totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {;
+            final int batchNumber = i; // For use in lambda
+
+            callables.add(() -> {
+                int startIndex = batchNumber * batchSize;
+             
+                logger.debug("Processing batch {}/{}, indices [{}]",
+                        batchNumber + 1, batches, startIndex);
+                try{
+               getLegacyChargeItemFuture(startIndex, batchSize);
+                }
+                catch (Exception e) {
+                    // TODO: handle exception
+                    e.printStackTrace();
+                    
+                    }
+                
+return 1;
+               
+            
+            });
+        }
+
+        return callables;
+    }
+
 }
