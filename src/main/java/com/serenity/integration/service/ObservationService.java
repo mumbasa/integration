@@ -1,5 +1,7 @@
 package com.serenity.integration.service;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
@@ -37,7 +40,12 @@ public class ObservationService {
     @Qualifier(value = "vectorJdbcTemplate")
     JdbcTemplate vectorJdbcTemplate;
 
-    
+
+
+    @Autowired
+    @Qualifier("serenityJdbcTemplate")
+    JdbcTemplate serenityJdbcTemplate;
+   
     @Autowired
     PatientRepository patientRepository;
 
@@ -90,11 +98,53 @@ public class ObservationService {
                 serviceRequests.add(request);
 
             }
-            logger.info("Saved Diagnostic result");
+            observationRepository.saveAll(serviceRequests);
+            logger.info("Saved Observation result");
         }
     }
 
 
+    public void migrateObservation(List<Observation> observations){
+String sql ="""
+        INSERT INTO observations
+(created_at,  issued_at, unit, effective_datetime, id, 
+encounter_id, service_provider_id, patient_id, visit_id, "uuid", 
+encounter_type, status, category, tag, code,
+ display, sub_category, "system", value, score,
+ "rank", reference_range_high, reference_range_low, reference_range_text, interpretation, 
+ body_site, "method", specimen, service_request_id, diagnostic_report_id, 
+ practitioner_name, practitioner_id)
+VALUES('', '', '', '', '', nextval('observations_id_seq'::regclass), ?, ?, ?, ?, ?, '', '', '', '', '', '', '', '', '', '', '', 0, '', '', '', '', '', '', '', ?, ?, '', ?);
+        """;
+serenityJdbcTemplate.batchUpdate(sql,new BatchPreparedStatementSetter() {
+
+    @Override
+    public void setValues(PreparedStatement ps, int i) throws SQLException {
+        // TODO Auto-generated method stub
+        Observation observation = observations.get(i);
+        ps.setString(1, observation.getCreatedAt());
+        ps.setString(2, observation.getIssued());
+        ps.setString(3, observation.getUnit());
+        ps.setString(4, observation.getEffectiveDateTime());
+        ps.setLong(5, observation.getId());
+
+        ps.setString(6, observation.getEncounterId());
+      //  ps.setString(7, observation.getServiceProviderId());
+
+
+
+    }
+
+    @Override
+    public int getBatchSize() {
+        // TODO Auto-generated method stub
+        return observations.size();
+            }
+    
+});
+
+
+    }
 
 
 }
