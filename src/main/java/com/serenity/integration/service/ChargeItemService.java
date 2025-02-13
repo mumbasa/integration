@@ -214,8 +214,8 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
 }
 
 
-public void migrateChargeitems(){
+public void migrateChargeitems(List<ChargeItem> items){
 
-    
+
 }
 }
