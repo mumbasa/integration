@@ -170,9 +170,9 @@ public class ChargeItemService {
 
 
      public void chargeThread(int batchSize) {
-    String sql = "SELECT count(*) FROM \"ChargeItem\" ci";
     
-    long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+    
+    long rows = chargeItemRepository.count();
     logger.info("Rows size is: {}", rows);
 
     ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -213,4 +213,9 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
     return callables;
 }
 
+
+public void migrateChargeitems(){
+
+    
+}
 }
