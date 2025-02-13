@@ -59,11 +59,6 @@ public class ChargeItemService {
 
 
     public void getLegacyChargeItem(int batchSize) {
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-
-                Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         
         String sql = "select count(*) from \"ChargeItem\" ci ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
@@ -95,7 +90,7 @@ public class ChargeItemService {
                 request.setQuantity(set.getInt("quantity"));
                 request.setServiceId(set.getString("serviceid"));
                 request.setServiceOrProductName(set.getString("service_or_product_name"));
-                request.setServiceRequestId(set.getString(""));
+                request.setServiceRequestId(set.getString("sservicerequestid"));
                 request.setUserFriendlyId(set.getString("user_friendly_id"));
                 request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
                request.setPatientContribution(set.getDouble("patient_contribution"));
