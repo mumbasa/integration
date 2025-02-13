@@ -23,6 +23,7 @@ public class ServiceRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    //private long id;
     private String uuid;
     private String visitId;
     private String patientId;
@@ -45,6 +46,7 @@ public class ServiceRequest {
     private String status;
     private String statusReason;
     private String groupIdentifier;
+    private String bodySite;
     private String intent;
     private boolean doNotPerform;
     private boolean isPaid;
@@ -54,12 +56,12 @@ public class ServiceRequest {
     private boolean paymentRequired;
     private String patientMrNumber;
     private String patientMobile;
-    private LocalDate patientBirthDate;
+    private String patientBirthDate;
     private String patientGender;
     private String patientFullName;
     private String occurence;
     private UUID practitionerId;
     private String modifiedAt;
-   
+    private String note;
     private String createdAt;
 }

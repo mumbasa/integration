@@ -18,7 +18,7 @@ public class Observation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private String uuid;
     
     private String status;
     private String category;
@@ -27,7 +27,7 @@ public class Observation {
     private String display;
     private String subCategory;
     private String system;
-    private ZonedDateTime issued;
+    private String issued;
     private String unit;
     private String value;
     private String score;
@@ -40,14 +40,14 @@ public class Observation {
     private String bodySite;
     private String method;
     private String specimen;
-    private ZonedDateTime effectiveDateTime;
-    private UUID serviceRequestId;
-    private UUID diagnosticReportId;
+    private String effectiveDateTime;
+    private String  serviceRequestId;
+    private String diagnosticReportId;
     private String practitionerName;
-    private UUID practitionerId;
-    private UUID patientId;
-    private UUID encounterId;
+    private String practitionerId;
+    private String patientId;
+    private String encounterId;
     
     @CreationTimestamp
-    private ZonedDateTime createdAt;
+    private String createdAt;
 }

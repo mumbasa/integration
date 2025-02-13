@@ -22,6 +22,7 @@ import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.MedicalRequestService;
 import com.serenity.integration.service.NoteService;
 import com.serenity.integration.service.NoteWrangling;
+import com.serenity.integration.service.ObservationService;
 import com.serenity.integration.service.PatientMigrationService;
 import com.serenity.integration.service.PatientService;
 import com.serenity.integration.service.PractitionerService;
@@ -75,7 +76,8 @@ public class IntegrationApplication {
 	@Autowired
 	ServiceRequestService serviceRequestService;
 
-	
+	@Autowired
+	ObservationService observationService;
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -112,8 +114,8 @@ public class IntegrationApplication {
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
 		serviceRequestService.getLegacyRequest(1000);
-		diagnosisService.getLegacyDiagnosticReport(1000);
-
+		//diagnosisService.getLegacyDiagnosticReport(1000);
+		//observationService.getLegacyObservations(1000);
 		// encounterService.encounterLegacythread();
 	// noteService.moveVisitNote();
 		// diagnosisService.getNursingDiagnosis();
