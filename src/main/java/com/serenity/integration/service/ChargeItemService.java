@@ -171,7 +171,7 @@ public class ChargeItemService {
         String sql = "select count(*) from \"ChargeItem\" ci ";
       
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
-
+        logger.info("Rows size  is: "+rows);
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             List<Future<Integer>> futures = executorService.invokeAll(submitTask2( batchSize,rows));
@@ -194,7 +194,7 @@ public class ChargeItemService {
         Set<Callable<Integer>> callables = new HashSet<>();
         long totalSize = rows;
         int batches = (int)(totalSize + batchSize - 1) / batchSize; // Ceiling division
-
+ logger.info(batches+ "{ -----}");
         for (int i = 0; i < batches; i++) {;
             final int batchNumber = i; // For use in lambda
 
@@ -203,16 +203,11 @@ public class ChargeItemService {
              
                 logger.debug("Processing batch {}/{}, indices [{}]",
                         batchNumber + 1, batches, startIndex);
-                try{
-               getLegacyChargeItemFuture(startIndex, batchSize);
-                }
-                catch (Exception e) {
-                    // TODO: handle exception
-                    e.printStackTrace();
-                    
-                    }
                 
-return 1;
+             return   getLegacyChargeItemFuture(startIndex, batchSize);
+              
+                
+
                
             
             });
