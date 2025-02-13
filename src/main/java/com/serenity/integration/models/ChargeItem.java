@@ -63,6 +63,7 @@ public class ChargeItem {
     private String serviceOrProductName;
     private String serviceRequestId;
     private double unitPrice;
+    @Column(columnDefinition="TEXT")
     private String userFriendlyId;
     private String visitId;
 }

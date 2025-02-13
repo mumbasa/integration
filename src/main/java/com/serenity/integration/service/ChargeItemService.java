@@ -156,7 +156,7 @@ public class ChargeItemService {
                request.setPractitionerId(set.getString("practitionerid"));
                 request.setPractitionerName(set.getString("practitionername"));
                request.setPayerContribution(set.getDouble("requester_name"));
-                
+       
              
               
                 serviceRequests.add(request);

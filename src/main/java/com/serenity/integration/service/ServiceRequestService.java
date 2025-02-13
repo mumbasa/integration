@@ -118,33 +118,36 @@ public class ServiceRequestService {
     public void addVields() {
 
         String sql = """
-                                update service_request sr
+                update service_request sr
                 set practitionerid =uuid(e.assigned_to_id),visitid=e.visit_id
                 from encounter e
-                where uuid(e."uuid") =sr.encounterid ;
+                where (e."uuid") =sr.encounterid ;
                                 """;
         vectorJdbcTemplate.update(sql);
     }
 
     public void migrateServiceRequestToSerenity(List<ServiceRequest> requests) {
         String sql = """
-                                INSERT INTO public.service_requests
-                (created_at,  due_date, sample_received_date_time, charge, occurence,
-                 id, body_site, encounter_id, patient_id, practitioner_id,
-                  visit_id, service_provider_id, "uuid",  display,
-                  category, code, diagnostic_service_section, purpose, priority,
-                   healthcare_service_id, healthcare_service_name, charge_item_id, status,
-                    status_reason, group_identifier, intent, practitioner_name,patient_mr_number,
-                    patient_mobile, patient_birth_date, patient_gender, patient_full_name,
-                    encounter_class, notes)
-                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  0, to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),
-                 nextval('service_requests_id_seq'::regclass), uuid(?), ?, uuid(?), uuid(?),
-                 uuid(?),uuid(?), uuid(?), ?,
-                 ?, ?, ?, ?, ?,
-                 ?, ?, ?, ?,
-                 ?, ?, ?, ?,?,
-                ?,?,?,?,
-                  ?, ?),
+                              INSERT INTO public.service_requests
+    (created_at, due_date, sample_received_date_time, charge, occurence,
+     id, body_site, encounter_id, patient_id, practitioner_id,
+     visit_id, service_provider_id, uuid, display,
+     category, code, diagnostic_service_section, purpose, priority,
+     healthcare_service_id, healthcare_service_name, charge_item_id, status,
+     status_reason, group_identifier, intent, practitioner_name, patient_mr_number,
+     patient_mobile, patient_birth_date, patient_gender, patient_full_name,
+     encounter_class, notes)
+VALUES (
+    ?::timestamp, ?::timestamp, ?::timestamp, ?, ?::timestamp,  
+    ?, ?, uuid(?), uuid(?), uuid(?),                    
+    uuid(?), uuid(?), uuid(?), ?,                           
+    ?, ?, ?, ?, ?,                                           
+    uuid(?), ?, uuid(?), ?,                                
+    ?, ?, ?, ?, ?,  
+    ?,?,?,?                                            
+    ? ,?                                                 
+);
+
                                 """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -154,37 +157,41 @@ public class ServiceRequestService {
                 // TODO Auto-generated method stub
                 ServiceRequest request = requests.get(i);
                 ps.setString(1, request.getCreatedAt());
-                ps.setString(2, request.getDueDate());
-                ps.setString(3, request.getSampleReceivedDateTime());
-                ps.setString(4, request.getOccurence());
-                ps.setString(6, request.getBodySite());
-                ps.setString(7, request.getEncounterId().toString());
-                ps.setString(8, request.getPatientId());
-                ps.setString(9, request.getPractitionerId().toString());
-                ps.setString(10, request.getVisitId());
-                ps.setString(11, "161380e9-22d3-4627-a97f-0f918ce3e4a9");
-                ps.setString(12,UUID.randomUUID().toString());
-                ps.setString(13, request.getDisplay());
-                ps.setString(14, request.getCategory());
-                ps.setString(15, request.getCode());
-                ps.setString(16, request.getDiagnosticServiceSection());
-                ps.setString(17, request.getPurpose());
-                ps.setString(18, request.getPriority());
-                ps.setString(19, request.getHealthcareServiceId());
-                ps.setString(20, request.getHealthcareServiceName());
-                ps.setString(21, request.getChargeItemId());
-                ps.setString(22, request.getStatus());
-                ps.setString(23, request.getStatusReason());
-                ps.setString(24, request.getGroupIdentifier());
-                ps.setString(25, request.getPractitionerName());
-                ps.setString(26, request.getPatientMrNumber());
+ps.setString(2, request.getDueDate());
+ps.setString(3, request.getSampleReceivedDateTime());
+ps.setDouble(4, request.getCharge()); // Set charge (assuming it's a numeric type)
+ps.setString(5, request.getOccurence());
+ps.setString(6, UUID.randomUUID().toString()); // ID (Generated)
+ps.setString(7, request.getBodySite());
+ps.setString(8, request.getEncounterId().toString());
+ps.setString(9, request.getPatientId());
+ps.setString(10, request.getPractitionerId().toString());
+ps.setString(11, request.getVisitId());
+ps.setString(12, "161380e9-22d3-4627-a97f-0f918ce3e4a9"); // service_provider_id
+ps.setString(13, UUID.randomUUID().toString()); // UUID
+ps.setString(14, request.getDisplay());
+ps.setString(15, request.getCategory());
+ps.setString(16, request.getCode());
+ps.setString(17, request.getDiagnosticServiceSection());
+ps.setString(18, request.getPurpose());
+ps.setString(19, request.getPriority());
+ps.setString(20, request.getHealthcareServiceId());
+ps.setString(21, request.getHealthcareServiceName());
+ps.setString(22, request.getChargeItemId());
+ps.setString(23, request.getStatus());
+ps.setString(24, request.getStatusReason());
+ps.setString(25, request.getGroupIdentifier());
+ps.setString(26, request.getIntent()); // Placeholder for intent
+ps.setString(27, request.getPractitionerName());
+ps.setString(28, request.getPatientMrNumber());
+ps.setString(29, request.getPatientMobile());
+ps.setString(30, request.getPatientBirthDate());
+ps.setString(31, request.getPatientGender());
+ps.setString(32, request.getPatientFullName());
+ps.setString(33, "ambulatory"); // encounter_class
+ps.setString(34, request.getNote());
 
-                ps.setString(27, request.getPatientMobile());
-                ps.setString(28, request.getPatientBirthDate());
-                ps.setString(29, request.getPatientGender());
-                ps.setString(30, request.getPatientFullName());
-                ps.setString(31, "ambulatory");
-                ps.setString(32, request.getNote());
+                
 
             }
 
@@ -197,6 +204,8 @@ public class ServiceRequestService {
         });
 
     }
+
+
 
     public void migrate(){
         List<ServiceRequest> requests  =serviceRequestRepository.findAllBy();

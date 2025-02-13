@@ -130,8 +130,10 @@ public class IntegrationApplication {
 		long start = System.currentTimeMillis();
 		//allergyService.getLegacyAllergies(1000);
 		//referalService.getLegacyReferral(1000);
-		//chargeItemService.chargeThread(1000);
-		serviceRequestService.getLegacyRequest(3000);
+		chargeItemService.getLegacyChargeItem(3000);
+		//serviceRequestService.getLegacyRequest(3000);
+		//serviceRequestService.addVields();
+		//serviceRequestService.migrate();
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		//diagnosisService.getLegacyDiagnosticReport(1000);

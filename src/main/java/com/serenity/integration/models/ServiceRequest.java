@@ -95,6 +95,7 @@ public class ServiceRequest {
     @Column(columnDefinition = "TEXT")
     private String practitionerId;
     private String modifiedAt;
+
     @Column(columnDefinition = "TEXT")
     private String note;
     @Column(columnDefinition = "TEXT")
