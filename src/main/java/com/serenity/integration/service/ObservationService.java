@@ -146,5 +146,14 @@ serenityJdbcTemplate.batchUpdate(sql,new BatchPreparedStatementSetter() {
 
     }
 
+public void cleanObservation(){
 
+    String sql ="""
+            update observations 
+set practitionerid =e.assigned_to_id ,practitionername=e.assigned_to_name 
+from encounter e
+where observations.encounterid =e."uuid" and practitionerid is null ;
+            """;
+            vectorJdbcTemplate.update(sql);
+}
 }
