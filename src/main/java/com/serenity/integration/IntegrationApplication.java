@@ -16,6 +16,8 @@ import com.serenity.integration.models.Diagnosis;
 import com.serenity.integration.repository.EncounterRepository;
 import com.serenity.integration.repository.VisitRepository;
 import com.serenity.integration.service.AdmissionService;
+import com.serenity.integration.service.AllergyService;
+import com.serenity.integration.service.ChargeItemService;
 import com.serenity.integration.service.DiagnosisService;
 import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
@@ -26,6 +28,7 @@ import com.serenity.integration.service.ObservationService;
 import com.serenity.integration.service.PatientMigrationService;
 import com.serenity.integration.service.PatientService;
 import com.serenity.integration.service.PractitionerService;
+import com.serenity.integration.service.ReferalService;
 import com.serenity.integration.service.ServiceRequestService;
 import com.serenity.integration.service.SetupService;
 import com.serenity.integration.service.VisitMigration;
@@ -79,6 +82,16 @@ public class IntegrationApplication {
 	@Autowired
 	ObservationService observationService;
 
+	@Autowired
+	AllergyService allergyService;
+
+	@Autowired
+	ReferalService referalService;
+
+	
+	@Autowired
+	ChargeItemService chargeItemService;
+	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	public static void main(String[] args) {
@@ -113,7 +126,10 @@ public class IntegrationApplication {
 		// encounterService.encounterOPDthread();
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
-		serviceRequestService.getLegacyRequest(1000);
+		//allergyService.getLegacyAllergies(10);
+		//referalService.getLegacyReferral(10);
+		chargeItemService.getLegacyChargeItem(100);
+		//serviceRequestService.getLegacyRequest(1000);
 		//diagnosisService.getLegacyDiagnosticReport(1000);
 		//observationService.getLegacyObservations(1000);
 		// encounterService.encounterLegacythread();

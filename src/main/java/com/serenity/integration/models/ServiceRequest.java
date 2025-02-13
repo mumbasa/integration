@@ -35,26 +35,49 @@ public class ServiceRequest {
     @Column(columnDefinition = "TEXT")
 
     private String notes;
+    @Column(columnDefinition = "TEXT")
+
     private String category;
+    @Column(columnDefinition = "TEXT")
     private String code;
+    @Column(columnDefinition = "TEXT")
+
     private String diagnosticServiceSection;
+    @Column(columnDefinition = "TEXT")
+
     private String dueDate;
     private String purpose;
     private String sampleReceivedDateTime;
     private String priority;
+    @Column(columnDefinition = "TEXT")
+
     private String healthcareServiceId;
+    @Column(columnDefinition = "TEXT")
+
     private String healthcareServiceName;
     private String chargeItemId;
     private UUID priceTierId;
     private UUID replacesId;
+    @Column(columnDefinition = "TEXT")
+
     private String status;
+    @Column(columnDefinition = "TEXT")
+
     private String statusReason;
+    @Column(columnDefinition = "TEXT")
+
     private String groupIdentifier;
+    @Column(columnDefinition = "TEXT")
+
     private String bodySite;
+    @Column(columnDefinition = "TEXT")
+
     private String intent;
     private boolean doNotPerform;
     private boolean isPaid;
     private double charge;
+    @Column(columnDefinition = "TEXT")
+
     private String practitionerName;
     private String encounterClass;
     private boolean paymentRequired;
@@ -62,7 +85,11 @@ public class ServiceRequest {
     private String patientMobile;
     private String patientBirthDate;
     private String patientGender;
+    @Column(columnDefinition = "TEXT")
+
     private String patientFullName;
+    @Column(columnDefinition = "TEXT")
+
     private String occurence;
     @Column(columnDefinition = "TEXT")
     private String practitionerId;

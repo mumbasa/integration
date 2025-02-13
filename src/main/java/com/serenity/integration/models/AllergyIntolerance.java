@@ -17,7 +17,7 @@ public class AllergyIntolerance {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private UUID uuid;
+    private String uuid;
 
     @Column(name = "clinical_status", nullable = false)
     private String clinicalStatus;
@@ -64,4 +64,6 @@ public class AllergyIntolerance {
 
     @Column(name = "patient_id", nullable = false)
     private String patientId;
+
+    private String encounterId;
 }
