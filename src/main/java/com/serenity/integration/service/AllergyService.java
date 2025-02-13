@@ -60,9 +60,6 @@ public class AllergyService {
         Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
-                Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        
         String sql = "Select count(*) from allergy_intolerance ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -114,4 +111,6 @@ public class AllergyService {
        
 
     }
+
+    
 }
