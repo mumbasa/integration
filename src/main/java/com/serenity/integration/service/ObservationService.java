@@ -53,7 +53,7 @@ public class ObservationService {
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        String sql = "SELECT count(*) from observations";
+        String sql = "SELECT count(*) from observation";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
