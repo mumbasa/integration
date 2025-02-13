@@ -90,7 +90,7 @@ public class ChargeItemService {
                 request.setQuantity(set.getInt("quantity"));
                 request.setServiceId(set.getString("serviceid"));
                 request.setServiceOrProductName(set.getString("service_or_product_name"));
-                request.setServiceRequestId(set.getString("sservicerequestid"));
+                request.setServiceRequestId(set.getString("servicerequestid"));
                 request.setUserFriendlyId(set.getString("user_friendly_id"));
                 request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
                request.setPatientContribution(set.getDouble("patient_contribution"));
