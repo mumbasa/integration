@@ -65,7 +65,7 @@ public class ChargeItemService {
                 Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         
-        String sql = "select * from \"ChargeItem\" ci ";
+        String sql = "select count(*) from \"ChargeItem\" ci ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
