@@ -134,7 +134,7 @@ public class IntegrationApplication {
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.getLegacyObservations(3000);
-		diagnosisService.getLegacyDiagnosticReport(1000);
+		diagnosisService.getLegacyDiagnosticReport(3000);
 
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
