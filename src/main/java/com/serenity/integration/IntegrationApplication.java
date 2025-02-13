@@ -133,7 +133,7 @@ public class IntegrationApplication {
 		//chargeItemService.getLegacyChargeItem(3000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
-		observationService.getLegacyObservations(1000);
+		observationService.getLegacyObservations(3000);
 
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
