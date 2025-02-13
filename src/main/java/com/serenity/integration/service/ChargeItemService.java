@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -168,52 +169,47 @@ public class ChargeItemService {
 
 
      public void chargeThread(int batchSize) {
-        String sql = "select count(*) from \"ChargeItem\" ci ";
-      
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
-        logger.info("Rows size  is: "+rows);
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2( batchSize,rows));
-            for (Future<Integer> future : futures) {
-                System.out.println("future.get = " + future.get());
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        executorService.shutdown();
-        System.err.println("patiend count is ");
-
-    }
-
-
-    public Set<Callable<Integer>> submitTask2(int batchSize,long rows) {
+    String sql = "SELECT count(*) FROM \"ChargeItem\" ci";
     
-        Set<Callable<Integer>> callables = new HashSet<>();
-        long totalSize = rows;
-        int batches = (int)(totalSize + batchSize - 1) / batchSize; // Ceiling division
- logger.info(batches+ "{ -----}");
-        for (int i = 0; i < batches; i++) {;
-            final int batchNumber = i; // For use in lambda
+    long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+    logger.info("Rows size is: {}", rows);
 
-            callables.add(() -> {
-                int startIndex = batchNumber * batchSize;
-             
-                logger.debug("Processing batch {}/{}, indices [{}]",
-                        batchNumber + 1, batches, startIndex);
-                
-             return   getLegacyChargeItemFuture(startIndex, batchSize);
-              
-                
-
-               
-            
-            });
+    ExecutorService executorService = Executors.newFixedThreadPool(10);
+    try {
+        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+        for (Future<Integer> future : futures) {
+            logger.info("Future result: {}", future.get());
         }
-
-        return callables;
+    } catch (InterruptedException | ExecutionException e) {
+        logger.error("Error processing batches", e);
+    } finally {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
     }
+}
+
+public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
+    List<Callable<Integer>> callables = new ArrayList<>();
+    long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+    
+    logger.info("Total batches: {}", batches);
+    for (int i = 0; i < batches; i++) {
+        final int batchNumber = i;
+
+        callables.add(() -> {
+            int startIndex = batchNumber * batchSize;
+            logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+            return getLegacyChargeItemFuture(startIndex, batchSize);
+        });
+    }
+
+    return callables;
+}
 
 }
