@@ -95,8 +95,8 @@ public class ChargeItemService {
                 request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
                request.setPatientContribution(set.getDouble("patient_contribution"));
                request.setRelationship(set.getString("relationship"));
-               request.setPractitionerId(set.getString("practitioner_id"));
-                request.setPractitionerName(set.getString("practitioner_name"));
+               request.setPractitionerId(set.getString("practitionerid"));
+                request.setPractitionerName(set.getString("practitionername"));
                 request.setPayerContribution(set.getDouble("requester_name"));
                 
              
