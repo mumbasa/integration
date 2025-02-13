@@ -77,7 +77,7 @@ public class ServiceRequestService {
                 request.setCategory(set.getString("category"));
                 String encounterId = set.getString("encounter_id");
                 if (encounterId != null) {
-                    request.setEncounterId(UUID.fromString(encounterId));
+                    request.setEncounterId(encounterId);
                 }
                 String patientMrNumber = set.getString("mr_number");
                 if (patientMrNumber != null) {

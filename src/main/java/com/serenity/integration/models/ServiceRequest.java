@@ -22,12 +22,12 @@ import lombok.NoArgsConstructor;
 public class ServiceRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    //private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     private String uuid;
     private String visitId;
     private String patientId;
-    private UUID encounterId;
+    private String encounterId;
     private String accessionNumber;
     private String display;
     private String notes;
