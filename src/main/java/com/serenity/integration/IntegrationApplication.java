@@ -1,6 +1,7 @@
 package com.serenity.integration;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -126,10 +127,13 @@ public class IntegrationApplication {
 		// encounterService.encounterOPDthread();
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
-		//allergyService.getLegacyAllergies(10);
-		//referalService.getLegacyReferral(10);
-		chargeItemService.getLegacyChargeItem(100);
-		//serviceRequestService.getLegacyRequest(1000);
+		long start = System.currentTimeMillis();
+		allergyService.getLegacyAllergies(1000);
+		referalService.getLegacyReferral(1000);
+		chargeItemService.getLegacyChargeItem(1000);
+		serviceRequestService.getLegacyRequest(1000);
+		long stop = System.currentTimeMillis();
+		System.err.println((stop-stop)/60000+" time taken to finish");
 		//diagnosisService.getLegacyDiagnosticReport(1000);
 		//observationService.getLegacyObservations(1000);
 		// encounterService.encounterLegacythread();
