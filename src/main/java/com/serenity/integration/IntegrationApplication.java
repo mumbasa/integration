@@ -134,7 +134,7 @@ public class IntegrationApplication {
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10);;
-		diagnosisService.getLegacyDiagnosticReport(10);
+		//diagnosisService.getLegacyDiagnosticReport(10);
 		diagnosisService.migrateDiagReportThread(10);
 
 		long stop = System.currentTimeMillis();

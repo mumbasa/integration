@@ -67,7 +67,7 @@ DiagnosticReportRepository diagnosticReportRepository;
         String sql = "SELECT count(*) from diagnostic_report";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = 100;
+        long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -102,7 +102,7 @@ DiagnosticReportRepository diagnosticReportRepository;
                
                 }
                 
-                request.setCreatedAt(set.getString(2));
+                request.setCreatedAt(set.getString(3));
                 request.setVisitId(set.getString("visit_id"));
                 serviceRequests.add(request);
 
@@ -116,82 +116,62 @@ DiagnosticReportRepository diagnosticReportRepository;
 
     public void migrateDiagnosticReports(List<DiagnosticReport> reports) {
         String sql = """
-                        INSERT INTO diagnostic_reports
-(created_at,  issued_date, sample_received_date_time, approved_date_time,reviewed_date_time,
-  effective_datetime, billing_turnaround_time, total_turnaround_time, intra_laboratory_turnaround_time,id, 
-  "uuid",  display, category,  code,  conclusion, 
-  purpose,  healthcare_service_id, service_provider_id, status, performer_name, 
-  performer_id, approved_by_name, approved_by_id, reviewed_by_name, reviewed_by_id, 
-  encounter_id, based_on_id, patient_id, visit_id, ervice_request_category,
-   patient_mr_number, patient_full_name, patient_mobile, patient_birth_date,patient_gender)
-VALUES(?::timestamp,?::timestamp,?::timestamp,?::timestamp,?::timestamp,
-?::timestamp,?,?,?,?,
-uuid(?),?,?,?,?,
-?,uuid(?),uuid(?),?,?,
-uuid(?),?,uuid(?),?,uuid(?),
-?,?,?,?,?,
-?,?,?,?,?
+    INSERT INTO diagnostic_reports (
+        created_at, issued_date, sample_received_date_time, approved_date_time, reviewed_date_time,
+        effective_datetime, id, uuid, display, category, code, conclusion, purpose,
+        healthcare_service_id, service_provider_id, status, performer_name, performer_id,
+        approved_by_name, approved_by_id, reviewed_by_name, reviewed_by_id, encounter_id,
+        based_on_id, patient_id, visit_id, service_request_category, patient_mr_number,
+        patient_full_name, patient_mobile, patient_birth_date, patient_gender
+    ) VALUES (
+        ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp,
+        ?::timestamp, ?, uuid(?), ?, ?, ?, ?, ?, uuid(?), uuid(?), ?, ?, uuid(?), ?,
+        uuid(?), ?, uuid(?), ?, ?, ?, ?, ?, ?, ?, ?, cast(? AS DATE), ?
+    );
+""";
+serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+    @Override
+    public void setValues(PreparedStatement ps, int i) throws SQLException {
+        DiagnosticReport report = reports.get(i);
+        ps.setString(1, report.getCreatedAt()); // created_at
+        ps.setString(2, report.getIssuedDate()); // issued_date
+        ps.setString(3, report.getSampleReceivedDateTime()); // sample_received_date_time (fixed)
+        ps.setString(4, report.getApprovedDateTime()); // approved_date_time
+        ps.setString(5, report.getReviewedDateTime()); // reviewed_date_time
+        ps.setString(6, report.getEffectiveDateTime()); // effective_datetime
+        ps.setLong(7, report.getId()); // id
+        ps.setString(8, report.getUuid()); // uuid
+        ps.setString(9, report.getDisplay()); // display
+        ps.setString(10, report.getCategory() == null ? "laboratory" : report.getCategory()); // category
+        ps.setString(11, report.getCode()); // code
+        ps.setString(12, report.getConclusion() == null ? "" : report.getConclusion()); // conclusion
+        ps.setString(13, report.getPurpose()); // purpose
+        ps.setString(14, report.getHealthcareServiceId()); // healthcare_service_id
+        ps.setString(15, report.getServiceProviderId()); // service_provider_id
+        ps.setString(16, report.getStatus()); // status
+        ps.setString(17, report.getPerformerName()); // performer_name
+        ps.setString(18, report.getPerformerId()); // performer_id
+        ps.setString(19, report.getApprovedByName()); // approved_by_name
+        ps.setString(20, report.getApprovedById()); // approved_by_id
+        ps.setString(21, report.getReviewedByName()); // reviewed_by_name
+        ps.setString(22, report.getReviewedById()); // reviewed_by_id
+        ps.setString(23, report.getEncounterId()); // encounter_id
+        ps.setString(24, report.getBasedOnId()); // based_on_id
+        ps.setString(25, report.getPatientId()); // patient_id
+        ps.setString(26, report.getVisitId()); // visit_id
+        ps.setString(27, report.getServiceRequestCategory()); // service_request_category
+        ps.setString(28, report.getPatientMrNumber()); // patient_mr_number
+        ps.setString(29, report.getPatientFullName()); // patient_full_name
+        ps.setString(30, report.getPatientMobile()); // patient_mobile
+        ps.setString(31, report.getPatientBirthDate()); // patient_birth_date
+        ps.setString(32, report.getPatientGender()); // patient_gender (added)
+    }
 
-);
-                        """;
-        serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                // TODO Auto-generated method stub
-                DiagnosticReport report = reports.get(i);
-                ps.setString(1, report.getCreatedAt());
-                ps.setString(2, report.getIssuedDate());
-                ps.setString(3, report.getCreatedAt());
-                ps.setString(4, report.getApprovedDateTime());
-                ps.setString(5, report.getReviewedDateTime());
-
-                ps.setString(6, report.getEffectiveDateTime());
-                ps.setDouble(7, report.getBillingTurnaroundTime());
-                ps.setDouble(8, report.getTotalTurnaroundTime());
-                ps.setDouble(9, report.getIntraLaboratoryTurnaroundTime());
-                ps.setLong(10, report.getId());
-
-                ps.setString(11, report.getUuid());
-                ps.setString(12, report.getDisplay());
-                ps.setString(13, report.getCategory()==null?"laboratory":report.getCategory());
-                ps.setString(14, report.getCode());
-                ps.setString(15, report.getConclusion()==null?"":report.getConclusion());
-
-                ps.setString(16, report.getPurpose());
-                ps.setString(17, report.getHealthcareServiceId());
-                ps.setString(18, report.getServiceProviderId());
-                ps.setString(19, report.getStatus());
-                ps.setString(20, report.getPerformerName());
-
-                ps.setString(21, report.getPerformerId());
-                ps.setString(22, report.getApprovedByName());
-                ps.setString(23, report.getApprovedById());
-                ps.setString(24, report.getReviewedByName());
-                ps.setString(25, report.getReviewedById());
-
-                ps.setString(26, report.getEncounterId());
-                ps.setString(27, report.getBasedOnId());
-                ps.setString(28, report.getPatientId());
-              ps.setString(29, report.getVisitId());
-              ps.setString(30, report.getServiceRequestCategory());
-
-              ps.setString(31, report.getPatientMrNumber());
-              ps.setString(32, report.getPatientFullName());
-              ps.setString(33, report.getPatientMobile());
-            ps.setString(34, report.getPatientBirthDate());
-            ps.setString(35, report.getPatientGender());
-
-            }
-
-            @Override
-            public int getBatchSize() {
-                // TODO Auto-generated method stub
-                return reports.size();
-            }
-
-        });
-
+    @Override
+    public int getBatchSize() {
+        return reports.size();
+    }
+});
     }
 
     public void cleanDiagnositcs() {
