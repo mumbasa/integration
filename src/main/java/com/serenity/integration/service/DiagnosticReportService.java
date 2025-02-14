@@ -109,6 +109,7 @@ DiagnosticReportRepository diagnosticReportRepository;
             }
             diagnosticReportRepository.saveAll(serviceRequests);
             logger.info("Saved Diagnostic result");
+            cleanDiagnositcs();
         }
     }
 
