@@ -133,11 +133,11 @@ public class IntegrationApplication {
 		//chargeItemService.getLegacyChargeItem(3000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
-		observationService.migrateObservationThread(10000);;
-		diagnosisService.getLegacyDiagnosticReport(1000);
+		//observationService.migrateObservationThread(10000);;
+		//diagnosisService.getLegacyDiagnosticReport(1000);
 		diagnosisService.migrateDiagReportThread(10000);
-		referalService.getLegacyReferral(1000);
-		allergyService.getLegacyAllergies(1000);
+		//referalService.getLegacyReferral(1000);
+		allergyService.migrateAlleryThread(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		// encounterService.encounterLegacythread();
