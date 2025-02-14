@@ -228,6 +228,26 @@ where diagnostic_report.encounterid =e."uuid"  ;
 
         return callables;
     }
+
+
+    public void submitTasker(int batchSize) {
+        long rows = diagnosticReportRepository.findCleanCount();
+        long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+
+        logger.info("Total batches: {}", batches);
+        for (int i = 0; i < batches; i++) {
+            final int batchNumber = i;
+
+       
+                int startIndex = batchNumber * batchSize;
+                logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+                migrateDiagnosticReports(diagnosticReportRepository.findBhy(startIndex, batchSize));
+             
+        
+        }
+
+   
+    }
 }
 
 
