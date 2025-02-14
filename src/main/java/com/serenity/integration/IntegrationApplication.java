@@ -135,9 +135,9 @@ public class IntegrationApplication {
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10000);;
 		//diagnosisService.getLegacyDiagnosticReport(1000);
-		diagnosisService.migrateDiagReportThread(10000);
+		diagnosisService.migrateDiagReportThread(100);
 		//referalService.getLegacyReferral(1000);
-		allergyService.migrateAlleryThread(1000);
+		//allergyService.migrateAlleryThread(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		// encounterService.encounterLegacythread();
