@@ -12,5 +12,8 @@ import com.serenity.integration.models.Observation;
 public interface ObservationRepository extends JpaRepository<Observation,Long>{
     @Query(value = "SELECT * from observations where practitionerid is not null and patientid is not null order by id OFFSET ?1 LIMIT ?2",nativeQuery = true)
 List<Observation> findByPractitionerIdNotNull(int offset,int limit);
+
+@Query(value = "SELECT count(*) from observations where practitionerid is not null",nativeQuery = true)
+long findCleanData();
     
 } 

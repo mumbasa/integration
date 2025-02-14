@@ -128,15 +128,16 @@ public class IntegrationApplication {
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
 		long start = System.currentTimeMillis();
-		//allergyService.getLegacyAllergies(1000);
-		//referalService.getLegacyReferral(1000);
+		//;
+		//;
 		//chargeItemService.getLegacyChargeItem(3000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
-		//observationService.migrateObservationThread(10);;
-		diagnosisService.getLegacyDiagnosticReport(10);
+		observationService.migrateObservationThread(10);;
+		diagnosisService.getLegacyDiagnosticReport(1000);
 		diagnosisService.migrateDiagReportThread(10);
-
+		referalService.getLegacyReferral(1000);
+		allergyService.getLegacyAllergies(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		// encounterService.encounterLegacythread();

@@ -145,10 +145,10 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(10, report.getCategory() == null ? "laboratory" : report.getCategory()); // category
         ps.setString(11, report.getCode()); // code
         ps.setString(12, report.getConclusion() == null ? "" : report.getConclusion()); // conclusion
-        ps.setString(13, report.getPurpose()); // purpose
-        ps.setString(14, report.getHealthcareServiceId()); // healthcare_service_id
+        ps.setString(13, report.getPurpose()== null ? "" : report.getPurpose()); // purpose
+        ps.setString(14, report.getHealthcareServiceId()== null ? "30f534f0-1210-4d9b-bd10-7871075534cb" : report.getHealthcareServiceId()); // healthcare_service_id
         ps.setString(15, report.getServiceProviderId()); // service_provider_id
-        ps.setString(16, report.getStatus()); // status
+        ps.setString(16, report.getStatus()== null ? "" : report.getStatus()); // status
         ps.setString(17, report.getPerformerName()); // performer_name
         ps.setString(18, report.getPerformerId()); // performer_id
         ps.setString(19, report.getApprovedByName()); // approved_by_name
@@ -187,7 +187,7 @@ where diagnostic_report.encounterid =e."uuid"  ;
 
     public void migrateDiagReportThread(int batchSize) {
 
-        long rows = 50;
+        long rows = diagnosticReportRepository.findCleanCount();
         logger.info("Rows size is: {}", rows);
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
