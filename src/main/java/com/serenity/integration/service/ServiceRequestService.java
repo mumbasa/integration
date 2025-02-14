@@ -175,7 +175,7 @@ ps.setString(9, request.getPatientId());
 ps.setString(10, request.getPractitionerId().toString());
 ps.setString(11, request.getVisitId());
 ps.setString(12, "161380e9-22d3-4627-a97f-0f918ce3e4a9"); // service_provider_id
-ps.setString(13, UUID.randomUUID().toString()); // UUID
+ps.setString(13, request.getUuid()); // UUID
 ps.setString(14, request.getDisplay());
 ps.setString(15, request.getCategory()==null?"Laboratory-procedure":request.getCategory() );
 ps.setString(16, request.getCode());
