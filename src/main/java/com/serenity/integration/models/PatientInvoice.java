@@ -1,13 +1,18 @@
 package com.serenity.integration.models;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+
 @Entity
 @Table(name = "patient_invoice")
+@Setter
+@Getter
 public class PatientInvoice {
 
     @Id
@@ -31,8 +36,8 @@ public class PatientInvoice {
     private String visitId;
     private String paymentMethod;
     private String invoiceDate;
-    private BigDecimal amountPaid;
-    private LocalDateTime dueDate;
+    private double amountPaid;
+    private String dueDate;
     private String externalId;
     private String externalSystem;
 

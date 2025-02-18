@@ -82,7 +82,7 @@ public class InvoiceService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                   select *,(select currency from "ChargeItem" ci where uuid(invoiceid)=i."uuid" limit 1) from invoice i  ORDER by i.id asc offset ? LIMIT ?
+                   select * from invoice i  ORDER by i.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -103,7 +103,7 @@ public class InvoiceService {
                 request.setExternalId(set.getString(2));
                 request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setVisitId(set.getString("visitid"));
-                request.setCurrency(set.getString(16));
+              //  request.setCurrency(set.getString(16));
                 serviceRequests.add(request);
 
             }
@@ -115,17 +115,15 @@ public class InvoiceService {
 
     }
 
-    public int migrateInvoice(List<AllergyIntolerance> allergies){
+    public int migrateInvoice(List<PatientInvoice> invoices){
         String sql ="""
-                INSERT INTO allergy_intolerances
-(created_at,  "type", onset_period_start, onset_period_end, recorded_date, 
-pk, encounter_id, service_provider_id, patient_id, visit_id, 
-"uuid", clinical_status, verification_status, category, criticality,
- code, display, practitioner_id, practitioner_name)
-VALUES( ?::timestamp, ?, ?::timestamp, ?::timestamp, cast (? AS DATE), 
-?, uuid(?), uuid(?), uuid(?), uuid(?), 
-uuid(?), ?, ?, ?, ?, 
-?, ?, uuid(?), ?);
+               INSERT INTO invoices
+(created_at,  pk, "uuid", patient_id, patient_name, 
+patient_mr_number, patient_birth_date, patient_gender, patient_mobile, 
+payer_name, managing_organization_id, payer_id, payer_type, currency, 
+visit_id, payment_method, invoice_date, amount_paid, due_date, 
+external_id, external_system)
+VALUES();
                 """;
 
     serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -133,30 +131,32 @@ uuid(?), ?, ?, ?, ?,
         @Override
         public void setValues(PreparedStatement ps, int i) throws SQLException {
             // TODO Auto-generated method stub
-           AllergyIntolerance intolerance = allergies.get(i);
+           PatientInvoice intolerance = invoices.get(i);
        
-           ps.setString(1,intolerance.getRecordedDate());
-           ps.setString(2,    intolerance.getAllergyIntoleranceType());
-           ps.setString(3,     intolerance.getOnsetPeriodEnd());
-           ps.setString(4,intolerance.getRecordedDate());
-           ps.setString(5,intolerance.getRecordedDate());
+           ps.setString(1,intolerance.getCreatedAt());
+           ps.setLong(2,    intolerance.getId());
+           ps.setString(3,     intolerance.getUuid());
+           ps.setString(4,intolerance.getPatientId());
+           ps.setString(5,intolerance.getPatientName());
 
            ps.setLong(6,intolerance.getId());
-           ps.setString(7,    intolerance.getEncounterId());
-           ps.setString(8,     intolerance.getServiceProviderId());
-           ps.setString(9,intolerance.getPatientId());
-           ps.setString(10,intolerance.getVisitId());
+           ps.setString(7,    intolerance.getPatientBirthDate());
+           ps.setString(8,     intolerance.getPatientGender());
+           ps.setString(9,intolerance.getPatientMobile());
+           ps.setString(10,intolerance.getPayerName());
 
-           ps.setString(11,intolerance.getUuid());
-           ps.setString(12,    intolerance.getClinicalStatus());
-           ps.setString(13,     intolerance.getVerificationStatus());
-           ps.setString(14,intolerance.getCategory());
-           ps.setString(15,intolerance.getCriticality());
+           ps.setString(11,intolerance.getManagingOrganizationId());
+           ps.setString(12,    intolerance.getPayerId());
+           ps.setString(13,     intolerance.getPayerType());
+           ps.setString(14,intolerance.getCurrency());
+           ps.setString(15,intolerance.getVisitId());
 
-           ps.setString(16,intolerance.getCode());
-           ps.setString(17,    intolerance.getDisplay());
-           ps.setString(18,     intolerance.getPractitionerId()==null?"4c4db061-1f31-4a7b-b5fc-04b6501fc3cf":intolerance.getPractitionerId());
-           ps.setString(19,intolerance.getPractitionerName()==null?"":intolerance.getPractitionerName());
+           ps.setString(16,intolerance.getPaymentMethod());
+           ps.setString(17,    intolerance.getInvoiceDate());
+           ps.setDouble(18,intolerance.getAmountPaid());
+           ps.setString(19,intolerance.getDueDate());
+           ps.setString(20, intolerance.getExternalId());
+           ps.setString(21, intolerance.getExternalSystem());
     
 
 
