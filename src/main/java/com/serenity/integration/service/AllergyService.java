@@ -199,7 +199,7 @@ where allergy_intolerance.encounterid =v.uuid ;
     
 
 
-     public void migrateAlleryThread(int batchSize) {
+     public void migrateAllergyThread(int batchSize) {
 
         long rows = allergyRepository.count();
         logger.info("Rows size is: {}", rows);

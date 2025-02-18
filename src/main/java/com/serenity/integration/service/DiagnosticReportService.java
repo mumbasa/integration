@@ -177,10 +177,10 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
     public void cleanDiagnositcs() {
 
         String sql = """
-                          update diagnostic_report 
-set visitid =e.visit_id
-from encounter e
-where diagnostic_report.encounterid =e."uuid"  ;
+                        update diagnostic_report 
+                        set visitid =e.visit_id
+                        from encounter e
+                        where diagnostic_report.encounterid =e."uuid"  ;
                             """;
         vectorJdbcTemplate.update(sql);
     }

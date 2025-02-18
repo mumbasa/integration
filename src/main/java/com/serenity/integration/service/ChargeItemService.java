@@ -1,5 +1,7 @@
 package com.serenity.integration.service;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
@@ -155,10 +158,15 @@ public class ChargeItemService {
                request.setRelationship(set.getString("relationship"));
                request.setPractitionerId(set.getString("practitionerid"));
                 request.setPractitionerName(set.getString("practitionername"));
-               request.setPayerContribution(set.getDouble("requester_name"));
-       
-             
-              
+               request.setPayerContribution(set.getDouble("requestername"));
+                request.setPayerName(set.getString("payer_name"));
+                request.setPatientId(set.getString("patientid"));
+                request.setInvoiceId(set.getString("invoiceid"));
+                request.setCreatedAt(set.getString("created_on"));
+                request.setPaidAt(set.getString("paid_at"));
+                request.setPaymentMethod(set.getString("payment_method"));
+                request.setStatus(set.getString("status"));
+                request.setTransactionId(set.getLong("transactionid"));
                 serviceRequests.add(request);
 
             }
@@ -177,7 +185,7 @@ public class ChargeItemService {
 
     ExecutorService executorService = Executors.newFixedThreadPool(10);
     try {
-        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 100));
         for (Future<Integer> future : futures) {
             logger.info("Future result: {}", future.get());
         }
@@ -206,7 +214,8 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
         callables.add(() -> {
             int startIndex = batchNumber * batchSize;
             logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
-            return getLegacyChargeItemFuture(startIndex, batchSize);
+            migrateChargeitems(chargeItemRepository.findBhy(startIndex, batchSize));
+            return 1;
         });
     }
 
@@ -215,7 +224,81 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
 
 
 public void migrateChargeitems(List<ChargeItem> items){
+String sql ="""
+        INSERT INTO chargeitem
+(created_at,  charge, patient_contribution, payer_contribution, unit_price, 
+pk, "uuid", category, created_by_name, currency, 
+encounter_id, location_id, location_name, medication_request_id, practitioner_id, 
+practitioner_name, product_id, provider_id, provider_name,quantity, 
+revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
+  visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
+  appointment_id, payer_name, payment_method,status)
+  VALUES (
+  ?::timestamp,?,?,?,?,
+  ?,uuid(?),?,?,?,
+  ?,?,?,?,?,
+  ?,?,?,?,?,
+  ?,?,?,?,?,
+  ?,?,?,?::timestamp,?,
+  ?,?,?,? 
+  )
+"""    
+        ;
+    serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
+        @Override
+        public void setValues(PreparedStatement ps, int i) throws SQLException {
+            ChargeItem item = items.get(i);
+            ps.setString(1, item.getCreatedAt());
+            ps.setDouble(2, item.getCharge());
+            ps.setDouble(3, item.getPatientContribution());
+            ps.setDouble(4, item.getUnitPrice());
+            ps.setDouble(5, item.getPayerContribution());
+
+            ps.setLong(6, item.getId());
+            ps.setString(7,UUID.randomUUID().toString());
+            ps.setString(8, item.getCategory());
+            ps.setString(9, item.getCreatedByName());
+            ps.setString(10, item.getCurrency());
+
+            ps.setString(11, item.getEncounterId());
+            ps.setString(12,item.getLocationId()==null?"":item.getLocationId());
+            ps.setString(13, item.getLocationName()==null?"":item.getLocationName());
+            ps.setString(14, item.getMedicationRequestId());
+            ps.setString(15, item.getPractitionerId());
+
+            ps.setString(16, item.getPractitionerName());
+            ps.setString(17,item.getProductId());
+            ps.setString(18, item.getProviderId()==null?"":item.getProviderId());
+            ps.setString(19, item.getProviderName()==null?"":item.getPractitionerName());
+            ps.setInt(20, item.getQuantity());
+
+            ps.setString(21, item.getRevenueTagDisplay());
+            ps.setString(22,item.getRelationship());
+            ps.setString(23, item.getServiceId()==null?"":item.getProviderId());
+            ps.setString(24, item.getServiceOrProductName()==null?"":item.getServiceOrProductName());
+            ps.setString(25, item.getServiceRequestId());
+
+            ps.setString(26, item.getVisitId());
+            ps.setString(27, item.getUserFriendlyId()==null?"":item.getUserFriendlyId());
+            ps.setString(28, item.getInvoiceId()==null?"":item.getInvoiceId());
+            ps.setString(29, item.getPaidAt());
+            ps.setString(30, item.getPatientId());
+
+            ps.setString(31, item.getAppointmentId());
+            ps.setString(32, item.getPayerName()==null?"":item.getUserFriendlyId());
+            ps.setString(33, item.getPaymentMethod()==null?"":item.getInvoiceId());
+            ps.setString(34, item.getStatus()==null?"":item.getStatus());
+
+        }
+
+        @Override
+        public int getBatchSize() {
+            // TODO Auto-generated method stub
+            return items.size();
+        }
+        
+    });
 
 }
 }

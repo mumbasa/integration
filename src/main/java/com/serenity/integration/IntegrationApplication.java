@@ -87,11 +87,10 @@ public class IntegrationApplication {
 	AllergyService allergyService;
 
 	@Autowired
-	ReferalService referalService;
+	ChargeItemService chargeItemService;
 
 	
-	@Autowired
-	ChargeItemService chargeItemService;
+	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -130,13 +129,13 @@ public class IntegrationApplication {
 		long start = System.currentTimeMillis();
 		//;
 		//;
-		//chargeItemService.getLegacyChargeItem(3000);
+		chargeItemService.chargeThread(10);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10000);;
 		//diagnosisService.getLegacyDiagnosticReport(1000);
-		diagnosisService.migrateDiagReportThread(10);
-		//referalService.getLegacyReferral(1000);
+	//	diagnosisService.migrateDiagReportThread(10000);
+		//referalService.migrateReferalThread(1000);
 		//allergyService.migrateAlleryThread(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");

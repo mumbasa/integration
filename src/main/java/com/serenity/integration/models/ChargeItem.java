@@ -20,6 +20,7 @@ public class ChargeItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(name = "uuid")
     private String uuid;
 
     private String appointmentId;
@@ -57,7 +58,15 @@ public class ChargeItem {
     private String canceledAt;
     private String canceledByName;
     private String canceledById;
-
+    private String patientId;
+    private String patientMrNumber;
+    private String payerName;
+    private String invoiceId;
+    private String createdAt;
+    private String paidAt;
+    private String paymentMethod;
+    private String status;
+    private long transactionId;
     private String serviceId;
     @Column(columnDefinition = "TEXT")
     private String serviceOrProductName;

@@ -1,14 +1,24 @@
 package com.serenity.integration.service;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
@@ -116,5 +126,108 @@ public class ReferalService {
 
     }
     
+
+    private void migrateReferal(List<Referal> referals){
+        String sql ="""
+                INSERT INTO referral_requests
+(created_at, updated_at, pk, encounter_id, patient_id, 
+requester_id, requesting_organization_id, recipient_id, "uuid", priority, 
+specialty, reason, description, referral_type, status, 
+recipient_extra_detail, recepient_name, replaces_id,  requester_name)
+VALUES(?::timestamp,?::timestamp,?,uuid(?),uuid(?),
+uuid(?),uuid(?),uuid(?),uuid(?),?,
+?,?,?,?,?,
+?,?,uuid(?),?
+);
+                """;
+serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+    @Override
+    public void setValues(PreparedStatement ps, int i) throws SQLException {
+     
+        Referal referal = referals.get(i);
+        ps.setString(1, referal.getCreatedAt());
+        ps.setString(2, referal.getCreatedAt());
+        ps.setLong(3, referal.getId());
+        ps.setString(4, referal.getEncounterId());
+        ps.setString(5, referal.getPatientId());
+
+        ps.setString(6, referal.getRequesterId());
+        ps.setString(7, referal.getRequestingOrganizationId());
+        ps.setString(8, referal.getRecipientId());
+        ps.setString(9, UUID.randomUUID().toString());
+        ps.setString(10, referal.getPriority());
+        
+        ps.setString(11, referal.getSpecialty());
+        ps.setString(12, referal.getReason());
+        ps.setString(13, referal.getDescription());
+        ps.setString(14, referal.getReferralType());
+        ps.setString(15, referal.getStatus());
+
+        ps.setString(16, referal.getRecipientExtraDetail());
+        ps.setString(17, referal.getRecipientName());
+        ps.setString(18, referal.getReplacesId());
+        ps.setString(19, referal.getRequesterName());
+
+        
+
+
+    }
+
+    @Override
+    public int getBatchSize() {
+        // TODO Auto-generated method stub
+return referals.size();
+    }
     
+});
+    }
+    
+    
+    public void migrateReferalThread(int batchSize) {
+
+        long rows = referralRepository.count();
+        logger.info("Rows size is: {}", rows);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try {
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+            for (Future<Integer> future : futures) {
+                logger.info("Future result: {}", future.get());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error processing batches", e);
+        } finally {
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+            }
+        }
+    }
+
+    public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
+        List<Callable<Integer>> callables = new ArrayList<>();
+        long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+
+        logger.info("Total batches: {}", batches);
+        for (int i = 0; i < batches; i++) {
+            final int batchNumber = i;
+
+            callables.add(() -> {
+                int startIndex = batchNumber * batchSize;
+                logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+                migrateReferal(referralRepository.findBhy(startIndex, batchSize));
+                return 1;
+            });
+        }
+
+        return callables;
+    }
+
+
+
 }
