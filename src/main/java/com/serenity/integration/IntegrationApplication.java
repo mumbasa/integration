@@ -15,6 +15,7 @@ import com.serenity.integration.cron.NoteServiceCron;
 import com.serenity.integration.cron.VisitsCron;
 import com.serenity.integration.models.Diagnosis;
 import com.serenity.integration.repository.EncounterRepository;
+import com.serenity.integration.repository.InvoiceRepository;
 import com.serenity.integration.repository.VisitRepository;
 import com.serenity.integration.service.AdmissionService;
 import com.serenity.integration.service.AllergyService;
@@ -22,6 +23,7 @@ import com.serenity.integration.service.ChargeItemService;
 import com.serenity.integration.service.DiagnosisService;
 import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
+import com.serenity.integration.service.InvoiceService;
 import com.serenity.integration.service.MedicalRequestService;
 import com.serenity.integration.service.NoteService;
 import com.serenity.integration.service.NoteWrangling;
@@ -89,8 +91,8 @@ public class IntegrationApplication {
 	@Autowired
 	ChargeItemService chargeItemService;
 
-	
-	
+@Autowired
+InvoiceService invoiceService;
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -130,6 +132,7 @@ public class IntegrationApplication {
 		//;
 		//;
 		chargeItemService.chargeThread(10);
+		invoiceService.getLegacyInvoice(10);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10000);;
