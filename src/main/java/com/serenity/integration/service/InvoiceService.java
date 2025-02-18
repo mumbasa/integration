@@ -88,8 +88,8 @@ public class InvoiceService {
             while (set.next()) {
                 PatientInvoice request = new PatientInvoice();
                 PatientData patientData=mps.get(set.getString("patientid"));
-                //request.setId(set.getLong("id"));
-                request.setUuid(set.getString("uuid"));
+                request.setId(set.getLong(1));
+                request.setUuid(set.getString(2));
                 request.setCreatedAt(set.getString("created_at"));
                 request.setPatientId(set.getString("patient_id"));
                 request.setVisitId(set.getString("visit_id"));
@@ -100,7 +100,7 @@ public class InvoiceService {
                 request.setPatientMobile(patientData.getMobile());
                 request.setPatientMrNumber(patientData.getMrNumber());
                 request.setPatientName(patientData.getFullName());
-                request.setExternalId(set.getString("uuid"));
+                request.setExternalId(set.getString(2));
                 request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setVisitId(set.getString("visit_id"));
                 request.setCurrency(set.getString("currency"));
