@@ -131,7 +131,7 @@ InvoiceService invoiceService;
 		long start = System.currentTimeMillis();
 		//;
 		//;
-		chargeItemService.chargeThread(1000);
+	//	chargeItemService.chargeThread(1000);
 		invoiceService.getLegacyInvoice(1000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
