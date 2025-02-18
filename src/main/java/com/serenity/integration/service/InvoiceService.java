@@ -74,7 +74,7 @@ public class InvoiceService {
         String sql = "Select count(*) from invoice ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = 100;
+        long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -103,7 +103,7 @@ public class InvoiceService {
                 request.setExternalId(set.getString(2));
                 request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setVisitId(set.getString("visitid"));
-                request.setCurrency(set.getString("currency"));
+                request.setCurrency(set.getString(16));
                 serviceRequests.add(request);
 
             }
