@@ -214,8 +214,14 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
         callables.add(() -> {
             int startIndex = batchNumber * batchSize;
             logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+           try{
             migrateChargeitems(chargeItemRepository.findBhy(startIndex, batchSize));
-            return 1;
+            
+           }catch (Exception e){
+            e.printStackTrace();
+
+           }
+           return 1;
         });
     }
 
