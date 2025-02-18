@@ -74,7 +74,7 @@ public class InvoiceService {
         String sql = "Select count(*) from invoice ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = rows;
+        long totalSize = 100;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -82,7 +82,7 @@ public class InvoiceService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                   select * from invoice i join "ChargeItem" ci on i."uuid" =uuid(ci.invoiceid) ORDER by i.id asc offset ? LIMIT ?
+                   select *,(select currency from "ChargeItem" ci where uuid(invoiceid)=i."uuid" limit 1) from invoice i  ORDER by i.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -91,8 +91,8 @@ public class InvoiceService {
                 request.setId(set.getLong(1));
                 request.setUuid(set.getString(2));
                 request.setCreatedAt(set.getString("created_at"));
-                request.setPatientId(set.getString("patient_id"));
-                request.setVisitId(set.getString("visit_id"));
+                request.setPatientId(set.getString("patientid"));
+                request.setVisitId(set.getString("visitid"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setExternalSystem("opd");
                 request.setPatientBirthDate(patientData.getBirthDate());
@@ -102,7 +102,7 @@ public class InvoiceService {
                 request.setPatientName(patientData.getFullName());
                 request.setExternalId(set.getString(2));
                 request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-                request.setVisitId(set.getString("visit_id"));
+                request.setVisitId(set.getString("visitid"));
                 request.setCurrency(set.getString("currency"));
                 serviceRequests.add(request);
 
@@ -115,7 +115,7 @@ public class InvoiceService {
 
     }
 
-    public int migrateAllergy(List<AllergyIntolerance> allergies){
+    public int migrateInvoice(List<AllergyIntolerance> allergies){
         String sql ="""
                 INSERT INTO allergy_intolerances
 (created_at,  "type", onset_period_start, onset_period_end, recorded_date, 
@@ -194,9 +194,9 @@ where allergy_intolerance.encounterid =v.uuid ;
     
 
 
-     public void migrateAllergyThread(int batchSize) {
+     public void migrateinvoiceThread(int batchSize) {
 
-        long rows = allergyRepository.count();
+        long rows = invoiceRepository.count();
         logger.info("Rows size is: {}", rows);
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -230,7 +230,7 @@ where allergy_intolerance.encounterid =v.uuid ;
             callables.add(() -> {
                 int startIndex = batchNumber * batchSize;
                 logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
-                migrateAllergy(allergyRepository.findBatch(startIndex, batchSize));
+                migrateInvoice(allergyRepository.findBatch(startIndex, batchSize));
                 return 1;
             });
         }
