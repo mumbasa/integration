@@ -88,7 +88,7 @@ public class InvoiceService {
             while (set.next()) {
                 PatientInvoice request = new PatientInvoice();
                 PatientData patientData=mps.get(set.getString("patientid"));
-                request.setId(set.getLong("id"));
+                //request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
                 request.setCreatedAt(set.getString("created_at"));
                 request.setPatientId(set.getString("patient_id"));
