@@ -119,11 +119,17 @@ public class InvoiceService {
         String sql ="""
                INSERT INTO invoices
 (created_at,  pk, "uuid", patient_id, patient_name, 
-patient_mr_number, patient_birth_date, patient_gender, patient_mobile, 
-payer_name, managing_organization_id, payer_id, payer_type, currency, 
-visit_id, payment_method, invoice_date, amount_paid, due_date, 
-external_id, external_system)
-VALUES();
+patient_mr_number, patient_birth_date, patient_gender, patient_mobile, payer_name, 
+managing_organization_id, payer_id, payer_type, currency, visit_id, 
+payment_method, invoice_date, amount_paid, due_date, external_id,
+ external_system)
+VALUES( 
+?::timestamp,?,uuid(?),?,?,
+?,?,?,?,?,
+uuid(?),uuid(?),?,?,uuid(?),
+?,?,?,?,?,
+?
+);
                 """;
 
     serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -167,11 +173,11 @@ VALUES();
         @Override
         public int getBatchSize() {
             // TODO Auto-generated method stub
-           return allergies.size();
+           return invoices.size();
         }
         
     })     ;       
-return allergies.size();
+return invoices.size();
     }
     public void cleanAllergies(){
 
@@ -230,7 +236,7 @@ where allergy_intolerance.encounterid =v.uuid ;
             callables.add(() -> {
                 int startIndex = batchNumber * batchSize;
                 logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
-                migrateInvoice(allergyRepository.findBatch(startIndex, batchSize));
+                migrateInvoice(invoiceRepository.findBatch(startIndex, batchSize));
                 return 1;
             });
         }
