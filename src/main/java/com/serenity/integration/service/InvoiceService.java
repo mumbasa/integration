@@ -73,7 +73,7 @@ public class InvoiceService {
 
         String sql = "Select count(*) from invoice ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
-
+logger.info("row are :---"+rows);
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 

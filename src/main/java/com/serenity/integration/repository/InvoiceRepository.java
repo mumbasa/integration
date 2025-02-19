@@ -10,7 +10,7 @@ import com.serenity.integration.models.PatientInvoice;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<PatientInvoice,Long>{
-@Query(value="SELECT * FROM patient_invoice offset ?1 limit ?2")
+@Query(value="SELECT * FROM patient_invoice order by id offset ?1 limit ?2",nativeQuery = true)
     List<PatientInvoice> findBatch(int startIndex, int batchSize);
 
 }
