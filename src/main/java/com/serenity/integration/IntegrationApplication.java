@@ -137,7 +137,7 @@ InvoiceService invoiceService;
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10000);;
 		//diagnosisService.getLegacyDiagnosticReport(1000);
-		diagnosisService.migrateDiagReportThread(10000);
+		diagnosisService.migrateDiagReportThread(100);
 		//referalService.migrateReferalThread(1000);
 		//allergyService.migrateAlleryThread(1000);
 		long stop = System.currentTimeMillis();

@@ -123,11 +123,11 @@ DiagnosticReportRepository diagnosticReportRepository;
         healthcare_service_id, service_provider_id, status, performer_name, performer_id,
         approved_by_name, approved_by_id, reviewed_by_name, reviewed_by_id, encounter_id,
         based_on_id, patient_id, visit_id, service_request_category, patient_mr_number,
-        patient_full_name, patient_mobile, patient_birth_date, patient_gender
+        patient_full_name, patient_mobile, patient_birth_date, patient_gender,accession_number
     ) VALUES (
         ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp,
         ?::timestamp, ?, uuid(?), ?, ?, ?, ?, ?, uuid(?), uuid(?), ?, ?, uuid(?), ?,
-        uuid(?), ?, uuid(?), ?, ?, ?, ?, ?, ?, ?, ?, cast(? AS DATE), ?
+        uuid(?), ?, uuid(?), ?, ?, ?, ?, ?, ?, ?, ?, cast(? AS DATE), ?,?
     );
 """;
 serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -166,6 +166,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(30, report.getPatientMobile()); // patient_mobile
         ps.setString(31, report.getPatientBirthDate()); // patient_birth_date
         ps.setString(32, report.getPatientGender()); // patient_gender (added)
+        ps.setString(33, report.getAcessionNumber());
     }
 
     @Override
