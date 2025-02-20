@@ -71,6 +71,7 @@ public class DiagnosticReport {
     private String patientId;
     private String visitId;
     private String serviceRequestCategory;
+    private String acessionNumber;
 
     // Patient Details
     private String patientMrNumber;

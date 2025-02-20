@@ -85,7 +85,7 @@ public class ObservationService {
                 request.setCreatedAt(set.getString(3));
                 request.setPatientId(mps.get(set.getString("mr_number")).getUuid());
                 request.setEncounterId(set.getString("encounter_id"));
-                request.setStatus(set.getString("status"));
+                request.setStatus(set.getString("status")==null?"registered":set.getString("status"));
                 request.setEffectiveDateTime(set.getString("effective_date_time"));
                 request.setCode(set.getString("code"));
                 request.setUnit(set.getString("unit"));
@@ -143,7 +143,7 @@ public class ObservationService {
                 ps.setString(10, observation.getPractitionerId());
 
                 ps.setString(11, observation.getPractitionerName());
-                ps.setString(12, observation.getStatus());
+                ps.setString(12, observation.getStatus()==""?"registered" :observation.getStatus());
                 ps.setString(13, observation.getCategory()==null?"laboratory":observation.getCategory());
                 ps.setString(14, observation.getTag());
                 ps.setString(15, observation.getCode());

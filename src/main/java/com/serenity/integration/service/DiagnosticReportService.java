@@ -80,8 +80,10 @@ DiagnosticReportRepository diagnosticReportRepository;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 DiagnosticReport request = new DiagnosticReport();
+                request.setCreatedAt(sql);
+                request.setAcessionNumber(set.getString("based_on_id"));
                 request.setUuid(set.getString(2));
-                request.setBasedOnId(set.getString(75));
+                request.setBasedOnId(set.getString("based_on_id"));
                 request.setDisplay(set.getString(8));
                 request.setPatientId(mps.get(set.getString("mr_number")).getUuid());
                 request.setPatientBirthDate(mps.get(set.getString("mr_number")).getBirthDate());
@@ -90,7 +92,7 @@ DiagnosticReportRepository diagnosticReportRepository;
                 request.setPatientMobile(mps.get(set.getString("mr_number")).getMobile());
                 request.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
                 request.setEncounterId(set.getString(103));
-                request.setServiceRequestCategory(set.getString("service_request_category"));
+                request.setServiceRequestCategory(set.getString("category"));
                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 if (set.getString("requesting_practitioner_role_id") != null) {
                    try{
@@ -101,7 +103,6 @@ DiagnosticReportRepository diagnosticReportRepository;
                    }
                
                 }
-                
                 request.setCreatedAt(set.getString(3));
                 request.setVisitId(set.getString("visit_id"));
                 serviceRequests.add(request);
