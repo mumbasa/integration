@@ -136,7 +136,7 @@ InvoiceService invoiceService;
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10000);;
-		diagnosisService.getLegacyDiagnosticReport(1000);
+		//diagnosisService.getLegacyDiagnosticReport(1000);
 		diagnosisService.migrateDiagReportThread(10000);
 		//referalService.migrateReferalThread(1000);
 		//allergyService.migrateAlleryThread(1000);
