@@ -92,6 +92,7 @@ DiagnosticReportRepository diagnosticReportRepository;
                 request.setPatientMobile(mps.get(set.getString("mr_number")).getMobile());
                 request.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
                 request.setEncounterId(set.getString(103));
+                request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));
                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 if (set.getString("requesting_practitioner_role_id") != null) {

@@ -39,6 +39,8 @@ public class Doctors {
     @Column(name = "date_of_birth")
     private String dateOfBirth;
 
+    private String updatedAt;
+
     private String email;
 
     private String mobile;

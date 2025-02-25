@@ -161,7 +161,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(11, referal.getSpecialty());
         ps.setString(12, referal.getReason());
         ps.setString(13, referal.getDescription());
-        ps.setString(14, referal.getReferralType());
+        ps.setString(14, referal.getReferralType().replaceAll("_"," "));
         ps.setString(15, referal.getStatus());
 
         ps.setString(16, referal.getRecipientExtraDetail());

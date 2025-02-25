@@ -127,7 +127,7 @@ VALUES(
 ?::timestamp,?,uuid(?),?,?,
 ?,?::date,?,?,?,
 uuid(?),uuid(?),?,?,uuid(?),
-?,?,?,?,?,
+?,?::date,?,?::date,?,
 ?
 );
                 """;
@@ -149,10 +149,10 @@ uuid(?),uuid(?),?,?,uuid(?),
            ps.setString(7,    intolerance.getPatientBirthDate());
            ps.setString(8,     intolerance.getPatientGender());
            ps.setString(9,intolerance.getPatientMobile());
-           ps.setString(10,intolerance.getPayerName());
+           ps.setString(10,intolerance.getPayerName()==null?"":intolerance.getPayerName());
 
            ps.setString(11,intolerance.getManagingOrganizationId());
-           ps.setString(12,    intolerance.getPayerId());
+           ps.setString(12,    intolerance.getPayerId()==null?"":intolerance.getPayerId());
            ps.setString(13,     intolerance.getPayerType());
            ps.setString(14,intolerance.getCurrency());
            ps.setString(15,intolerance.getVisitId());
@@ -207,7 +207,7 @@ where allergy_intolerance.encounterid =v.uuid ;
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 100));
             for (Future<Integer> future : futures) {
                 logger.info("Future result: {}", future.get());
             }
