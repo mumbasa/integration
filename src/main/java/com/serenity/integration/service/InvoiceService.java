@@ -82,7 +82,26 @@ logger.info("row are :---"+rows);
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                   select * from invoice i  ORDER by i.id asc offset ? LIMIT ?
+                 SELECT
+    i.uuid AS uuid,
+    i.created_at AS created_at,
+    i.modified_at AS modified_at,
+    i.patientid AS patientid,
+    i.issuerid AS issuerid,
+    i.visitid AS visitid,
+    i.note AS note,
+    i.accountid AS accountid,
+    i.payment_method AS payment_method,
+    i.cashierid AS cashierid,
+    i.status AS status,
+    i.settlement_date AS settlement_date,
+    i.user_friendly_id AS user_friendly_id,
+    oca.managing_organization_id,
+    ci.currency ,
+    owner_id
+FROM invoice i
+ left JOIN "ChargeItem" ci ON CAST(i.uuid AS TEXT) = ci.invoiceid
+ left JOIN organization_clientaccount oca ON ci.payer_account_id = oca.uuid  ORDER by i.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -93,6 +112,7 @@ logger.info("row are :---"+rows);
                 request.setCreatedAt(set.getString("created_at"));
                 request.setPatientId(set.getString("patientid"));
                 request.setVisitId(set.getString("visitid"));
+                request.setPayerId(set.getString("owner_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setExternalSystem("opd");
                 request.setPatientBirthDate(patientData.getBirthDate());
@@ -103,6 +123,7 @@ logger.info("row are :---"+rows);
                 request.setExternalId(set.getString(2));
                 request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setVisitId(set.getString("visitid"));
+                request.setCurrency(set.getString("currency")==null?"GHS":set.getString("currency"));
               //  request.setCurrency(set.getString(16));
                 serviceRequests.add(request);
 

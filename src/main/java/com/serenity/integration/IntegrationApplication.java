@@ -132,7 +132,7 @@ InvoiceService invoiceService;
 		//;
 		//;
 	//	chargeItemService.chargeThread(1000);
-		//invoiceService.migrateinvoiceThread(10);
+		invoiceService.getLegacyInvoice(1000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.migrateObservationThread(10000);;
