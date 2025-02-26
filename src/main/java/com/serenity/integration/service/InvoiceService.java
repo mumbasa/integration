@@ -83,6 +83,7 @@ logger.info("row are :---"+rows);
             int startIndex = i * batchSize;
             String sqlQuery = """
                  SELECT
+                 i.id,
     i.uuid AS uuid,
     i.created_at AS created_at,
     i.modified_at AS modified_at,
@@ -124,7 +125,7 @@ FROM invoice i
                 request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setVisitId(set.getString("visitid"));
                 request.setCurrency(set.getString("currency")==null?"GHS":set.getString("currency"));
-              //  request.setCurrency(set.getString(16));
+                request.setCurrency(set.getString(16));
                 serviceRequests.add(request);
 
             }
