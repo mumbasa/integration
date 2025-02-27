@@ -112,7 +112,7 @@ public class ReferalService {
                 }
                 String patientMrNumber = set.getString("mr_number");
                 if (patientMrNumber != null) {
-                                      request.setPatientId(mps.get(patientMrNumber).getMrNumber());            
+                request.setPatientId(mps.get(patientMrNumber).getUuid());            
                 }
                 
             
