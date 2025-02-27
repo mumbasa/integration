@@ -114,7 +114,6 @@ InvoiceService invoiceService;
 		// noteService.truncate();
 		// noteService.getChiefNotes();
 		// noteService.cleanData();
-
 		// noteService.getCarePlan();
 		// noteService.cleanData();
 
@@ -129,6 +128,8 @@ InvoiceService invoiceService;
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
 		long start = System.currentTimeMillis();
+		noteService.getLegacyEncounters(1000);
+
 		//;
 		//;
 	//	chargeItemService.chargeThread(1000);
@@ -136,8 +137,8 @@ InvoiceService invoiceService;
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
 		//observationService.getLegacyObservations(1000);
-		referalService.getLegacyReferral(1000);
-		referalService.migrateReferalThread(1000);
+		//referalService.getLegacyReferral(1000);
+		//referalService.migrateReferalThread(1000);
 		//diagnosisService.getLegacyDiagnosticReport(1000);
 		//diagnosisService.migrateDiagReportThread(1000);
 		//referalService.migrateReferalThread(1000);

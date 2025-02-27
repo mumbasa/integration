@@ -75,7 +75,7 @@ public class ReferalService {
                 Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         
-        String sql = "SELECT count(*) from service_request";
+        String sql = "SELECT count(*) from referral_request";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;

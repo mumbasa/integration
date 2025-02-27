@@ -668,20 +668,27 @@ and encounter.visit_id is null
 
     }
 
-    public void getLegacyEncounters() {
+    public void getLegacyEncounters(int batchSize) {
 
         Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+  String sql = "SELECT count(*) from encounter";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            int startIndex = i * batchSize;
         List<EncounterNote> encounters = new ArrayList<>();
-        String sql = "select * from encounter e join patient p on p.id=e.patient_id";
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+         sql = "select * from encounter e join patient p on p.id=e.patient_id order by e.id offset ? LIMIT ?";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex, batchSize);
         while (set.next()) {
             PatientData patient = patientDataMap.get(set.getString("mr_number"));
            // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
-            if(set.getString("chief_complaint") != null){
+            if(set.getString("chief_complaint") != null |set.getString("chief_complaint") !="" ){
             EncounterNote encounter = new EncounterNote();
             encounter.setUuid(UUID.randomUUID().toString());
             encounter.setEncounterId(set.getString(5));
@@ -701,7 +708,8 @@ and encounter.visit_id is null
             encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             encounter.setServiceProviderName("Nyaho Medical Centre");
             encounters.add(encounter);
-            }else if(set.getString("history_of_presenting_illness") !=null){
+            }
+            else if(set.getString("history_of_presenting_illness") !=null|set.getString("history_of_presenting_illness") !=""){
 
                 EncounterNote encounter = new EncounterNote();
                 encounter.setUuid(UUID.randomUUID().toString());
@@ -725,22 +733,13 @@ and encounter.visit_id is null
             }
             logger.info("adding encounter");
         }
+        encounterNoteRepository.saveAll(encounters);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitNote(encounters, 1000));
-            for (Future<Integer> future : futures) {
-                System.out.println("future.get = " + future.get());
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        executorService.shutdown();
-        System.err.println("patiend count is ");
 
     }
+    cleanLegacyData();
+        System.err.println("patiend count is ");
+   }
 
 
 
