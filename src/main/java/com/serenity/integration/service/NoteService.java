@@ -763,7 +763,7 @@ and encounter.visit_id is null
         List<EncounterNote> encounters = new ArrayList<>();
         int startIndex = i * batchSize;
 
-         sql = "select  * from encounter_patient_notes e join patient p on p.id=e.patient_id order bhy p.id offset ? LIMIT ?";
+         sql = "select  * from encounter_patient_notes e join patient p on p.id=e.patient_id order by p.id offset ? LIMIT ?";
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
 
@@ -795,6 +795,7 @@ and encounter.visit_id is null
             logger.info("adding encounter");
         
         }
+        cleanvisitNOte();
 
     }
 
