@@ -156,9 +156,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(6, referal.getRequesterId());
         ps.setString(7, referal.getRequestingOrganizationId());
         ps.setString(8, referal.getRecipientId());
-        ps.setString(9, UUID.randomUUID().toString());
+        ps.setString(9, referal.getUuid());
         ps.setString(10, referal.getPriority());
-        
         ps.setString(11, referal.getSpecialty());
         ps.setString(12, referal.getReason());
         ps.setString(13, referal.getDescription());

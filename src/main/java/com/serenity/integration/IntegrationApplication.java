@@ -137,6 +137,7 @@ InvoiceService invoiceService;
 		//serviceRequestService.addVields();
 		//observationService.getLegacyObservations(1000);
 		referalService.getLegacyReferral(1000);
+		referalService.migrateReferalThread(1000);
 		//diagnosisService.getLegacyDiagnosticReport(1000);
 		//diagnosisService.migrateDiagReportThread(1000);
 		//referalService.migrateReferalThread(1000);
