@@ -91,8 +91,8 @@ public class ReferalService {
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 Referal request = new Referal();
-              //  request.setId(set.getLong("id"));
-                request.setUuid(set.getString("id"));
+                request.setId(set.getLong("id"));
+                request.setUuid(set.getString("uuid"));
                 request.setCreatedAt(set.getString("created_at"));
                 request.setDescription(set.getString("description"));
                 request.setPriority(set.getString("priority"));
