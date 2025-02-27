@@ -128,7 +128,7 @@ InvoiceService invoiceService;
 		// noteService.noteThread();getLegacyEncounters
 		// medicalRequestService.medicalRequestOPD2();
 		long start = System.currentTimeMillis();
-		noteService.getLegacyEncounters(1000);
+		noteService.getLegacyEncounters(5000);
 
 		//;
 		//;
