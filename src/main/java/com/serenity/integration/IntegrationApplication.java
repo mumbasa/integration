@@ -74,7 +74,7 @@ public class IntegrationApplication {
 	PatientMigrationService migrationService;
 
 	@Autowired
-	PatientService patientService;
+	ReferalService referalService;
 
 	@Autowired
 	DiagnosticReportService diagnosisService;
@@ -135,7 +135,8 @@ InvoiceService invoiceService;
 	//	invoiceService.getLegacyInvoice(1000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.addVields();
-		observationService.getLegacyObservations(1000);;
+		//observationService.getLegacyObservations(1000);
+		referalService.getLegacyReferral(1000);
 		//diagnosisService.getLegacyDiagnosticReport(1000);
 		//diagnosisService.migrateDiagReportThread(1000);
 		//referalService.migrateReferalThread(1000);

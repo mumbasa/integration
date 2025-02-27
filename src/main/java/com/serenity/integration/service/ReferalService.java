@@ -123,7 +123,7 @@ public class ReferalService {
             logger.info("Saved Allergy");
         }
         logger.info("Cleaning Requests");
-       
+       setRequesterName();
 
     }
     
