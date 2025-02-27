@@ -547,7 +547,7 @@ public class NoteService {
                 ps.setString(5, note.getPatientId());
                 ps.setString(6, note.getVisitId());
                 ps.setString(7, note.getUuid());
-                ps.setString(8, note.getNote());
+                ps.setString(8, note.getNote()==null?"":note.getNote());
                 ps.setBoolean(9, false);
                 ps.setString(10, note.getNoteType());
                 ps.setBoolean(11, false);
