@@ -484,10 +484,10 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
             doc.setFirstName(set.getString("first_name"));
             doc.setLastName(set.getString("last_name"));
             doc.setGender(set.getString("gender"));
+            doc.setDateOfBirth(set.getString("birth_date"));
             doc.setFullName(set.getString("full_name"));
-             doc.setManagingOrganisation(set.getString("managing_organization_name"));
+            doc.setManagingOrganisation(set.getString("managing_organization_name"));
             doc.setManagingOrganisationId(set.getString("managing_organization_id"));
-            doc.setNationalMobileNumber(set.getString("national_mobile_number"));
             doctors.add(doc);
 
         }
