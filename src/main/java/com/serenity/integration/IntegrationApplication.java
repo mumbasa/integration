@@ -103,37 +103,16 @@ InvoiceService invoiceService;
 	@PostConstruct
 	public void coke() {
 		logger.info("Starting import");
-		// patientService.loadPatients();;
-		// patientMigrationService.getPatientsThreads();;
-		// practitionerService.getLegacyPractitioner();
-		// practitionerService.migrateDoctors();
-		// visitService.getHisThreads();
-		/// visitService.getIPDVISITSThreads();
-		// visitService.getlegacyThreads();
-		// visitMigration.getVisitThreads();
-		// noteService.truncate();
-		// noteService.getChiefNotes();
-		// noteService.cleanData();
-		// noteService.getCarePlan();
-		// noteService.cleanData();
-
-		// noteService.getPresentingIllness();
-		// noteService.cleanData();
-
-		// noteService.getProgressNote();
-		// noteService.cleanData();
-
-		// noteService.cleanData();
-		// encounterService.encounterOPDthread();
-		// noteService.noteThread();getLegacyEncounters
-		// medicalRequestService.medicalRequestOPD2();
+	
+		
 		long start = System.currentTimeMillis();
-		noteService.getLegacyEncounters(2000);
-		noteService.getLegacyVisitNotesEncounters(1000);
-		noteService.noteThread();
+		//noteService.getLegacyEncounters(2000);
+		//noteService.getLegacyVisitNotesEncounters(1000);
+		//noteService.noteThread();
 
-		//;
-		//;
+	//	observationService.getLegacyObservations(1000);
+		observationService.migrateObservationThread(1000);
+
 	//	chargeItemService.chargeThread(1000);
 	//	invoiceService.getLegacyInvoice(1000);
 		//serviceRequestService.getLegacyRequest(3000);
