@@ -103,7 +103,7 @@ public class ReferalService {
                 request.setSpecialty(set.getString("specialty"));
                 request.setRecipientId(set.getString("recipient_id"));
                 request.setRequesterId(set.getString("requester_id"));
-                request.setRequesterName(doctorMap.get(request.getRequesterId()).getFullName());
+               // request.setRequesterName(doctorMap.get(request.getRequesterId()).getFullName());
                 request.setRequestingOrganizationId(set.getString("requesting_organization_id"));
                 request.setReplacesId(set.getString("replaces_id"));
                 String encounterId = set.getString("encounter_id");
