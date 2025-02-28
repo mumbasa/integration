@@ -105,6 +105,7 @@ public class ObservationService {
             observationRepository.saveAll(serviceRequests);
             logger.info("Saved Observation result");
         }
+        cleanObservation();
     }
 
     public void migrateObservation(List<Observation> observations) {
