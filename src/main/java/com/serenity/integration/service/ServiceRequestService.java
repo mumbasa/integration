@@ -230,7 +230,7 @@ where service_request.priority is null ;
       public void migrateThread(int batchSize) {
   
     
-    long rows = serviceRequestRepository.getParactionerIdCount();
+    long rows = serviceRequestRepository.count();
     logger.info("Rows size is: {}", rows);
 
     ExecutorService executorService = Executors.newFixedThreadPool(10);

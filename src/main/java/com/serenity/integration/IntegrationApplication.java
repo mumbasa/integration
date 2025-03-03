@@ -111,11 +111,12 @@ InvoiceService invoiceService;
 		//noteService.noteThread();
 
 	//	observationService.getLegacyObservations(1000);
-		observationService.migrateObservationThread(1000);
+		//observationService.migrateObservationThread(1000);
 
 	//	chargeItemService.chargeThread(1000);
 	//	invoiceService.getLegacyInvoice(1000);
 		//serviceRequestService.getLegacyRequest(3000);
+		serviceRequestService.migrateThread(1000);
 		//serviceRequestService.addVields();
 		//observationService.getLegacyObservations(1000);
 		//referalService.getLegacyReferral(1000);
