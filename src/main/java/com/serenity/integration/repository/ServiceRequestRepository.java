@@ -10,7 +10,7 @@ import com.serenity.integration.models.ServiceRequest;
 
 @Repository
 public interface ServiceRequestRepository extends JpaRepository<ServiceRequest,Long> {
-@Query(value = "select  * from service_request sr  WHERE encounterid is not null offset ?1 limit ?2",nativeQuery = true)
+@Query(value = "select  * from service_request sr  WHERE encounterid order by id is not null offset ?1 limit ?2",nativeQuery = true)
     List<ServiceRequest> findOffset(int offset,int limit);
     @Query(value = "select  count(*) from service_request WHERE encounterid is not null",nativeQuery = true)
     long getParactionerIdCount();
