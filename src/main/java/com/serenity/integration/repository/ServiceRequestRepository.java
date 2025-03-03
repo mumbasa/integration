@@ -12,6 +12,6 @@ import com.serenity.integration.models.ServiceRequest;
 public interface ServiceRequestRepository extends JpaRepository<ServiceRequest,Long> {
 @Query(value = "select  * from service_request sr  offset ?1 limit ?2",nativeQuery = true)
     List<ServiceRequest> findOffset(int offset,int limit);
-    @Query(value = "select  count(*) from service_request sr where practitionerid IS null",nativeQuery = true)
+    @Query(value = "select  count(*) from service_request",nativeQuery = true)
     long getParactionerIdCount();
 }

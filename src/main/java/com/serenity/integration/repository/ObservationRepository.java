@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import com.serenity.integration.models.Observation;
@@ -14,6 +13,6 @@ public interface ObservationRepository extends JpaRepository<Observation,Long>{
 List<Observation> findByPractitionerIdNotNull(int offset,int limit);
 
 @Query(value = "SELECT count(*) from observations",nativeQuery = true)
-long findCleanData();
+long findCleanDatas();
     
 } 
