@@ -73,7 +73,7 @@ public class InvoiceService {
 
         String sql = "Select count(*) from invoice ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
-logger.info("row are :---"+rows);
+        logger.info("row are :---"+rows);
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
@@ -123,7 +123,7 @@ LEFT JOIN "public"."organization_clientaccount" AS oca
                 request.setUpdatedAt(set.getString("modified_at"));
                 request.setCreatedAt(set.getString("created_at"));
                 request.setPatientId(set.getString("patientid"));
-                request.setVisitId(set.getString("visitid"));
+                request.setVisitId(set.getString("visit_id"));
                 request.setPayerId(set.getString("owner_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setPayerName(set.getString("payer_name"));
