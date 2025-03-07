@@ -83,13 +83,13 @@ public class InvoiceService {
             int startIndex = i * batchSize;
             String sqlQuery = """
              select
-  "public"."invoice"."id" AS "id",
+"public"."invoice"."id" AS "id",
   "public"."invoice"."uuid" AS "uuid",
   "public"."invoice"."created_at" AS "created_at",
   "public"."invoice"."modified_at" AS "modified_at",
   "public"."invoice"."patientid" AS "patientid",
   "public"."invoice"."issuerid" AS "issuerid",
-  "public"."invoice"."visitid" AS "visitid",
+  "public"."invoice"."visitid" AS "visit_id",
   "public"."invoice"."note" AS "note",
   "public"."invoice"."accountid" AS "accountid",
   "public"."invoice"."payment_method" AS "payment_method",
@@ -98,12 +98,14 @@ public class InvoiceService {
   "public"."invoice"."settlement_date" AS "settlement_date",
   "public"."invoice"."user_friendly_id" AS "user_friendly_id",
   oca."managing_organization_id" AS "managing_organization_id",
+  oca."owner_id" as "owner_id",
   o."name" as "payer_name" ,
   p.gender as "patient_gender",
   p.birth_date  as "dob",
   p.mr_number as "mr_number",
   p.mobile as "patient_mobile",
- concat(p.first_name,' ',p.last_name) as "patient_name"
+ concat(p.first_name,' ',p.last_name) as "patient_name",
+"ChargeItem - UUID".currency  as "currency"
 FROM
   "public"."invoice"
 LEFT JOIN "public"."ChargeItem" AS "ChargeItem - UUID" 
@@ -112,7 +114,7 @@ LEFT JOIN "public"."organization_clientaccount" AS oca
   ON "ChargeItem - UUID"."payer_account_id" = oca."uuid"
  left join organization o on o."id" =oca.managing_organization_id
  left join patient p  on p."uuid" =uuid(invoice.patientid) 
- order by id asc offset ? limit ?
+  order by id asc offset ? limit ?
 
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
@@ -127,6 +129,7 @@ LEFT JOIN "public"."organization_clientaccount" AS oca
                 request.setPayerId(set.getString("owner_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setPayerName(set.getString("payer_name"));
+                request.setDueDate(set.getString("settlement_date"));
                 request.setExternalSystem("opd");
                 request.setNote(set.getString("note"));
                 request.setPatientBirthDate(set.getString("dob"));
