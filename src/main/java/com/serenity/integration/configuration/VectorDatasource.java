@@ -35,7 +35,11 @@ public class VectorDatasource {
     @Primary
     @ConfigurationProperties("spring.datasource.dl")
     public DataSource primaryDataSource() {
+        try{
         return primaryDataSourceProperties().initializeDataSourceBuilder().build();
+        }catch(Exception e){
+            return null;
+        }
     }
 
     @Bean

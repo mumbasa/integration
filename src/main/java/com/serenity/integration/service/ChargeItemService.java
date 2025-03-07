@@ -84,40 +84,84 @@ public class ChargeItemService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    select * from "ChargeItem" ci order by ci.id asc offset ? LIMIT ?
-                     """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+         SELECT
+"ChargeItem"."id" AS "id",         
+"ChargeItem"."category" AS "category",
+"ChargeItem"."charge" AS "charge",
+"ChargeItem"."clinic_name" AS "location_name",
+"ChargeItem"."clinicid" AS "location_id",
+"ChargeItem"."created_on" AS "created_at",
+"ChargeItem"."created_on" AS "updated_at",
+"ChargeItem"."currency" AS "currency",
+"ChargeItem"."invoiceid" AS "invoice_id",
+"ChargeItem"."medicationrequestid" AS "medication_request_id",
+"ChargeItem"."patient_mobile" AS "patient_mobile",
+"ChargeItem"."patientid" AS "patient_id",
+"ChargeItem"."patientname" AS "patient_name",
+"ChargeItem"."payerid" AS "payer_id",
+"ChargeItem"."payername" AS "payer_name",
+"ChargeItem"."payment_method" AS "payment_method",
+"ChargeItem"."practitionerid" AS "practitioner_id",
+"ChargeItem"."practitionername" AS "practitioner_name",
+'161380e9-22d3-4627-a97f-0f918ce3e4a9' AS "provider_id",
+'Nyaho Medical Center' AS "provider_name",
+"ChargeItem"."relationship" AS "relationship",
+"ChargeItem"."service_or_product_name" AS "service_or_product_name",
+"ChargeItem"."servicerequestid" AS "service_request_id",
+"ChargeItem"."status" AS "status",
+"ChargeItem"."quantity" AS "quantity",
+"ChargeItem"."unit_price" AS "unit_price",
+"ChargeItem"."uuid" AS "uuid",
+"ChargeItem"."policy_id" AS "policy_id",
+"ChargeItem"."service_id" AS "service_id",
+"ChargeItem"."visit_id" AS "visit_id",
+"ChargeItem"."patient_contribution" AS "patient_contribution",
+"ChargeItem"."user_friendly_id" AS "user_friendly_id",
+"ChargeItem"."created_by" AS "created_by_name",
+"ChargeItem"."revenue_tag_display" AS "revenue_tag_display",
+"ChargeItem"."paid_at" AS "paid_at",
+"ChargeItem"."payer_contribution" AS "payer_contribution",
+ "Encounter"."id" AS "encounter_id"
+FROM
+"ChargeItem" left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id" where "ChargeItem"."clinicid" is not null order by "ChargeItem".id offset ? limit ?
+            """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex+217000, batchSize);
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
                 request.setId(set.getLong("id"));
-                request.setUuid(set.getString("id"));
+                request.setUuid(set.getString("uuid"));
                 request.setCharge(set.getDouble("charge"));
                 request.setCurrency(set.getString("currency"));
                 request.setUnitPrice(set.getDouble("unit_price"));
                 request.setCategory(set.getString("category"));
                 request.setVisitId(set.getString("visit_id"));
-                request.setLocationId(set.getString("clinicid"));
-                request.setLocationName(set.getString("clinic_name"));
-                request.setProviderId(set.getString("provider_id"));
-                request.setProviderName(set.getString("providername"));
+                request.setLocationId(set.getString("location_id"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setLocationName(set.getString("location_name"));
+                request.setProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                request.setProviderName("Nyaho Medical Center");
                 request.setQuantity(set.getInt("quantity"));
-                request.setServiceId(set.getString("serviceid"));
+                request.setServiceId(set.getString("service_id"));
                 request.setServiceOrProductName(set.getString("service_or_product_name"));
-                request.setServiceRequestId(set.getString("servicerequestid"));
+                request.setServiceRequestId(set.getString("service_request_id"));
                 request.setUserFriendlyId(set.getString("user_friendly_id"));
                 request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
                request.setPatientContribution(set.getDouble("patient_contribution"));
                request.setRelationship(set.getString("relationship"));
-               request.setPractitionerId(set.getString("practitionerid"));
-                request.setPractitionerName(set.getString("practitionername"));
-               request.setPayerContribution(set.getDouble("requester_name"));
+               request.setPractitionerId(set.getString("practitioner_id"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setEncounterId(set.getString("encounter_id"));
+               request.setPractitionerName(set.getString("practitioner_name"));
+               request.setUpdatedAt(set.getString("updated_at"));
+               request.setPaidAt(set.getString("paid_at"));
                 
              
               
                 serviceRequests.add(request);
 
             }
-            chargeItemRepository.saveAll(serviceRequests);
+           // chargeItemRepository.saveAll(serviceRequests);
+           migrateChargeitems(serviceRequests);
             logger.info("Saved chargeItem");
         }
         logger.info("Cleaning Requests");
@@ -262,26 +306,26 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setDouble(5, item.getPayerContribution());
 
             ps.setLong(6, item.getId());
-            ps.setString(7,UUID.randomUUID().toString());
+            ps.setString(7,item.getUuid());
             ps.setString(8, item.getCategory());
             ps.setString(9, item.getCreatedByName());
             ps.setString(10, item.getCurrency());
 
             ps.setString(11, item.getEncounterId());
-            ps.setString(12,item.getLocationId()==null?"":item.getLocationId());
-            ps.setString(13, item.getLocationName()==null?"":item.getLocationName());
+            ps.setString(12,item.getLocationId()==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":item.getLocationId());
+            ps.setString(13, item.getLocationName()==null?"Airport Main":item.getLocationName());
             ps.setString(14, item.getMedicationRequestId());
             ps.setString(15, item.getPractitionerId());
 
             ps.setString(16, item.getPractitionerName());
             ps.setString(17,item.getProductId());
             ps.setString(18, item.getProviderId()==null?"":item.getProviderId());
-            ps.setString(19, item.getProviderName()==null?"":item.getPractitionerName());
+            ps.setString(19, item.getProviderName()==null?"":item.getProviderName());
             ps.setInt(20, item.getQuantity());
 
             ps.setString(21, item.getRevenueTagDisplay());
             ps.setString(22,item.getRelationship());
-            ps.setString(23, item.getServiceId()==null?"":item.getProviderId());
+            ps.setString(23, item.getServiceId()==null?"":item.getServiceId());
             ps.setString(24, item.getServiceOrProductName()==null?"":item.getServiceOrProductName());
             ps.setString(25, item.getServiceRequestId());
 
@@ -292,8 +336,8 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(30, item.getPatientId());
 
             ps.setString(31, item.getAppointmentId());
-            ps.setString(32, item.getPayerName()==null?"":item.getUserFriendlyId());
-            ps.setString(33, item.getPaymentMethod()==null?"":item.getInvoiceId());
+            ps.setString(32, item.getPayerName()==null?"":item.getPayerName());
+            ps.setString(33, item.getPaymentMethod()==null?"":item.getPaymentMethod());
             ps.setString(34, item.getStatus()==null?"":item.getStatus());
 
         }

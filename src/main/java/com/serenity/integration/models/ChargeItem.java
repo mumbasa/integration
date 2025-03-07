@@ -47,7 +47,7 @@ public class ChargeItem {
     private String serialNumber;
     private String orderCode;
     private String orderCodeSystem;
-    
+    private String updatedAt;
     private String cancellationRequestedAt;
     private String cancellationRequestedByName;
     private String cancellationRequestedById;

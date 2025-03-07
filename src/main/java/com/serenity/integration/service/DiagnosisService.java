@@ -118,7 +118,7 @@ public class DiagnosisService {
             diagnosis.setSystem(set.getString("system"));
             diagnosis.setVisitId(set.getString("visit_id"));
             diagnosis.setRank(set.getInt("rank"));
-
+            diagnosis.setStatus(set.getString("status"));
             diagnosises.add(diagnosis);
 
         }
@@ -522,6 +522,13 @@ public class DiagnosisService {
             diagnosis.setRank(set.getInt("rank"));
             diagnosis.setEncounterId(set.getString("encounter_id"));
             diagnosis.setStatus(set.getString("status"));
+            switch (diagnosis.getStatus()){
+           case "final" -> diagnosis.setStatus("confirmed");
+           case "" ->diagnosis.setStatus("provisional");
+           default -> diagnosis.setStatus(diagnosis.getStatus().toLowerCase());
+        
+        }
+
             diagnosis.setNote(set.getString("note"));
             diagnosis.setUuid(set.getString("id"));
             diagnosis.setSystem("opd");
