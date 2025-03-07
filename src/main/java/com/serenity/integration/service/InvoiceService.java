@@ -2,9 +2,13 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -180,7 +184,7 @@ payment_method, invoice_date, amount_paid, due_date, external_id,
 VALUES( 
 ?::timestamp,?,uuid(?),?,?,
 ?,?::date,?,?,?,
-uuid(?),uuid(?),?,?,uuid(?),
+uuid(?),?,?,?,uuid(?),
 ?,?::date,?,?::date,?,
 ?,now()
 );
@@ -195,12 +199,11 @@ uuid(?),uuid(?),?,?,uuid(?),
        
            ps.setString(1,intolerance.getCreatedAt());
            ps.setLong(2,    intolerance.getId());
-           ps.setString(3,     intolerance.getUuid());
+           ps.setString(3,     UUID.randomUUID().toString());
            ps.setString(4,intolerance.getPatientId());
            ps.setString(5,intolerance.getPatientName());
-
            ps.setLong(6,intolerance.getId());
-           ps.setString(7,    intolerance.getPatientBirthDate());
+           ps.setString(7,    intolerance.getPatientBirthDate()==null?LocalDate.now().toString():intolerance.getPatientBirthDate());
            ps.setString(8,     intolerance.getPatientGender());
            ps.setString(9,intolerance.getPatientMobile());
            ps.setString(10,intolerance.getPayerName()==null?"":intolerance.getPayerName());
@@ -215,7 +218,7 @@ uuid(?),uuid(?),?,?,uuid(?),
            ps.setString(17,intolerance.getInvoiceDate());
            ps.setDouble(18,intolerance.getAmountPaid());
            ps.setString(19,intolerance.getDueDate());
-           ps.setString(20, intolerance.getExternalId());
+           ps.setString(20, intolerance.getExternalId()+UUID.randomUUID().toString());
            ps.setString(21, intolerance.getExternalSystem());
  
         }
