@@ -73,7 +73,7 @@ public class ChargeItemService {
 
     public void getLegacyChargeItem(int batchSize) {
         
-        String sql = "select count(*) from \"ChargeItem\" ci where ci.clinicid is null";
+        String sql = "select count(*) from \"ChargeItem\" ci";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
@@ -123,9 +123,9 @@ public class ChargeItemService {
 "ChargeItem"."payer_contribution" AS "payer_contribution",
  "Encounter"."id" AS "encounter_id"
 FROM
-"ChargeItem" left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id" where "ChargeItem"."clinicid" is  null order by "ChargeItem".id offset ? limit ?
+"ChargeItem" left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  order by "ChargeItem".id offset ? limit ?
             """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex+217000, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
                 request.setId(set.getLong("id"));
