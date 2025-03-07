@@ -79,6 +79,11 @@ public class PatientService {
       getHisPatients();
       removeDuplicates();
 
+      String sql ="""
+              select pr.created_at, pr.is_deleted, pr.modified_at, pr."uuid" as uuid, pr.first_name, pr.last_name, pr.is_active, pr.other_names, pr.mobile,pr.email, relationship, line_address, place_of_work, period_start, period_end, pr.birth_date, pr.gender, p.uuid as patient_id
+FROM patient_relatedperson pr join patient p on p.id=pr.patient_id 
+              """;
+
     }
 
     

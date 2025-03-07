@@ -283,7 +283,7 @@ encounter_id, location_id, location_name, medication_request_id, practitioner_id
 practitioner_name, product_id, provider_id, provider_name,quantity, 
 revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
   visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
-  appointment_id, payer_name, payment_method,status)
+  appointment_id, payer_name, payment_method,status,updated_at)
   VALUES (
   ?::timestamp,?,?,?,?,
   ?,uuid(?),?,?,?,
@@ -291,7 +291,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
   ?,?,?,?,?,
   ?,?,?,?,?,
   ?,?,?,?::timestamp,?,
-  ?,?,?,? 
+  ?,?,?,? ,now()
   )
 """    
         ;

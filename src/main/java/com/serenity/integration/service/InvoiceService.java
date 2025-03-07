@@ -71,7 +71,7 @@ public class InvoiceService {
         Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
 
-        String sql = "Select count(*) from invoice ";
+        String sql = "Select count(*) from \"ChargeItem\" as ci ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
         logger.info("row are :---"+rows);
         long totalSize = rows;
@@ -82,60 +82,79 @@ public class InvoiceService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-             select
-"public"."invoice"."id" AS "id",
-  "public"."invoice"."uuid" AS "uuid",
-  "public"."invoice"."created_at" AS "created_at",
-  "public"."invoice"."modified_at" AS "modified_at",
-  "public"."invoice"."patientid" AS "patientid",
-  "public"."invoice"."issuerid" AS "issuerid",
-  "public"."invoice"."visitid" AS "visit_id",
-  "public"."invoice"."note" AS "note",
-  "public"."invoice"."accountid" AS "accountid",
-  "public"."invoice"."payment_method" AS "payment_method",
-  "public"."invoice"."cashierid" AS "cashierid",
-  "public"."invoice"."status" AS "status",
-  "public"."invoice"."settlement_date" AS "settlement_date",
-  "public"."invoice"."user_friendly_id" AS "user_friendly_id",
-  oca."managing_organization_id" AS "managing_organization_id",
-  oca."owner_id" as "owner_id",
-  o."name" as "payer_name" ,
-  p.gender as "patient_gender",
-  p.birth_date  as "dob",
-  p.mr_number as "mr_number",
-  p.mobile as "patient_mobile",
- concat(p.first_name,' ',p.last_name) as "patient_name",
-"ChargeItem - UUID".currency  as "currency"
+             SELECT
+    MIN(i.uuid::text) AS invoice_uuid,
+    MIN(i.created_at) AS created_at,
+    MIN(i.modified_at) AS updated_at,
+    p.uuid AS patient_id,
+    MIN(p.first_name || ' ' || p.last_name) AS patient_name,
+    MIN(p.mr_number) AS patient_mr_number,
+    MIN(p.birth_date) AS patient_birth_date,
+    MIN(p.gender) AS patient_gender,
+    MIN(p.mobile) AS patient_mobile,
+    MIN(o.name) AS payer_name,
+    ci.provider_id AS managing_organization_id,
+    o.uuid AS payer_id,
+    CASE
+        WHEN o.uuid IS NOT NULL THEN 'ORGANIZATION'
+        ELSE 'PATIENT'
+    END AS payer_type,
+    MIN(ci.currency) AS currency,
+    ci.visitid AS visit_id,
+    MIN(i.payment_method) AS payment_method,
+    CAST(MIN(i.created_at) AS DATE) AS invoice_date,
+    SUM(t.amount_received) AS amount_paid,
+    CASE
+        WHEN o.uuid IS NOT NULL THEN SUM(ci.payer_contribution)
+        ELSE SUM(ci.charge)
+    END AS amount_due,
+    CAST(MIN(i.created_at) + INTERVAL '30 days' AS DATE) AS due_date,
+    MIN(i.user_friendly_id) AS external_id,
+    'opd' AS external_system
 FROM
-  "public"."invoice"
-LEFT JOIN "public"."ChargeItem" AS "ChargeItem - UUID" 
-  ON CAST("public"."invoice"."uuid" AS TEXT) = CAST("ChargeItem - UUID"."invoiceid" AS TEXT)
-LEFT JOIN "public"."organization_clientaccount" AS oca
-  ON "ChargeItem - UUID"."payer_account_id" = oca."uuid"
- left join organization o on o."id" =oca.managing_organization_id
- left join patient p  on p."uuid" =uuid(invoice.patientid) 
-  order by id asc offset ? limit ?
-
+    "public"."ChargeItem" ci
+JOIN
+    "public"."patient" p ON ci.patient_id = p.id
+JOIN
+    "public"."invoice" i ON ci.invoiceid::uuid = i.uuid
+LEFT JOIN
+    "public"."organization_clientaccount" ca ON ci.payer_account_id::uuid = ca.uuid
+LEFT JOIN
+    "public"."organization" o ON ca.owner_id = o.id
+LEFT JOIN
+    "public"."finance_transaction" t ON t.charge_item_id = ci.id
+WHERE
+    ci.status IN ('billed', 'paid')
+GROUP BY
+    ci.provider_id,
+    o.uuid,
+    ci.visitid,
+    p.uuid
+ORDER BY
+    MIN(i.created_at) desc offset ? limit ?;
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 PatientInvoice request = new PatientInvoice();
-                request.setId(set.getLong("id"));
-                request.setUuid(set.getString("uuid"));
-                request.setUpdatedAt(set.getString("modified_at"));
+             
+                request.setUuid(set.getString("invoice_uuid"));
+                request.setUpdatedAt(set.getString("updated_at"));
                 request.setCreatedAt(set.getString("created_at"));
-                request.setPatientId(set.getString("patientid"));
+                request.setPatientId(set.getString("patient_id"));
                 request.setVisitId(set.getString("visit_id"));
-                request.setPayerId(set.getString("owner_id"));
+                request.setPayerId(set.getString("payer_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setPayerName(set.getString("payer_name"));
-                request.setDueDate(set.getString("settlement_date"));
-                request.setExternalSystem("opd");
-                request.setNote(set.getString("note"));
-                request.setPatientBirthDate(set.getString("dob"));
+                request.setDueDate(set.getString("due_date"));
+                request.setExternalSystem(set.getString("external_system"));
+                request.setExternalId(set.getString("external_id"));
+                request.setInvoiceDate(set.getString("invoice_date"));
+                request.setAmountPaid(set.getDouble("amount_paid"));
+                request.setPayerType(set.getString("payer_type"));
+                request.setPatientBirthDate(set.getString("patient_birth_date"));
                 request.setPatientGender(set.getString("patient_gender"));
                 request.setPatientMobile(set.getString("patient_mobile"));
-                request.setPatientMrNumber(set.getString("mr_number"));
+                request.setPatientMrNumber(set.getString("patient_mr_number"));
                 request.setPatientName(set.getString("patient_name"));
                 request.setManagingOrganizationId(set.getString("managing_organization_id"));
                 request.setCurrency(set.getString("currency")==null?"GHS":set.getString("currency"));
@@ -157,13 +176,13 @@ LEFT JOIN "public"."organization_clientaccount" AS oca
 patient_mr_number, patient_birth_date, patient_gender, patient_mobile, payer_name, 
 managing_organization_id, payer_id, payer_type, currency, visit_id, 
 payment_method, invoice_date, amount_paid, due_date, external_id,
- external_system)
+ external_system,updated_at)
 VALUES( 
 ?::timestamp,?,uuid(?),?,?,
 ?,?::date,?,?,?,
 uuid(?),uuid(?),?,?,uuid(?),
 ?,?::date,?,?::date,?,
-?
+?,now()
 );
                 """;
 
