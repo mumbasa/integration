@@ -123,7 +123,7 @@ public class ChargeItemService {
 "ChargeItem"."payer_contribution" AS "payer_contribution",
  "Encounter"."id" AS "encounter_id"
 FROM
-"ChargeItem" left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id" where "ChargeItem"."clinicid" is not null order by "ChargeItem".id offset ? limit ?
+"ChargeItem" left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id" where "ChargeItem"."clinicid" is  null order by "ChargeItem".id offset ? limit ?
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex+217000, batchSize);
             while (set.next()) {
@@ -135,7 +135,8 @@ FROM
                 request.setUnitPrice(set.getDouble("unit_price"));
                 request.setCategory(set.getString("category"));
                 request.setVisitId(set.getString("visit_id"));
-                request.setLocationId(set.getString("location_id"));
+                request.setLocationId(set.getString("location_id")==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":set.getString("location_id"));
+                request.setLocationName(set.getString("location_name")==null?"Airport Main":set.getString("location_name"));
                 request.setPatientId(set.getString("patient_id"));
                 request.setLocationName(set.getString("location_name"));
                 request.setProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
