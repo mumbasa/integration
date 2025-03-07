@@ -73,7 +73,7 @@ public class ChargeItemService {
 
     public void getLegacyChargeItem(int batchSize) {
         
-        String sql = "select count(*) from \"ChargeItem\" ci ";
+        String sql = "select count(*) from \"ChargeItem\" ci where ci.clinicid is null";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
