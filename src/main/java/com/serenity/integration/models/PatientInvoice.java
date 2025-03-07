@@ -40,11 +40,13 @@ public class PatientInvoice {
     private String dueDate;
     private String externalId;
     private String externalSystem;
+    private String note;
 
     @Column(nullable = false, updatable = false)
     private String createdAt;
 
     private String updatedAt;
+
 
     
 

@@ -112,9 +112,9 @@ InvoiceService invoiceService;
 
 	//	observationService.getLegacyObservations(1000);
 		//observationService.migrateObservationThread(10uf	00)
-		chargeItemService.getLegacyChargeItem(1000);
-	
-	
+		//chargeItemService.getLegacyChargeItem(1000);
+		
+		invoiceService.getLegacyInvoice(1000);
 	
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.migrateThread(1000);

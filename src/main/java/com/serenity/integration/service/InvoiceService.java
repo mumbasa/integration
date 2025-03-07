@@ -82,50 +82,60 @@ logger.info("row are :---"+rows);
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                 SELECT
-                 i.id,
-    i.uuid AS uuid,
-    i.created_at AS created_at,
-    i.modified_at AS modified_at,
-    i.patientid AS patientid,
-    i.issuerid AS issuerid,
-    i.visitid AS visitid,
-    i.note AS note,
-    i.accountid AS accountid,
-    i.payment_method AS payment_method,
-    i.cashierid AS cashierid,
-    i.status AS status,
-    i.settlement_date AS settlement_date,
-    i.user_friendly_id AS user_friendly_id,
-    oca.managing_organization_id,
-    ci.currency ,
-    owner_id
-FROM invoice i
- left JOIN "ChargeItem" ci ON CAST(i.uuid AS TEXT) = ci.invoiceid
- left JOIN organization_clientaccount oca ON ci.payer_account_id = oca.uuid  ORDER by i.id asc offset ? LIMIT ?
+             select
+  "public"."invoice"."id" AS "id",
+  "public"."invoice"."uuid" AS "uuid",
+  "public"."invoice"."created_at" AS "created_at",
+  "public"."invoice"."modified_at" AS "modified_at",
+  "public"."invoice"."patientid" AS "patientid",
+  "public"."invoice"."issuerid" AS "issuerid",
+  "public"."invoice"."visitid" AS "visitid",
+  "public"."invoice"."note" AS "note",
+  "public"."invoice"."accountid" AS "accountid",
+  "public"."invoice"."payment_method" AS "payment_method",
+  "public"."invoice"."cashierid" AS "cashierid",
+  "public"."invoice"."status" AS "status",
+  "public"."invoice"."settlement_date" AS "settlement_date",
+  "public"."invoice"."user_friendly_id" AS "user_friendly_id",
+  oca."managing_organization_id" AS "managing_organization_id",
+  o."name" as "payer_name" ,
+  p.gender as "patient_gender",
+  p.birth_date  as "dob",
+  p.mr_number as "mr_number",
+  p.mobile as "patient_mobile",
+ concat(p.first_name,' ',p.last_name) as "patient_name"
+FROM
+  "public"."invoice"
+LEFT JOIN "public"."ChargeItem" AS "ChargeItem - UUID" 
+  ON CAST("public"."invoice"."uuid" AS TEXT) = CAST("ChargeItem - UUID"."invoiceid" AS TEXT)
+LEFT JOIN "public"."organization_clientaccount" AS oca
+  ON "ChargeItem - UUID"."payer_account_id" = oca."uuid"
+ left join organization o on o."id" =oca.managing_organization_id
+ left join patient p  on p."uuid" =uuid(invoice.patientid) 
+ order by id asc offset ? limit ?
+
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 PatientInvoice request = new PatientInvoice();
-                PatientData patientData=mps.get(set.getString("patientid"));
-                request.setId(set.getLong(1));
-                request.setUuid(set.getString(2));
+                request.setId(set.getLong("id"));
+                request.setUuid(set.getString("uuid"));
+                request.setUpdatedAt(set.getString("modified_at"));
                 request.setCreatedAt(set.getString("created_at"));
                 request.setPatientId(set.getString("patientid"));
                 request.setVisitId(set.getString("visitid"));
                 request.setPayerId(set.getString("owner_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
+                request.setPayerName(set.getString("payer_name"));
                 request.setExternalSystem("opd");
-                request.setPatientBirthDate(patientData.getBirthDate());
-                request.setPatientGender(patientData.getGender());
-                request.setPatientMobile(patientData.getMobile());
-                request.setPatientMrNumber(patientData.getMrNumber());
-                request.setPatientName(patientData.getFullName());
-                request.setExternalId(set.getString(2));
-                request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-                request.setVisitId(set.getString("visitid"));
+                request.setNote(set.getString("note"));
+                request.setPatientBirthDate(set.getString("dob"));
+                request.setPatientGender(set.getString("patient_gender"));
+                request.setPatientMobile(set.getString("patient_mobile"));
+                request.setPatientMrNumber(set.getString("mr_number"));
+                request.setPatientName(set.getString("patient_name"));
+                request.setManagingOrganizationId(set.getString("managing_organization_id"));
                 request.setCurrency(set.getString("currency")==null?"GHS":set.getString("currency"));
-                request.setCurrency(set.getString(16));
                 serviceRequests.add(request);
 
             }
@@ -174,22 +184,18 @@ uuid(?),uuid(?),?,?,uuid(?),
            ps.setString(10,intolerance.getPayerName()==null?"":intolerance.getPayerName());
 
            ps.setString(11,intolerance.getManagingOrganizationId());
-           ps.setString(12,    intolerance.getPayerId()==null?"":intolerance.getPayerId());
-           ps.setString(13,     intolerance.getPayerType());
+           ps.setString(12, intolerance.getPayerId()==null?"":intolerance.getPayerId());
+           ps.setString(13, intolerance.getPayerType());
            ps.setString(14,intolerance.getCurrency());
            ps.setString(15,intolerance.getVisitId());
 
            ps.setString(16,intolerance.getPaymentMethod());
-           ps.setString(17,    intolerance.getInvoiceDate());
+           ps.setString(17,intolerance.getInvoiceDate());
            ps.setDouble(18,intolerance.getAmountPaid());
            ps.setString(19,intolerance.getDueDate());
            ps.setString(20, intolerance.getExternalId());
            ps.setString(21, intolerance.getExternalSystem());
-    
-
-
-
-
+ 
         }
 
         @Override
