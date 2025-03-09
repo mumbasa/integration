@@ -523,7 +523,7 @@ public class NoteService {
                   "practitioner_role_type, encounter_type, patient_mr_number)\n"
                 + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?)," +
-               "uuid(?), uuid(?), ?, ?, ?,"+
+               "(SELECT uuid from visits where external_id=?), uuid(?), ?, ?, ?,"+
                 "?, ?, uuid(?), to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?,"+ 
                 "?, ?, ?);";
 
