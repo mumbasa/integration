@@ -106,35 +106,16 @@ InvoiceService invoiceService;
 	
 		
 		long start = System.currentTimeMillis();
-		//noteService.getLegacyEncounters(2000);
-		//noteService.getLegacyVisitNotesEncounters(1000);
+			visitService.getLegacyVisit(1000);
+		noteService.getLegacyEncounters(2000);
+		noteService.getLegacyVisitNotesEncounters(1000);
 		//noteService.noteThread();
 
-	//	observationService.getLegacyObservations(1000);
-		//observationService.migrateObservationThread(10uf	00)
-		//chargeItemService.getLegacyChargeItem(1000);
-		
-		//invoiceService.getLegacyInvoice(1000);
-		//invoiceService.migrateinvoiceThread(1000);
-		//noteService.getLegacyCarePlan(1000);
 	
-		//serviceRequestService.getLegacyRequest(3000);
-		//serviceRequestService.migrateThread(1000);
-		//serviceRequestService.addVields();
-		//observationService.getLegacyObservations(1000);
-		//referalService.getLegacyReferral(1000);
-		//referalService.migrateReferalThread(1000);
-		//diagnosisService.getLegacyDiagnosticReport(1000);
-		//diagnosisService.migrateDiagReportThread(1000);
-		//referalService.migrateReferalThread(1000);
-		//allergyService.migrateAlleryThread(1000);
-	//patientService.getLegacyAllPatients(1000);
-		//practitionerService.addSerenityPractitioner();
-	//observationService.getLegacyObservations(1000);
-		//visitService.getLegacyVisit(1000);
+	
 		//encounterService.getLegacyEncounters(1000);
-		noteService.getLegacyEncounters(1000);
-		noteService.getLegacyVisitNotesEncounters(1000);
+		//noteService.getLegacyEncounters(1000);
+		//noteService.getLegacyVisitNotesEncounters(1000);
 	
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
