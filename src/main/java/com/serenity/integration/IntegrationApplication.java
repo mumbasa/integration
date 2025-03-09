@@ -106,9 +106,10 @@ InvoiceService invoiceService;
 	
 		
 		long start = System.currentTimeMillis();
-			visitService.getLegacyVisit(1000);
-		noteService.getLegacyEncounters(2000);
-		noteService.getLegacyVisitNotesEncounters(1000);
+		//	visitService.getLegacyVisit(1000);
+		//noteService.getLegacyEncounters(2000);
+		//noteService.getLegacyVisitNotesEncounters(1000);
+		observationService.migrateObservationThread(1000);
 		//noteService.noteThread();
 
 	
