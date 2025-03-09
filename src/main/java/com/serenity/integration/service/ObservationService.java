@@ -76,35 +76,35 @@ public class ObservationService {
         
 
         Map<String,String> unitlMap = new HashMap<>();
-        vitalMap.put("SBP", "mm[Hg]");
-        vitalMap.put("BLOOD_PRESSURE", "mm[Hg]");
-        vitalMap.put("RESPIRATORY_RATE", "beats/min");
-        vitalMap.put("OXYGEN_SATURATION", "%");
-        vitalMap.put("DEGREES_CELCIUS", "°C");
-        vitalMap.put("temperature", "°C");
-        vitalMap.put("WEIGHT_KG", "kg");
-        vitalMap.put("PULSE", "beats/min");
-        vitalMap.put("BLOOD_SUGAR", "mmol/L");
-        vitalMap.put("BMI", "kg/m2");
-        vitalMap.put("HEIGHT_CM", "cm");
-        vitalMap.put("HEART_RATE", "beats/min");
-        vitalMap.put("AVPU", "");
+        unitlMap.put("SBP", "mm[Hg]");
+        unitlMap.put("BLOOD_PRESSURE", "mm[Hg]");
+        unitlMap.put("RESPIRATORY_RATE", "beats/min");
+        unitlMap.put("OXYGEN_SATURATION", "%");
+        unitlMap.put("DEGREES_CELCIUS", "°C");
+        unitlMap.put("temperature", "°C");
+        unitlMap.put("WEIGHT_KG", "kg");
+        unitlMap.put("PULSE", "beats/min");
+        unitlMap.put("BLOOD_SUGAR", "mmol/L");
+        unitlMap.put("BMI", "kg/m2");
+        unitlMap.put("HEIGHT_CM", "cm");
+        unitlMap.put("HEART_RATE", "beats/min");
+        unitlMap.put("AVPU", "");
 
 
         Map<String,String> displayMap = new HashMap<>();
-        vitalMap.put("SBP", "Systolic blood pressure");
-        vitalMap.put("BLOOD_PRESSURE", "Diastolic blood pressure");
-        vitalMap.put("RESPIRATORY_RATE", "Respiratory rate");
-        vitalMap.put("OXYGEN_SATURATION", "Oxygen saturation in Blood%");
-        vitalMap.put("DEGREES_CELCIUS", "Body Temperature");
-        vitalMap.put("temperature", "Body Temperature");
-        vitalMap.put("WEIGHT_KG", "Body weight Measured");
-        vitalMap.put("PULSE", "Heart rate");
-        vitalMap.put("BLOOD_SUGAR", "Blood Sugar");
-        vitalMap.put("BMI", "Body mass index (BMI) [Ratio]");
-        vitalMap.put("HEIGHT_CM", "Body height");
-        vitalMap.put("HEART_RATE", "Heart rate");
-        vitalMap.put("AVPU", "Level of responsiveness (AVPU)");
+        displayMap.put("SBP", "Systolic blood pressure");
+        displayMap.put("BLOOD_PRESSURE", "Diastolic blood pressure");
+        displayMap.put("RESPIRATORY_RATE", "Respiratory rate");
+        displayMap.put("OXYGEN_SATURATION", "Oxygen saturation in Blood%");
+        displayMap.put("DEGREES_CELCIUS", "Body Temperature");
+        displayMap.put("temperature", "Body Temperature");
+        displayMap.put("WEIGHT_KG", "Body weight Measured");
+        displayMap.put("PULSE", "Heart rate");
+        displayMap.put("BLOOD_SUGAR", "Blood Sugar");
+        displayMap.put("BMI", "Body mass index (BMI) [Ratio]");
+        displayMap.put("HEIGHT_CM", "Body height");
+        displayMap.put("HEART_RATE", "Heart rate");
+        displayMap.put("AVPU", "Level of responsiveness (AVPU)");
 
 
       /*   Map<String, PatientData> mps = patientRepository.findAll().stream()
@@ -140,6 +140,7 @@ FROM observation o join patient p on p.id=o.patient_id
                 request.setStatus(set.getString("status")==null?"registered":set.getString("status"));
                 request.setEffectiveDateTime(set.getString("effective_date_time"));
                 String codes=set.getString("unit");
+                
                 if(vitalMap.keySet().contains(set.getString("unit"))){
                     request.setCode(vitalMap.get(codes));
                     request.setDisplay(displayMap.get(codes));
