@@ -153,7 +153,7 @@ VALUES
 (uuid(?), ?, ?::timestamp, ?::timestamp, uuid(?), 
 ?, ?, ?, ?, ?, 
 ?::date, ?, ?, ?, ?,
- ?, ?, ?, ?);
+ ?, ?, ?::date, ?::date);
                     """;
 
 serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
