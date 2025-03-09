@@ -50,6 +50,7 @@ public class Observation {
     private String patientId;
     private String encounterId;
     private String enconterType;
+    private String visitId;
     private String updatedAt;
     @CreationTimestamp
     private String createdAt;
