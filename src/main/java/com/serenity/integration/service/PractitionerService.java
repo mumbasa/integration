@@ -472,7 +472,7 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
     public void addSerenityPractitioner() {
         List<Doctors> doctors = new ArrayList<>();
         String sql = "SELECT * FROM practitioner_role";
-        SqlRowSet set = serenityJdbcTemplate.queryForRowSet(sql);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
         while (set.next()) {
             Doctors doc = new Doctors();
             doc.setUuid(set.getString("uuid"));

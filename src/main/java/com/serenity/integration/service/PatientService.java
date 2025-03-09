@@ -114,7 +114,7 @@ public class PatientService {
         String sql = "SELECT count(*) from patient_relatedperson";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = 100;
+        long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -175,7 +175,7 @@ public class PatientService {
         String sql = "SELECT count(*) from patient_address";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = 100;
+        long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
         Map<String,Address> addresses = new HashMap<String,Address>();
 
@@ -583,7 +583,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         String sql = "SELECT count(*) from patient";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = 100;
+        long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
