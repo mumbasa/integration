@@ -670,10 +670,10 @@ and encounter.visit_id is null
 
     public void getLegacyEncounters(int batchSize) {
 
-        Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+        // Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
+        //         .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
+        // Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
+        //         .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
   String sql = "SELECT count(*) from encounter";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -690,7 +690,7 @@ FROM encounter e join patient p on e.patient_id =p.id
                  """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex, batchSize);
         while (set.next()) {
-            PatientData patient = patientDataMap.get(set.getString("patient_id"));
+           // PatientData patient = patientDataMap.get(set.getString("patient_id"));
            // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
             if(set.getString("chief_complaint") != null |set.getString("chief_complaint") !="" ){
             EncounterNote encounter = new EncounterNote();
@@ -704,7 +704,7 @@ FROM encounter e join patient p on e.patient_id =p.id
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
             encounter.setPatientMobile(set.getString("mobile"));
-            encounter.setPatientMrNumber(patient.getMrNumber());
+            //encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("chief_complaint"));
             encounter.setLocationId(set.getString("primary_location_id"));
@@ -726,7 +726,7 @@ FROM encounter e join patient p on e.patient_id =p.id
                 encounter.setPatientBirthDate(set.getString("birth_date"));
                 encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
                 encounter.setPatientMobile(set.getString("mobile"));
-                encounter.setPatientMrNumber(patient.getMrNumber());
+               // encounter.setPatientMrNumber(patient.getMrNumber());
                 encounter.setExternalSystem("opd");
                 encounter.setNote(set.getString("history_of_presenting_illness"));
                 encounter.setLocationId(set.getString("primary_location_id"));
