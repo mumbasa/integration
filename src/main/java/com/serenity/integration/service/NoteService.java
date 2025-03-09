@@ -752,7 +752,7 @@ FROM encounter e join patient p on e.patient_id =p.id
     public void getLegacyVisitNotesEncounters(int batchSize) {
 
         Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+                 .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
          Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
                  .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
 
@@ -791,7 +791,7 @@ FROM encounter e join patient p on e.patient_id =p.id
             encounter.setEncounterType("ambulatory");
             encounter.setPatientId(set.getString("patient_id"));
             encounter.setNoteType(set.getString("note_type"));
-         encounter.setPatientBirthDate(patient.getBirthDate());
+            encounter.setPatientBirthDate(patient.getBirthDate());
              encounter.setPatientFullName(patient.getFullName());
              encounter.setPatientMobile(patient.getMobile());
              encounter.setPatientMrNumber(patient.getMrNumber());
