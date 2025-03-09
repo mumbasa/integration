@@ -671,7 +671,7 @@ and encounter.visit_id is null
     public void getLegacyEncounters(int batchSize) {
 
         Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
         Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
   String sql = "SELECT count(*) from encounter";
@@ -683,23 +683,27 @@ and encounter.visit_id is null
         for (int i = 0; i < batches; i++) {
             int startIndex = i * batchSize;
         List<EncounterNote> encounters = new ArrayList<>();
-         sql = "select * from encounter e join patient p on p.id=e.patient_id order by e.id offset ? LIMIT ?";
+         sql = """
+                 SELECT  e.uuid as id ,e.created_at, e.is_deleted, e.modified_at, e.id as uuid, e.status, encounter_class, chief_complaint, history_of_presenting_illness, "type", priority, start_time, end_time, length, dyte_meeting_id, dyte_room_name, appointment_id, charge_item_id, part_of_id,p.uuid as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title, chief_complaint_author_id, chief_complaint_editor_uuids, chief_complaint_editors_display, history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names
+FROM encounter e join patient p on e.patient_id =p.id
+ order by p.id offset ? LIMIT ? 
+                 """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex, batchSize);
         while (set.next()) {
-            PatientData patient = patientDataMap.get(set.getString("mr_number"));
+            PatientData patient = patientDataMap.get(set.getString("patient_id"));
            // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
             if(set.getString("chief_complaint") != null |set.getString("chief_complaint") !="" ){
             EncounterNote encounter = new EncounterNote();
             encounter.setUuid(UUID.randomUUID().toString());
-            encounter.setEncounterId(set.getString(5));
-            encounter.setExternalId(set.getString(5));
-            encounter.setCreatedAt(set.getString(2));
+            encounter.setEncounterId(set.getString("uuid"));
+            encounter.setExternalId(set.getString("id"));
+            encounter.setCreatedAt(set.getString("created_at"));
             encounter.setEncounterType(set.getString("encounter_class"));
-            encounter.setPatientId(patient.getUuid());
+            encounter.setPatientId(set.getString("patient_id"));
             encounter.setNoteType("chief-complaint");
-            encounter.setPatientBirthDate(patient.getBirthDate());
-            encounter.setPatientFullName(patient.getFullName());
-            encounter.setPatientMobile(patient.getMobile());
+            encounter.setPatientBirthDate(set.getString("birth_date"));
+            encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
+            encounter.setPatientMobile(set.getString("mobile"));
             encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("chief_complaint"));
@@ -713,15 +717,15 @@ and encounter.visit_id is null
 
                 EncounterNote encounter = new EncounterNote();
                 encounter.setUuid(UUID.randomUUID().toString());
-                encounter.setEncounterId(set.getString(5));
-                encounter.setExternalId(set.getString(5));
-                encounter.setCreatedAt(set.getString(2));
+                encounter.setEncounterId(set.getString("uuid"));
+                encounter.setExternalId(set.getString("id"));
+                encounter.setCreatedAt(set.getString("created_at"));
                 encounter.setEncounterType(set.getString("encounter_class"));
-                encounter.setPatientId(patient.getUuid());
+                encounter.setPatientId(set.getString("patient_id"));
                 encounter.setNoteType("history-of-presenting-illness");
-                encounter.setPatientBirthDate(patient.getBirthDate());
-                encounter.setPatientFullName(patient.getFullName());
-                encounter.setPatientMobile(patient.getMobile());
+                encounter.setPatientBirthDate(set.getString("birth_date"));
+                encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
+                encounter.setPatientMobile(set.getString("mobile"));
                 encounter.setPatientMrNumber(patient.getMrNumber());
                 encounter.setExternalSystem("opd");
                 encounter.setNote(set.getString("history_of_presenting_illness"));
@@ -748,9 +752,9 @@ and encounter.visit_id is null
     public void getLegacyVisitNotesEncounters(int batchSize) {
 
         Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+         Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
+                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
 
 
                 String sql = "SELECT count(*) from encounter_patient_notes";
@@ -763,25 +767,34 @@ and encounter.visit_id is null
         List<EncounterNote> encounters = new ArrayList<>();
         int startIndex = i * batchSize;
 
-         sql = "select  * from encounter_patient_notes e join patient p on p.id=e.patient_id order by p.id offset ? LIMIT ?";
+         sql = """
+            
+               
+         
+         SELECT  e.created_at, e.is_deleted, e.modified_at, e.id as uuid, display, encounter_id, p.uuid as patient_id, practitioner_id,
+          practitioner_role_id, practitioner_name, note_type, practitioner_role_type,p
+                          
+         FROM encounter_patient_notes e join patient p on p.id=e.patient_id order by p.id offset ? LIMIT ?
+                          
+                          """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
 
-            PatientData patient = patientDataMap.get(set.getString("mr_number"));
+            PatientData patient = patientDataMap.get(set.getString("patient_id"));
            // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
          
             EncounterNote encounter = new EncounterNote();
-            encounter.setUuid(UUID.randomUUID().toString());
+            encounter.setUuid(set.getString("uuid"));
             encounter.setEncounterId(set.getString("encounter_id"));
-            encounter.setExternalId(set.getString(5));
-            encounter.setCreatedAt(set.getString(2));
+            encounter.setExternalId(set.getString("uuid"));
+            encounter.setCreatedAt(set.getString("created_at"));
             encounter.setEncounterType("ambulatory");
-            encounter.setPatientId(patient.getUuid());
+            encounter.setPatientId(set.getString("patient_id"));
             encounter.setNoteType(set.getString("note_type"));
-            encounter.setPatientBirthDate(patient.getBirthDate());
-            encounter.setPatientFullName(patient.getFullName());
-            encounter.setPatientMobile(patient.getMobile());
-            encounter.setPatientMrNumber(patient.getMrNumber());
+         encounter.setPatientBirthDate(patient.getBirthDate());
+             encounter.setPatientFullName(patient.getFullName());
+             encounter.setPatientMobile(patient.getMobile());
+             encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("display"));
             encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
