@@ -116,7 +116,7 @@ InvoiceService invoiceService;
 		
 		//invoiceService.getLegacyInvoice(1000);
 		//invoiceService.migrateinvoiceThread(1000);
-	noteService.getLegacyCarePlan(1000);
+	noteService.noteThread();
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.migrateThread(1000);
 		//serviceRequestService.addVields();
