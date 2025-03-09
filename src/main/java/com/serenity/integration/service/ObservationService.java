@@ -129,7 +129,7 @@ public class ObservationService {
                reference_range_high, reference_range_low, "rank", performer_id, performer_name
 FROM observation o join patient p on p.id=o.patient_id;
 
-            order by dr.id asc offset ? LIMIT ?
+            order by o.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
