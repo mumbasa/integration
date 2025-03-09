@@ -68,7 +68,7 @@ public class IntegrationApplication {
 	@Autowired
 	EncounterService encounterService;
 	@Autowired
-	NoteWrangling noteWrangling;
+	PatientService patientService;
 
 	@Autowired
 	PatientMigrationService migrationService;
@@ -117,7 +117,7 @@ InvoiceService invoiceService;
 		//invoiceService.getLegacyInvoice(1000);
 		//invoiceService.migrateinvoiceThread(1000);
 		//noteService.getLegacyCarePlan(1000);
-	noteService.noteThread();
+	
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.migrateThread(1000);
 		//serviceRequestService.addVields();
@@ -128,6 +128,7 @@ InvoiceService invoiceService;
 		//diagnosisService.migrateDiagReportThread(1000);
 		//referalService.migrateReferalThread(1000);
 		//allergyService.migrateAlleryThread(1000);
+		patientService.getLegacyRelated(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		// encounterService.encounterLegacythread();

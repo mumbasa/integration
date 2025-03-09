@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -43,8 +44,11 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
+import com.serenity.integration.models.Doctors;
 import com.serenity.integration.models.EncounterNote;
+import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
+import com.serenity.integration.models.RelatedPerson;
 import com.serenity.integration.repository.PatientRepository;
 
 @Service
@@ -60,6 +64,10 @@ public class PatientService {
     @Autowired
     @Qualifier(value = "legJdbcTemplate")
     JdbcTemplate legJdbcTemplate;
+
+    @Autowired
+    @Qualifier("serenityJdbcTemplate")
+    JdbcTemplate serenityJdbcTemplate;
 
     @Autowired
     @Qualifier(value = "vectorJdbcTemplate")
@@ -79,12 +87,118 @@ public class PatientService {
       getHisPatients();
       removeDuplicates();
 
-      String sql ="""
-              select pr.created_at, pr.is_deleted, pr.modified_at, pr."uuid" as uuid, pr.first_name, pr.last_name, pr.is_active, pr.other_names, pr.mobile,pr.email, relationship, line_address, place_of_work, period_start, period_end, pr.birth_date, pr.gender, p.uuid as patient_id
-FROM patient_relatedperson pr join patient p on p.id=pr.patient_id 
-              """;
 
     }
+
+
+
+
+    public void getLegacyRelated(int batchSize) {
+      
+        String sql = "SELECT count(*) from patient_relatedperson";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<RelatedPerson> serviceRequests = new ArrayList<RelatedPerson>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+                        select pr.id, pr.created_at, pr.is_deleted, pr.modified_at, pr."uuid" as uuid, 
+                        pr.first_name, pr.last_name, pr.is_active, pr.other_names, pr.mobile,pr.email, 
+                        relationship, line_address, place_of_work, period_start, period_end, pr.birth_date, 
+                        pr.gender, p.uuid as patient_id FROM patient_relatedperson pr join patient 
+                        p on p.id=pr.patient_id  order by pr.id asc offset ? LIMIT ?
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            while (set.next()) {
+                RelatedPerson request = new RelatedPerson();
+                request.setUuid(set.getString("uuid"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setBirthDate(set.getString("birth_date"));
+                request.setEmail(set.getString("email"));
+                request.setMobile(set.getString("mobile"));
+                request.setLastName(set.getString("last_name"));
+                request.setFirstName(set.getString("first_name"));
+                request.setOtherNames(set.getString("other_names"));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setRelationship(set.getString("relationship"));
+                request.setLineAddress(set.getString("line_address"));
+                request.setPeriodStart(set.getString("period_start"));
+                request.setPeriodEnd(set.getString("period_end"));
+                request.setGender(set.getString("gender"));
+                request.setId(set.getLong("id"));
+                request.setActive(set.getBoolean("is_active"));
+             
+                serviceRequests.add(request);
+
+            }
+          
+            LOGGER.info("Saved Related result");
+            saveRelatedPersion(serviceRequests);
+        }
+    }
+
+        public void saveRelatedPersion(List<RelatedPerson> persons){
+            String sql ="""
+                    INSERT INTO related_persons
+(patient_id, id, created_at, updated_at, "uuid", 
+mobile, national_mobile_number, first_name, last_name, email, 
+birth_date, gender, is_active, other_names, relationship,
+ line_address, place_of_work, period_start, period_end)
+VALUES
+(uuid(?), ?, ?::timestamp, ?::timestamp, uuid(?), 
+?, ?, ?, ?, ?, 
+?::date, ?, ?, ?, ?,
+ ?, ?, ?, ?);
+                    """;
+
+serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+    @Override
+    public void setValues(PreparedStatement ps, int i) throws SQLException {
+        // TODO Auto-generated method stub
+        RelatedPerson person = persons.get(i);
+        ps.setString(1, person.getPatientId());
+        ps.setLong(2, person.getId());
+        ps.setString(3, person.getCreatedAt());
+        ps.setString(4, person.getUpdatedAt());
+        ps.setString(5, person.getUuid());
+
+        ps.setString(6, person.getMobile());
+        ps.setString(7, person.getNationalMobileNumber());
+        ps.setString(8, person.getFirstName());
+        ps.setString(9, person.getLastName());
+        ps.setString(10, person.getEmail());
+
+        ps.setString(11, person.getBirthDate());
+        ps.setString(12, person.getGender());
+        ps.setBoolean(13, person.isActive());
+        ps.setString(14, person.getOtherNames());
+        ps.setString(15, person.getRelationship());
+
+        ps.setString(16, person.getLineAddress());
+        ps.setString(17, person.getPlaceOfWork());
+        ps.setString(18, person.getPeriodStart());
+        ps.setString(19, person.getPeriodEnd());
+
+
+        
+    }
+
+    @Override
+    public int getBatchSize() {
+        // TODO Auto-generated method stub
+       return persons.size();
+    }
+    
+}
+);
+
+        }
 
     
     public void getHisPatients() {
