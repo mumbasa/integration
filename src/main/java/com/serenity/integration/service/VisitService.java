@@ -26,6 +26,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.Doctors;
+import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.models.Practitioner;
 import com.serenity.integration.models.Visits;
@@ -354,11 +355,26 @@ return visits.size();
 
     
 
-    public List<Visits>  getLegacyVisit(){
+    public  void  getLegacyVisit(int batchSize){
+
+    String sqlRow = "SELECT count(*) from visit";
+        long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<Observation> serviceRequests = new ArrayList<Observation>();
+
+            int startIndex = i * batchSize;
         List<Visits> visits = new ArrayList<>();
-        String sql = "SELECT * FROM visit v join patient p  on p.id = v.patient_id";
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
-        Map<String,PatientData> mps = patientRepository.findAll().stream().collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+        String sql = """
+                SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due, patient_age, p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names, upcoming_encounters, encounter_history, p.name_prefix as ttile
+FROM visit  v join patient p  on p.id = v.patient_id
+                order by v.created_at offset ? limit ?
+                """;;
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
+       // Map<String,PatientData> mps = patientRepository.findAll().stream().collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         Map<String,Doctors> doc = doctorRepository.findAll().stream().collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
         while(set.next()){
@@ -370,9 +386,9 @@ return visits.size();
             visit.setStatus(set.getString("status"));
             visit.setStartedAt(set.getString("arrived_at"));
             visit.setEndedAt(set.getString("ended_at"));
-            visit.setHisNumber(set.getString("mr_number"));
+           // visit.setHisNumber(set.getString("mr_number"));
             visit.setExternalSystem("opd");
-            visit.setExternalId(set.getString(5));
+            visit.setExternalId(set.getString("uuid"));
             visit.setAssignedToId(set.getString("assigned_to_id"));
             try{
                 visit.setAssignedToName(doc.get(set.getString("assigned_to_id")).getFullName());
@@ -380,31 +396,31 @@ return visits.size();
                 visit.setAssignedToName("");
 
             }
-            visit.setPractitionerId(doc.get(set.getString("assigned_to_id")).getSerenityUUid());
+            visit.setPractitionerId(set.getString("assigned_to_id"));
             visit.setLocationId(set.getString("primary_location_id"));
             visit.setPatientMobile(set.getString("mobile"));
             visit.setPatientName(set.getString("first_name")+" "+set.getString("last_name"));
             visit.setPatientDob(set.getString("birth_date"));
             visit.setGender(set.getString("gender"));
             visit.setEncounterClass(set.getString("visit_class"));
-            visit.setPatientId(mps.get(set.getString("mr_number")).getUuid());
-            try{
-            visit.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
-            }catch(Exception e){
-                logger.info("patient not found");
+            // visit.setPatientId(mps.get(set.getString("mr_number")).getUuid());
+            // try{
+            // visit.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
+            // }catch(Exception e){
+            //     logger.info("patient not found");
 
-            }
-            visit.setDisplay("opd-"+visit.getHisNumber());
+            // }
+            visit.setDisplay("opd-"+visit.getUuid());
             visit.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             visit.setServiceProviderName("Nyaho Medical Center");
             visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175\"");
             visit.setLocationName("Airport Primary Care");
             visits.add(visit);
-        
 
     }
+    visitRepository.saveAll(visits);
 
-return visits;
+        }
 }
 
 
@@ -486,27 +502,7 @@ int rows =640871;
                     }
                     
 
-public void getlegacyThreads(){
-List<Visits>visits = getLegacyVisit();
-//int rows = legJdbcTemplate.queryForObject(sql, Integer.class);
 
-ExecutorService executorService =  Executors.newFixedThreadPool(10);
-    try {
-        List<Future<Integer>> futures = executorService.invokeAll(submitTask(visits,100));
-        for(Future<Integer> future : futures){
-            System.out.println("future.get = " + future.get());
-        }
-    } catch (InterruptedException | ExecutionException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-    
-    executorService.shutdown();
-    System.err.println("patiend count is ");
-    
-    
-        
-    }
 
 
 

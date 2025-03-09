@@ -426,30 +426,44 @@ public class EncounterService {
 
     }
 
-    public void getLegacyEncounters() {
+    public void getLegacyEncounters(int batchSize) {
 
-        Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
 
+
+      //  Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
+       //         .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+       // Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
+         //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+
+                String sqlRow = "SELECT count(*) from encounter";
+                long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
+        
+                long totalSize = rows;
+                long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+        
+                for (int i = 0; i < batches; i++) {
+        
+                    int startIndex = i * batchSize;
         List<Encounter> encounters = new ArrayList<>();
-        String sql = "select * from encounter e join patient p on p.id=e.patient_id";
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+        String sql = """
+        SELECT e."uuid", e.created_at, e.is_deleted,e.modified_at,e.id, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
+FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at offset ? limit ? ;        
+
+                """;
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
-            System.err.println(set.getString("mr_number")+"-----------------");
-            PatientData patient = patientDataMap.get(set.getString("mr_number"));
+         //   System.err.println(set.getString("mr_number")+"-----------------");
+           // PatientData patient = patientDataMap.get(set.getString("mr_number"));
             Encounter encounter = new Encounter();
-            encounter.setUuid(set.getString(5));
-            encounter.setExternalId(set.getString(5));
-            encounter.setCreatedAt(set.getString(2));
+            encounter.setUuid(set.getString("id"));
+            encounter.setExternalId(set.getString("id"));
+            encounter.setCreatedAt(set.getString("created_at"));
             encounter.setEncounterClass(set.getString("encounter_class"));
             encounter.setPriority(set.getString("priority"));
-            encounter.setPatientId(patient.getUuid());
-            encounter.setPatientBirthDate(patient.getBirthDate());
-            encounter.setPatientFullName(patient.getFullName());
-            encounter.setPatientMobile(patient.getMobile());
-            encounter.setPatientMrNumber(patient.getMrNumber());
+            encounter.setPatientId(set.getString("patient_id"));
+            encounter.setPatientBirthDate(set.getString("birth_date"));
+            encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
+            encounter.setPatientMobile(set.getString("mobile"));
             encounter.setExternalSystem("opd");
             encounter.setDisplay(set.getString("uuid"));
             encounter.setLocationId(set.getString("primary_location_id"));
@@ -460,22 +474,9 @@ public class EncounterService {
             encounters.add(encounter);
             logger.info("adding encounter");
         }
-
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitNote(encounters, 20000));
-            for (Future<Integer> future : futures) {
-                System.out.println("future.get = " + future.get());
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        executorService.shutdown();
-        System.err.println("patiend count is ");
-        populateWithVisits();
-
+encounterRepository.saveAll(encounters);
+                }
+       
     }
 
     public Set<Callable<Integer>> submitNote(List<Encounter> notes, int batchSize) {
