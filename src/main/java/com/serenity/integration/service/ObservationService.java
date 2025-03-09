@@ -69,7 +69,7 @@ public class ObservationService {
         vitalMap.put("WEIGHT_KG", "3141-9");
         vitalMap.put("PULSE", "8867-4");
         vitalMap.put("BLOOD_SUGAR", "2339-0");
-        vitalMap.put("BMI", "3141-9");
+        vitalMap.put("BMI", "39156-5");
         vitalMap.put("HEIGHT_CM", "8302-2");
         vitalMap.put("HEART_RATE", "8867-4");
         vitalMap.put("AVPU", "67775-7");
@@ -91,10 +91,26 @@ public class ObservationService {
         vitalMap.put("AVPU", "");
 
 
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
+        Map<String,String> displayMap = new HashMap<>();
+        vitalMap.put("SBP", "Systolic blood pressure");
+        vitalMap.put("BLOOD_PRESSURE", "Diastolic blood pressure");
+        vitalMap.put("RESPIRATORY_RATE", "Respiratory rate");
+        vitalMap.put("OXYGEN_SATURATION", "Oxygen saturation in Blood%");
+        vitalMap.put("DEGREES_CELCIUS", "Body Temperature");
+        vitalMap.put("temperature", "Body Temperature");
+        vitalMap.put("WEIGHT_KG", "Body weight Measured");
+        vitalMap.put("PULSE", "Heart rate");
+        vitalMap.put("BLOOD_SUGAR", "Blood Sugar");
+        vitalMap.put("BMI", "Body mass index (BMI) [Ratio]");
+        vitalMap.put("HEIGHT_CM", "Body height");
+        vitalMap.put("HEART_RATE", "Heart rate");
+        vitalMap.put("AVPU", "Level of responsiveness (AVPU)");
+
+
+      /*   Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e)); */
         String sql = "SELECT count(*) from observation";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -113,14 +129,25 @@ public class ObservationService {
                 Observation request = new Observation();
                 request.setUuid(set.getString(2));
                 request.setCreatedAt(set.getString(3));
-                request.setPatientId(mps.get(set.getString("mr_number")).getUuid());
+                request.setPatientId(set.getString("patient_id"));
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setStatus(set.getString("status")==null?"registered":set.getString("status"));
                 request.setEffectiveDateTime(set.getString("effective_date_time"));
-                request.setCode(set.getString("code"));
+                String codes=set.getString("unit");
+                if(vitalMap.keySet().contains(set.getString("unit"))){
+                    request.setCode(vitalMap.get(codes));
+                    request.setDisplay(displayMap.get(codes));
+                    request.setUnit(unitlMap.get(codes));
+                    request.setCategory("vital-signs");
+                    request.setEnconterType("vitals-observation");
+                }
+                else{
+                request.setCode(set.getString("unit"));
+                request.setDisplay(set.getString("display"));
                 request.setUnit(set.getString("unit"));
                 request.setCategory(set.getString("category"));
-                request.setCreatedAt(set.getString(3));
+                }
+                request.setUpdatedAt (set.getString("created_at"));
                 request.setIssued(set.getString("issued"));
                 request.setValue(set.getString("value"));
                 request.setBodySite(set.getString("body_site"));
@@ -129,7 +156,6 @@ public class ObservationService {
                 request.setReferenceRangeHigh(set.getString("reference_range_high"));
                 request.setReferenceRangeLow(set.getString("reference_range_low"));
                 request.setSpecimen(set.getString("specimen"));
-                request.setDisplay(set.getString("display"));
                 serviceRequests.add(request);
 
             }

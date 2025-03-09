@@ -48,7 +48,8 @@ public class Observation {
     private String practitionerId;
     private String patientId;
     private String encounterId;
-    
+    private String enconterType;
+    private String updatedAt;
     @CreationTimestamp
     private String createdAt;
 }

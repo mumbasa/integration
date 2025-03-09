@@ -1,5 +1,7 @@
 package com.serenity.integration.models;
 
+import javax.sql.rowset.serial.SerialArray;
+
 import org.apache.commons.csv.CSVRecord;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -110,7 +112,7 @@ public class PatientData {
   private String birthTime;
   @SerializedName("religious_affiliation")
 
-  private String religiousAffiliation;
+  private SerialArray religiousAffiliation;
   @Column(name = "managing_organization_id")
   @SerializedName("managing_organization_id")
   private String managingOrganizationId;
@@ -145,7 +147,6 @@ public class PatientData {
     passportNumber = record.get("passport_no");
     // active=Boolean.parseBoolean(record.get("active"));
     birthTime = record.get("timeofbirth");
-    religiousAffiliation = record.get("religiousaffiliation");
     // managingOrganizationId=record.get("membership");
 
   }
@@ -334,13 +335,6 @@ public class PatientData {
     this.birthTime = birthTime;
   }
 
-  public String getReligiousAffiliation() {
-    return religiousAffiliation;
-  }
-
-  public void setReligiousAffiliation(String religiousAffiliation) {
-    this.religiousAffiliation = religiousAffiliation;
-  }
 
   public String getManagingOrganizationId() {
     return managingOrganizationId;

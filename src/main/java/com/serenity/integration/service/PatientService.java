@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.security.SecureRandom;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -23,6 +24,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
+import javax.sql.rowset.serial.SerialArray;
+import javax.sql.rowset.serial.SerialClob;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -110,7 +114,7 @@ public class PatientService {
         String sql = "SELECT count(*) from patient_relatedperson";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = rows;
+        long totalSize = 100;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -171,7 +175,7 @@ public class PatientService {
         String sql = "SELECT count(*) from patient_address";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = rows;
+        long totalSize = 100;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
         Map<String,Address> addresses = new HashMap<String,Address>();
 
@@ -367,7 +371,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             pd.setNationality(record.getString("country"));
             pd.setPassportNumber(record.getString("passport_no"));
             pd.setBirthTime(record.getString("timeofbirth"));
-            pd.setReligiousAffiliation(record.getString("religiousaffiliation"));
+         //   pd.setReligiousAffiliation(record.getString("religiousaffiliation"));
             pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             pd.setManagingOrganization("Nyaho Medical Centre");
 
@@ -487,7 +491,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             pd.setNationality(record.getString("country"));
             pd.setPassportNumber(record.getString("passport_no"));
             pd.setBirthTime(record.getString("timeofbirth"));
-            pd.setReligiousAffiliation(record.getString("religiousaffiliation"));
+        //    pd.setReligiousAffiliation(record.getString("religiousaffiliation"));
             pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             fallouts.add(pd);
         }
@@ -577,7 +581,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         String sql = "SELECT count(*) from patient";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = rows;
+        long totalSize = 100;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -626,7 +630,9 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 pd.setPassportNumber(record.getString("passport_number"));
                 pd.setBirthTime(record.getString("birth_time"));
                 pd.setFullName(pd.getFirstName()+pd.getOtherNames()==null?" ":" "+pd.getOtherNames()+" "+pd.getLastName());
-                pd.setReligiousAffiliation(record.getString("religious_affiliation"));
+                
+
+                pd.setReligiousAffiliation(record.getObject("religious_affiliation",SerialArray.class));
                 pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 pd.setManagingOrganization("Nyaho Medical Centre");
                 pd.setDeceased(record.getBoolean("is_deceased"));
@@ -643,6 +649,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 e.printStackTrace();
 
                } 
+               System.err.println(pd.getReligiousAffiliation()+" -----------");
                 patients.add(pd);
 
             }
@@ -652,7 +659,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         
       
         
-       addressRepo.saveAll(address.values().stream().toList());
+       //addressRepo.saveAll(address.values().stream().toList());
        //saveLegacyAddressInSerenity(address.values().stream().toList());
 
        persons.values().stream().forEach(e -> 
@@ -666,8 +673,18 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 
 
-
-
+    public static String convertSerialClobToString(Clob clob)  {
+        if (clob == null) {
+            return null;
+        }
+        try {
+            return clob.getSubString(1, (int) clob.length());
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }  // Convert SerialClob to String
+    }
     public void getLegacyPatients(int offset) {
         List<PatientData> patientData = new ArrayList<>();
         // Note: Set<String> mrNumbers is declared but never used
@@ -771,7 +788,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 data.setEmployer(resultSet.getString("employer"));
                 data.setMaritalStatus(resultSet.getString("marital_status"));
                 data.setOccupation(resultSet.getString("occupation"));
-                data.setReligiousAffiliation(resultSet.getString("religious_affiliation"));
+                data.setReligiousAffiliation(resultSet.getObject("religious_affiliation",SerialArray.class));
                 data.setTitle(resultSet.getString("name_prefix"));
                 data.setNationality(sql);
                 data.setOtherNames(resultSet.getString("other_names"));
