@@ -114,9 +114,9 @@ InvoiceService invoiceService;
 		//observationService.migrateObservationThread(10uf	00)
 		//chargeItemService.getLegacyChargeItem(1000);
 		
-		invoiceService.getLegacyInvoice(1000);
-		invoiceService.migrateinvoiceThread(1000);
-	
+		//invoiceService.getLegacyInvoice(1000);
+		//invoiceService.migrateinvoiceThread(1000);
+	noteService.getLegacyCarePlan(1000);
 		//serviceRequestService.getLegacyRequest(3000);
 		//serviceRequestService.migrateThread(1000);
 		//serviceRequestService.addVields();

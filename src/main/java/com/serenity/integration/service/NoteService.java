@@ -799,6 +799,69 @@ and encounter.visit_id is null
 
     }
 
+
+
+    public void getLegacyCarePlan(int batchSize) {
+/* 
+        Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
+                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
+                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+ */
+
+                String sql = "SELECT count(*) from care_plan";
+                long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        
+                long totalSize = rows;
+                long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling divisionddd
+        
+                for (int i = 0; i < batches; i++) {
+        List<EncounterNote> encounters = new ArrayList<>();
+        int startIndex = i * batchSize;
+
+         sql = """
+                 SELECT c.created_at as created_at, c.modified_at as updated_at, c.id as id, c.title as title, 
+                 description, period_start, period_end, encounter_id, p.uuid as patient_id,p.birth_date ,p.gender 
+                 ,p.birth_date ,p.mobile ,concat(p.first_name,' ',p.last_name) as fullname,e.visit_id ,e.encounter_class
+FROM care_plan c join encounter e on e.id = c.encounter_id  join patient p on p.id =e.patient_id 
+ order by c.id offset ? LIMIT ?
+                 """;
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
+        while (set.next()) {
+
+           // PatientData patient = patientDataMap.get(set.getString("mr_number"));
+           // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
+         
+            EncounterNote encounter = new EncounterNote();
+            encounter.setUuid(set.getString("id"));
+            encounter.setEncounterId(set.getString("encounter_id"));
+            encounter.setExternalId(set.getString("id"));
+            encounter.setCreatedAt(set.getString("created_at"));
+            encounter.setUpdatedAt(set.getString("updated_at"));
+            encounter.setEncounterType(set.getString("encounter_class"));
+            encounter.setPatientId(set.getString("patient_id"));
+            encounter.setNoteType("care-plan");
+            encounter.setPatientBirthDate(set.getString("birth_date"));
+            encounter.setPatientFullName(set.getString("fullname"));
+            encounter.setPatientMobile(set.getString("mobile"));
+            //encounter.setPatientMrNumber(patient.getMrNumber());
+            encounter.setExternalSystem("opd");
+            encounter.setNote(set.getString("description"));
+            encounter.setVisitId(set.getString("visit_id"));
+            encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
+            encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+            encounter.setServiceProviderName("Nyaho Medical Centre");
+            encounters.add(encounter);
+          
+            }
+            encounterNoteRepository.saveAll(encounters);
+            logger.info("adding encounter");
+        
+        }
+       // cleanvisitNOte();
+
+    }
+
     public void cleanvisitNOte(){
 
         String sql ="""

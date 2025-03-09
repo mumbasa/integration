@@ -210,7 +210,7 @@ uuid(?),?,?,?,uuid(?),
 
            ps.setString(11,intolerance.getManagingOrganizationId());
            ps.setString(12, intolerance.getPayerId()==null?"":intolerance.getPayerId());
-           ps.setString(13, intolerance.getPayerType());
+           ps.setString(13, intolerance.getPayerType().toLowerCase());
            ps.setString(14,intolerance.getCurrency());
            ps.setString(15,intolerance.getVisitId());
 
@@ -260,7 +260,7 @@ where allergy_intolerance.encounterid =v.uuid ;
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 100));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
             for (Future<Integer> future : futures) {
                 logger.info("Future result: {}", future.get());
             }
