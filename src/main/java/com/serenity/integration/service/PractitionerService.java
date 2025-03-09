@@ -475,8 +475,7 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
         while (set.next()) {
             Doctors doc = new Doctors();
-            doc.setUuid(set.getString("uuid"));
-            doc.setId(set.getLong("id"));
+            doc.setUuid(set.getString("id"));
             doc.setCreatedAt(set.getString("created_at"));
             doc.setUpdatedAt(set.getString("modified_at"));
             doc.setTitle(set.getString("title"));
@@ -491,8 +490,8 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
             doc.setDateOfBirth(set.getString("birth_date"));
             doc.setFullName(set.getString("full_name"));
             doc.setSpecialty(set.getString("specialty"));
-            doc.setManagingOrganisation(set.getString("managing_organization_name"));
-            doc.setManagingOrganisationId(set.getString("managing_organization_id"));
+            doc.setManagingOrganisation(("Nyaho Medical Centre"));
+            doc.setManagingOrganisationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             doctors.add(doc);
 
         }
