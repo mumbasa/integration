@@ -594,7 +594,11 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 pd.setLastName(record.getString("last_name"));
                 pd.setFirstName(record.getString("first_name"));
                 pd.setMobile(record.getString("mobile"));
+                if(pd.getMobile()!=null){
                 pd.setMobile(generateMobile(pd.getMobile().replaceAll("\u0000", "")));
+                }else{
+                    pd.setMobile("");
+                }
                 pd.setEmail(record.getString("email"));
                 pd.setBirthDate(record.getString("birth_date"));
                 pd.setCreatedAt(record.getString("created_at"));
