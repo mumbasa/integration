@@ -166,14 +166,14 @@ public class PatientService {
 
 
 
-    public  Map<String,List<Address>> getLegacyAddress(int batchSize) {
+    public  Map<String,Address> getLegacyAddress(int batchSize) {
       
         String sql = "SELECT count(*) from patient_address";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
-        Map<String,List<Address>> addresses = new HashMap<String,List<Address>>();
+        Map<String,Address> addresses = new HashMap<String,Address>();
 
         for (int i = 0; i < batches; i++) {
             List<Address> serviceRequests = new ArrayList<Address>();
@@ -200,14 +200,10 @@ FROM patient_address pa join patient p on p.id=pa.patient_id order by pa.id  asc
                 request.setId(set.getLong("id"));
                 request.setDistrict(set.getString("district"));
                 request.setCountry(set.getString("country"));
-                if(addresses.keySet().contains(request.getPatientId())){
-                    addresses.get(request.getPatientId()).add(request);
-                }else{
-                    List<Address>address = new ArrayList<>();
-                    address.add(request);
-                    addresses.put(request.getPatientId(), address);
+             
+                addresses.put(request.getPatientId(), addresses.get(request.getPatientId()));
 
-                }
+                
             
 
                 serviceRequests.add(request);
@@ -573,7 +569,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
   
 
     public void getLegacyAllPatients(int batchSize) {
-       Map<String,List<Address>> address = getLegacyAddress(batchSize);
+       Map<String,Address> address = getLegacyAddress(batchSize);
     Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
 
         Set<String> mrs = new HashSet<>();
@@ -649,9 +645,18 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
            patientRepository.saveAll(patients);
             LOGGER.info("Saved patient result");
         }
-        List<Address> adds= new ArrayList<Address>();
         
-     //   addressRepo.saveAll(address.values().stream().toList());
+      
+        
+       addressRepo.saveAll(address.values().stream().toList());
+       //saveLegacyAddressInSerenity(address.values().stream().toList());
+
+       persons.values().stream().forEach(e -> 
+       {
+        //saveRelatedPersion(e);
+    relatedRepo.saveAll(e);
+    }
+       );
 
     }
 

@@ -485,6 +485,7 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
             doc.setMobile(set.getString("mobile"));
             doc.setFirstName(set.getString("first_name"));
             doc.setExternalId(set.getString("uuid"));
+            doc.setExternalSystem("opd");
             doc.setLastName(set.getString("last_name"));
             doc.setGender(set.getString("gender"));
             doc.setDateOfBirth(set.getString("birth_date"));

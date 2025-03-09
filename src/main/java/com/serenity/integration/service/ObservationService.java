@@ -3,6 +3,7 @@ package com.serenity.integration.service;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -22,15 +23,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
-import com.serenity.integration.models.DiagnosticReport;
 import com.serenity.integration.models.Doctors;
 import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.ObservationRepository;
 import com.serenity.integration.repository.PatientRepository;
-
-import io.micrometer.observation.ObservationRegistry;
 
 @Service
 public class ObservationService {
@@ -61,6 +59,38 @@ public class ObservationService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     public void getLegacyObservations(int batchSize) {
+        Map<String,String> vitalMap = new HashMap<>();
+        vitalMap.put("SBP", "8480-6");
+        vitalMap.put("BLOOD_PRESSURE", "8462-4");
+        vitalMap.put("RESPIRATORY_RATE", "9279-1");
+        vitalMap.put("OXYGEN_SATURATION", "20564-1");
+        vitalMap.put("DEGREES_CELCIUS", "8310-5");
+        vitalMap.put("temperature", "8310-5");
+        vitalMap.put("WEIGHT_KG", "3141-9");
+        vitalMap.put("PULSE", "8867-4");
+        vitalMap.put("BLOOD_SUGAR", "2339-0");
+        vitalMap.put("BMI", "3141-9");
+        vitalMap.put("HEIGHT_CM", "8302-2");
+        vitalMap.put("HEART_RATE", "8867-4");
+        vitalMap.put("AVPU", "67775-7");
+        
+
+        Map<String,String> unitlMap = new HashMap<>();
+        vitalMap.put("SBP", "mm[Hg]");
+        vitalMap.put("BLOOD_PRESSURE", "mm[Hg]");
+        vitalMap.put("RESPIRATORY_RATE", "beats/min");
+        vitalMap.put("OXYGEN_SATURATION", "%");
+        vitalMap.put("DEGREES_CELCIUS", "°C");
+        vitalMap.put("temperature", "°C");
+        vitalMap.put("WEIGHT_KG", "kg");
+        vitalMap.put("PULSE", "beats/min");
+        vitalMap.put("BLOOD_SUGAR", "mmol/L");
+        vitalMap.put("BMI", "kg/m2");
+        vitalMap.put("HEIGHT_CM", "cm");
+        vitalMap.put("HEART_RATE", "beats/min");
+        vitalMap.put("AVPU", "");
+
+
         Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
@@ -92,6 +122,7 @@ public class ObservationService {
                 request.setCategory(set.getString("category"));
                 request.setCreatedAt(set.getString(3));
                 request.setIssued(set.getString("issued"));
+                request.setValue(set.getString("value"));
                 request.setBodySite(set.getString("body_site"));
                 request.setInterpretation(set.getString("interpretation"));
                 request.setRank(set.getInt("rank"));
