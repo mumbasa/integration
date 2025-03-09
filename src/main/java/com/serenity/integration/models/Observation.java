@@ -30,6 +30,7 @@ public class Observation {
     private String system;
     private String issued;
     private String unit;
+    @Column(columnDefinition = "TEXT")
     private String value;
     private String score;
     private String hexColorCode;

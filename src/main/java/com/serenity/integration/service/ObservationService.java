@@ -122,7 +122,14 @@ public class ObservationService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    select * from observation dr join patient p on p.id = dr.patient_id order by dr.id asc offset ? LIMIT ?
+
+            SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, category, code,
+             issued, unit, value, data_absent_reason, body_site, "method", specimen, device, effective_date_time,
+              diagnostic_report_id, encounter_id, p.uuid as patient_id, visit_id, display, interpretation,
+               reference_range_high, reference_range_low, "rank", performer_id, performer_name
+FROM observation o join patient p on p.id=o.patient_id;
+
+            order by dr.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -147,6 +154,9 @@ public class ObservationService {
                 request.setUnit(set.getString("unit"));
                 request.setCategory(set.getString("category"));
                 }
+                if(request.getCategory()==null){
+                    request.setCategory("vital-signs");
+                }
                 request.setUpdatedAt (set.getString("created_at"));
                 request.setIssued(set.getString("issued"));
                 request.setValue(set.getString("value"));
@@ -156,6 +166,7 @@ public class ObservationService {
                 request.setReferenceRangeHigh(set.getString("reference_range_high"));
                 request.setReferenceRangeLow(set.getString("reference_range_low"));
                 request.setSpecimen(set.getString("specimen"));
+                request.setPractitionerId(sql);
                 serviceRequests.add(request);
 
             }
