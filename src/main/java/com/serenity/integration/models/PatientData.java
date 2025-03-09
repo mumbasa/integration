@@ -83,8 +83,9 @@ public class PatientData {
   @Column(nullable = true)
 
   private String otherNames;
+  @Column(nullable = true,columnDefinition = "TEXT")
   private String address;
-
+  @Column(nullable = true,columnDefinition = "TEXT")
   private String relatedPerson;
 
   @SerializedName("mr_number")
