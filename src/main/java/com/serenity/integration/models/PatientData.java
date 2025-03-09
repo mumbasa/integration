@@ -110,13 +110,10 @@ public class PatientData {
   @Column(nullable = true)
 
   private String birthTime;
-  @SerializedName("religious_affiliation")
 
-  private SerialArray religiousAffiliation;
   @Column(name = "managing_organization_id")
   @SerializedName("managing_organization_id")
   private String managingOrganizationId;
-
   @Column(name = "managing_organization")
   @SerializedName("managing_organization")
   private String managingOrganization;

@@ -130,6 +130,7 @@ InvoiceService invoiceService;
 		//allergyService.migrateAlleryThread(1000);
 		patientService.getLegacyAllPatients(100);
 		practitionerService.addSerenityPractitioner();
+		observationService.getLegacyObservations(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		// encounterService.encounterLegacythread();

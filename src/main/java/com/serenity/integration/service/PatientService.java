@@ -491,7 +491,9 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             pd.setNationality(record.getString("country"));
             pd.setPassportNumber(record.getString("passport_no"));
             pd.setBirthTime(record.getString("timeofbirth"));
-        //    pd.setReligiousAffiliation(record.getString("religiousaffiliation"));
+            Object[] obj =(Object[]) record.getObject("religiousaffiliation");
+            
+
             pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             fallouts.add(pd);
         }
@@ -632,7 +634,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 pd.setFullName(pd.getFirstName()+pd.getOtherNames()==null?" ":" "+pd.getOtherNames()+" "+pd.getLastName());
                 
 
-                pd.setReligiousAffiliation(record.getObject("religious_affiliation",SerialArray.class));
+            //    pd.setReligiousAffiliation(record.getObject("religious_affiliation",SerialArray.class));
                 pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 pd.setManagingOrganization("Nyaho Medical Centre");
                 pd.setDeceased(record.getBoolean("is_deceased"));
@@ -649,7 +651,6 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 e.printStackTrace();
 
                } 
-               System.err.println(pd.getReligiousAffiliation()+" -----------");
                 patients.add(pd);
 
             }
@@ -788,7 +789,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 data.setEmployer(resultSet.getString("employer"));
                 data.setMaritalStatus(resultSet.getString("marital_status"));
                 data.setOccupation(resultSet.getString("occupation"));
-                data.setReligiousAffiliation(resultSet.getObject("religious_affiliation",SerialArray.class));
+              //  data.setReligiousAffiliation(resultSet.getObject("religious_affiliation",SerialArray.class));
                 data.setTitle(resultSet.getString("name_prefix"));
                 data.setNationality(sql);
                 data.setOtherNames(resultSet.getString("other_names"));
