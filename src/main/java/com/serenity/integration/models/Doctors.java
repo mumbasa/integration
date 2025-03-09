@@ -23,6 +23,8 @@ public class Doctors {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    private String uuid;
+
     @Column(name = "country_code")
     private String countryCode;
 
@@ -55,7 +57,8 @@ public class Doctors {
     private String hisId;
     private String empId;
     private String serenityId;
-    private String serenityUUid;
+    private String serenityUUid;;
+    private String specialty;
     private String createdAt;
     private String externalId;
     private String externalSystem;

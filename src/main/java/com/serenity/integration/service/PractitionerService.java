@@ -475,6 +475,8 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
         SqlRowSet set = serenityJdbcTemplate.queryForRowSet(sql);
         while (set.next()) {
             Doctors doc = new Doctors();
+            doc.setUuid(set.getString("uuid"));
+            doc.setId(set.getLong("id"));
             doc.setCreatedAt(set.getString("created_at"));
             doc.setUpdatedAt(set.getString("modified_at"));
             doc.setTitle(set.getString("title"));
@@ -482,10 +484,12 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
             doc.setEmail(set.getString("email"));
             doc.setMobile(set.getString("mobile"));
             doc.setFirstName(set.getString("first_name"));
+            doc.setExternalId(set.getString("uuid"));
             doc.setLastName(set.getString("last_name"));
             doc.setGender(set.getString("gender"));
             doc.setDateOfBirth(set.getString("birth_date"));
             doc.setFullName(set.getString("full_name"));
+            doc.setSpecialty(set.getString("specialty"));
             doc.setManagingOrganisation(set.getString("managing_organization_name"));
             doc.setManagingOrganisationId(set.getString("managing_organization_id"));
             doctors.add(doc);
@@ -559,8 +563,8 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
       
         String sql ="""
                 INSERT INTO public.practitioners
-                        (created_at,  id, \"uuid\", first_name, last_name, full_name, mobile, email, birth_date, gender, is_active, managing_organization_id, managing_organization_name,  external_id, external_system, name_prefix, national_mobile_number) 
-                        VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('practitioners_id_seq'::regclass), uuid(?), ?, ?, ?, ?, ?, to_date(?, 'YYYY-MM-DD'), ?, false, uuid('161380e9-22d3-4627-a97f-0f918ce3e4a9'), 'Nyaho Medical Centre',  ?, ?, ?, ?);
+                        (created_at,  id, \"uuid\", first_name, last_name, full_name, mobile, email, birth_date, gender, is_active, managing_organization_id, managing_organization_name,  external_id, external_system, name_prefix, national_mobile_number,specialty) 
+                        VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('practitioners_id_seq'::regclass), uuid(?), ?, ?, ?, ?, ?, to_date(?, 'YYYY-MM-DD'), ?, false, uuid('161380e9-22d3-4627-a97f-0f918ce3e4a9'), 'Nyaho Medical Centre',  ?, ?, ?, ?,?);
 
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -569,10 +573,10 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 // TODO Auto-generated method stub
                 ps.setString(1,doctors.get(i).getCreatedAt());
-                ps.setString(2, doctors.get(i).getSerenityUUid());
+                ps.setString(2, doctors.get(i).getUuid());
                 ps.setString(3, doctors.get(i).getFirstName());
                 ps.setString(4, doctors.get(i).getLastName()==null?"": doctors.get(i).getLastName());
-                ps.setString(5, doctors.get(i).getFullName()==null?"": doctors.get(i).getFullName());
+                ps.setString(5, doctors.get(i).getFullName()==null?"": doctors.get(i).getFullName()+" "+doctors.get(i).getLastName());
             
                 ps.setString(6, doctors.get(i).getMobile().strip());
                 ps.setString(7, doctors.get(i).getEmail());
@@ -582,6 +586,7 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
                 ps.setString(11, doctors.get(i).getExternalSystem());
                 ps.setString(12, doctors.get(i).getTitle());
                 ps.setString(13, doctors.get(i).getMobile());
+                ps.setString(14, doctors.get(i).getSpecialty());
 
 
             }

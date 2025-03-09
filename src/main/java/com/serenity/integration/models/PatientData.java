@@ -12,11 +12,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-
+@Setter
+@Getter
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true)
@@ -81,6 +83,9 @@ public class PatientData {
   @Column(nullable = true)
 
   private String otherNames;
+  private String address;
+
+  private String relatedPerson;
 
   @SerializedName("mr_number")
   private String mrNumber;
@@ -91,6 +96,11 @@ public class PatientData {
   private String bloodType;
   @Column(nullable = true)
   @SerializedName("passport_number")
+  
+  private boolean isDeceased;
+  private boolean isActive;
+  private boolean isMultipleBirth;
+  private int multipleBirthInteger;
 
   private String passportNumber;
 

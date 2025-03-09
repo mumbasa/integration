@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -43,19 +44,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.serenity.integration.models.Address;
 import com.serenity.integration.models.Doctors;
 import com.serenity.integration.models.EncounterNote;
 import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.models.RelatedPerson;
+import com.serenity.integration.repository.AddressRepo;
 import com.serenity.integration.repository.PatientRepository;
+import com.serenity.integration.repository.RelatedRepo;
 
 @Service
 public class PatientService {
 
     @Autowired
     PatientRepository patientRepository;
+
+    @Autowired
+    RelatedRepo relatedRepo;
+
+    @Autowired
+    AddressRepo addressRepo;
 
     @Autowired
     @Qualifier(value = "hisJdbcTemplate")
@@ -93,8 +105,8 @@ public class PatientService {
 
 
 
-    public void getLegacyRelated(int batchSize) {
-      
+    public Map<String,List<RelatedPerson>> getLegacyRelated(int batchSize) {
+        Map<String,List<RelatedPerson>> persons = new HashMap<>();
         String sql = "SELECT count(*) from patient_relatedperson";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -132,17 +144,136 @@ public class PatientService {
                 request.setGender(set.getString("gender"));
                 request.setId(set.getLong("id"));
                 request.setActive(set.getBoolean("is_active"));
+                if(persons.keySet().contains(request.getPatientId())){
+                    persons.get(request.getPatientId()).add(request);
+
+                }else{
+                    List<RelatedPerson> person= new ArrayList<>();
+                    person.add(request);
+                    persons.put(request.getPatientId(), person);
+
+                }
              
                 serviceRequests.add(request);
 
             }
           
             LOGGER.info("Saved Related result");
-            saveRelatedPersion(serviceRequests);
+          //  saveRelatedPersion(serviceRequests);
         }
+        return persons;
     }
 
-        public void saveRelatedPersion(List<RelatedPerson> persons){
+
+
+    public  Map<String,List<Address>> getLegacyAddress(int batchSize) {
+      
+        String sql = "SELECT count(*) from patient_address";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+        Map<String,List<Address>> addresses = new HashMap<String,List<Address>>();
+
+        for (int i = 0; i < batches; i++) {
+            List<Address> serviceRequests = new ArrayList<Address>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+                     SELECT pa.id, pa.created_at, pa.modified_at, pa."uuid", use, city, line, 
+                     "type", state, country, district, postal_code, p.uuid as patient_id
+FROM patient_address pa join patient p on p.id=pa.patient_id order by pa.id  asc offset ? LIMIT ?
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            while (set.next()) {
+                Address request = new Address();
+                request.setUuid(set.getString("uuid"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setUse(set.getString("use"));
+                request.setCity(set.getString("city"));
+                request.setLine(set.getString("line"));
+                request.setType(set.getString("type"));
+                request.setState(set.getString("state"));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setPostalCode(set.getString("postal_code"));
+                request.setId(set.getLong("id"));
+                request.setDistrict(set.getString("district"));
+                request.setCountry(set.getString("country"));
+                if(addresses.keySet().contains(request.getPatientId())){
+                    addresses.get(request.getPatientId()).add(request);
+                }else{
+                    List<Address>address = new ArrayList<>();
+                    address.add(request);
+                    addresses.put(request.getPatientId(), address);
+
+                }
+            
+
+                serviceRequests.add(request);
+
+            }
+        //  saveLegacyAddressInSerenity(serviceRequests);
+            LOGGER.info("Saved Related result");
+         
+        }
+        return addresses;
+    }
+
+    public void saveLegacyAddressInSerenity(List<Address> addresses){
+String sql ="""
+        INSERT INTO patient_addresses
+(created_at, updated_at, id, patient_id, "uuid", 
+use, city, line, "type", state, 
+country, district, postal_code)
+VALUES(?::timestamp, ?::timestamp, ?, uuid(?), uuid(?), ?, ?, ?, ?, ?, ?, ?, ?);
+        """;
+
+        serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                // TODO Auto-generated method stub
+           Address address = addresses.get(i);
+           ps.setString(1, address.getCreatedAt());
+           ps.setString(2, address.getUpdatedAt());
+        ps.setLong(3, address.getId());
+        ps.setString(4, address.getPatientId());
+        ps.setString(5, address.getUuid());
+        ps.setString(6, address.getUse());
+        ps.setString(7, address.getCity());        
+        ps.setString(8, address.getLine());
+        ps.setString(9, address.getType());
+
+        ps.setString(10, address.getState());
+        ps.setString(11, address.getCountry());
+        ps.setString(12, address.getDistrict());
+
+        ps.setString(13, address.getPostalCode());
+
+
+
+
+
+
+
+            }
+
+            @Override
+            public int getBatchSize() {
+                // TODO Auto-generated method stub
+              return addresses.size();
+            }
+            
+        }
+        );
+
+
+
+    }
+
+
+    public void saveRelatedPersion(List<RelatedPerson> persons){
             String sql ="""
                     INSERT INTO related_persons
 (patient_id, id, created_at, updated_at, "uuid", 
@@ -291,6 +422,18 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
     }
 
+    
+    public static String generateMRNumber(String prefix, LocalDate createdAt) {
+        // Format the date for a more precise timestamp (e.g., YYMMDD)
+        String dateSuffix = createdAt.format(DateTimeFormatter.ofPattern("yy"));
+
+        // Generate a short UUID (for uniqueness)
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+
+        // Format the MR number with prefix, date, random suffix, and unique ID
+        return String.format("%s-%s-%s", prefix.toUpperCase(), dateSuffix, uniqueId);
+
+    }
     public static String generateMobile(String number) {
         // Format the date for a more precise timestamp (e.g., YYMMDD)
         try {
@@ -380,6 +523,28 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         return mrNumber;
     }
 
+
+    public static String checkAndGenereate(Set<String> mrNumbers, String mrNumber, String prefix,
+            LocalDate createdAt) {
+        int attempts = 0;
+        final int MAX_ATTEMPTS = 10;
+        if (!mrNumbers.contains(mrNumber)) {
+            mrNumbers.add(mrNumber);
+            return mrNumber;
+        }
+        do {
+            mrNumber = generateMRNumber(prefix, createdAt);
+            attempts++;
+
+            if (attempts >= MAX_ATTEMPTS) {
+                throw new RuntimeException("Failed to generate unique MR number after " + MAX_ATTEMPTS + " attempts");
+            }
+        } while (mrNumbers.contains(mrNumber));
+
+        mrNumbers.add(mrNumber);
+
+        return mrNumber;
+    }
     public static UUID checkAndGenereateUUID(Set<UUID> uuids, UUID uuid) {
         if (uuids.contains(uuid)) {
             uuid = UUID.randomUUID();
@@ -406,6 +571,94 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
     }
 
   
+
+    public void getLegacyAllPatients(int batchSize) {
+       Map<String,List<Address>> address = getLegacyAddress(batchSize);
+    Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
+
+        Set<String> mrs = new HashSet<>();
+
+        String sql = "SELECT count(*) from patient";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<PatientData> patients = new ArrayList<PatientData>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+                    select * from patient order by  id asc offset ? LIMIT ?
+                     """;
+            SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            while (record.next()) {
+                PatientData pd = new PatientData();
+                pd.setExternalId(record.getString("uuid"));
+                pd.setLastName(record.getString("last_name"));
+                pd.setFirstName(record.getString("first_name"));
+                pd.setMobile(record.getString("mobile"));
+                pd.setMobile(generateMobile(pd.getMobile().replaceAll("\u0000", "")));
+                pd.setEmail(record.getString("email"));
+                pd.setBirthDate(record.getString("birth_date"));
+                pd.setCreatedAt(record.getString("created_at"));
+                String str = record.getString("created_at");
+
+
+                if (str != null) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate dateTime = LocalDate.parse(str.split(" ")[0], formatter);
+                    String mr = generateMRNumber("NMC", dateTime);
+                    pd.setMrNumber(checkAndGenereate(mrs, mr, "NMC", dateTime));
+                }
+    
+                pd.setUuid(record.getString("uuid"));
+                pd.setId(record.getLong("id"));
+                pd.setGender(record.getString("gender").toUpperCase());
+                pd.setExternalSystem("opd");
+                pd.setNationalMobileNumber(record.getString("national_mobile_number"));
+                pd.setOtherNames(record.getString("other_names"));
+                pd.setTitle(record.getString("name_prefix"));
+                pd.setOccupation(record.getString("occupation"));
+                pd.setEmployer(record.getString("employer"));
+                pd.setBloodType(record.getString("blood_type"));
+                pd.setMaritalStatus(record.getString("marital_status"));
+                pd.setPassportNumber(record.getString("passport_number"));
+                pd.setBirthTime(record.getString("birth_time"));
+                pd.setFullName(pd.getFirstName()+pd.getOtherNames()==null?" ":" "+pd.getOtherNames()+" "+pd.getLastName());
+                pd.setReligiousAffiliation(record.getString("religious_affiliation"));
+                pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                pd.setManagingOrganization("Nyaho Medical Centre");
+                pd.setDeceased(record.getBoolean("is_deceased"));
+                pd.setActive(record.getBoolean("is_active"));
+                pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
+                pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
+                try{
+                String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
+                String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
+                pd.setRelatedPerson(relatedJson);
+                pd.setAddress(addressJson);
+               } catch(Exception e){
+                System.err.println("data not exit");
+                e.printStackTrace();
+
+               } 
+                patients.add(pd);
+
+            }
+           patientRepository.saveAll(patients);
+            LOGGER.info("Saved patient result");
+        }
+        List<Address> adds= new ArrayList<Address>();
+        
+     //   addressRepo.saveAll(address.values().stream().toList());
+
+    }
+
+
+
+
+
     public void getLegacyPatients(int offset) {
         List<PatientData> patientData = new ArrayList<>();
         // Note: Set<String> mrNumbers is declared but never used
@@ -505,7 +758,14 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 data.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 data.setManagingOrganization("Nyaho Medical Center");
                 data.setNationalMobileNumber(resultSet.getString("national_mobile_number"));
-
+                data.setBloodType(resultSet.getString("blood_type"));
+                data.setEmployer(resultSet.getString("employer"));
+                data.setMaritalStatus(resultSet.getString("marital_status"));
+                data.setOccupation(resultSet.getString("occupation"));
+                data.setReligiousAffiliation(resultSet.getString("religious_affiliation"));
+                data.setTitle(resultSet.getString("name_prefix"));
+                data.setNationality(sql);
+                data.setOtherNames(resultSet.getString("other_names"));
                 patientData.add(data);
             } catch (Exception e) {
                 LOGGER.error("Error processing patient record: " + e.getMessage());
