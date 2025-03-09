@@ -386,7 +386,7 @@ FROM visit  v join patient p  on p.id = v.patient_id
             visit.setStatus(set.getString("status"));
             visit.setStartedAt(set.getString("arrived_at"));
             visit.setEndedAt(set.getString("ended_at"));
-           // visit.setHisNumber(set.getString("mr_number"));
+            visit.setPatientId(set.getString("patient_id"));
             visit.setExternalSystem("opd");
             visit.setExternalId(set.getString("uuid"));
             visit.setAssignedToId(set.getString("assigned_to_id"));
@@ -421,6 +421,7 @@ FROM visit  v join patient p  on p.id = v.patient_id
     visitRepository.saveAll(visits);
 
         }
+        updateVisits();
 }
 
 
@@ -577,6 +578,24 @@ public void removeDuplication(){
             """;
   
   
+  }
+
+  public void updateVisits(){
+    String sql="""
+            update visits
+set assignedtoname = concat(d.first_name,' ',d.last_name) 
+from doctors  d 
+where d."uuid" =visits.assignedtoid ;
+            """;
+            legJdbcTemplate.update(sql);
+            sql ="""
+                    update visits
+set patientmrnumber = d.mrnumber 
+from patient_information  d 
+where d."uuid" =visits.patientid 
+                    """;
+                    legJdbcTemplate.update(sql);
+
   }
 
 }
