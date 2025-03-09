@@ -133,8 +133,8 @@ InvoiceService invoiceService;
 	//observationService.getLegacyObservations(1000);
 		//visitService.getLegacyVisit(1000);
 		//encounterService.getLegacyEncounters(1000);
-		//noteService.getLegacyEncounters(10);
-		noteService.getLegacyVisitNotesEncounters(10);
+		noteService.getLegacyEncounters(1000);
+		noteService.getLegacyVisitNotesEncounters(1000);
 	
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
