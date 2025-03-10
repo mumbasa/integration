@@ -640,6 +640,7 @@ FROM patient p join patient_account pa on pa."uuid"  = uuid(p.previous_patient_a
 
                 try{
                     String tags = record.getString("religious_affiliation");
+                pd.setReligiousAffiliation(tags);
 System.err.println(tags);
             }catch(Exception e){
                     System.err.println("error");
