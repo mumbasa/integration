@@ -256,6 +256,12 @@ FROM observation o join patient p on p.id=o.patient_id join encounter e  on e.id
                 where observations.encounterid =e."uuid" and practitionerid is null ;
                             """;
         vectorJdbcTemplate.update(sql);
+        sql ="""
+                update observations 
+set visit_id =e.visit_id
+from encounters e
+where e.uuid = observations.encounter_id
+                """;
     }
 
     public void migrateObservationThread(int batchSize) {

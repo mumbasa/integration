@@ -52,6 +52,11 @@ public class VisitService {
     @Qualifier(value = "legJdbcTemplate")
     JdbcTemplate legJdbcTemplate;
 
+   
+    @Autowired
+    @Qualifier("vectorJdbcTemplate")
+    JdbcTemplate vectorJdbcTemplate;
+    
     @Autowired
     PatientRepository patientRepository;
 
@@ -587,14 +592,14 @@ set assignedtoname = concat(d.first_name,' ',d.last_name)
 from doctors  d 
 where d."uuid" =visits.assignedtoid ;
             """;
-            legJdbcTemplate.update(sql);
+            vectorJdbcTemplate.update(sql);
             sql ="""
                     update visits
 set patientmrnumber = d.mrnumber 
 from patient_information  d 
 where d."uuid" =visits.patientid 
                     """;
-                    legJdbcTemplate.update(sql);
+                    vectorJdbcTemplate.update(sql);
 
   }
 

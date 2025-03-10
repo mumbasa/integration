@@ -117,6 +117,7 @@ public class PatientData {
   @Column(name = "managing_organization")
   @SerializedName("managing_organization")
   private String managingOrganization;
+  private String religiousAffiliation;
 
   public PatientData() {
 

@@ -591,7 +591,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    select * from patient order by  id asc offset ? LIMIT ?
+                    SELECT id, "uuid", created_at, modified_at, txid, ts, resource_type, status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased, is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, managing_organization_id, user_id, email, mobile, national_mobile_number, previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id, current_visit_uuid
+FROM patient order by  id asc offset ? LIMIT ?
                      """;
             SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (record.next()) {
@@ -632,16 +633,20 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 pd.setPassportNumber(record.getString("passport_number"));
                 pd.setBirthTime(record.getString("birth_time"));
                 pd.setFullName(pd.getFirstName()+pd.getOtherNames()==null?" ":" "+pd.getOtherNames()+" "+pd.getLastName());
-                
 
-            //    pd.setReligiousAffiliation(record.getObject("religious_affiliation",SerialArray.class));
-                pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                try{
+                    String tags = record.getString("religious_affiliation");
+System.err.println(tags);
+            }catch(Exception e){
+                    System.err.println("error");
+                }
+               pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 pd.setManagingOrganization("Nyaho Medical Centre");
                 pd.setDeceased(record.getBoolean("is_deceased"));
                 pd.setActive(record.getBoolean("is_active"));
                 pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
                 pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
-                try{
+                 try{
                 String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
                 String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
                 pd.setRelatedPerson(relatedJson);
@@ -655,17 +660,18 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             }
            patientRepository.saveAll(patients);
+        //  addressRepo.saveAll(address.values());
             LOGGER.info("Saved patient result");
         }
         
       
         
-       //addressRepo.saveAll(address.values().stream().toList());
+       addressRepo.saveAll(address.values().stream().toList());
        //saveLegacyAddressInSerenity(address.values().stream().toList());
 
        persons.values().stream().forEach(e -> 
        {
-        //saveRelatedPersion(e);
+   //     saveRelatedPersion(e);
     relatedRepo.saveAll(e);
     }
        );

@@ -106,10 +106,12 @@ InvoiceService invoiceService;
 	
 		
 		long start = System.currentTimeMillis();
-		//	visitService.getLegacyVisit(1000);
+		
+		//visitService.getLegacyVisit(1000);
+		//visitService.updateVisits();
 		//noteService.getLegacyEncounters(2000);
 		//noteService.getLegacyVisitNotesEncounters(1000);
-		observationService.migrateObservationThread(1000);
+		//observationService.migrateObservationThread(1000);
 		//noteService.noteThread();
 
 	
@@ -117,7 +119,7 @@ InvoiceService invoiceService;
 		//encounterService.getLegacyEncounters(1000);
 		//noteService.getLegacyEncounters(1000);
 		//noteService.getLegacyVisitNotesEncounters(1000);
-	
+	patientService.getLegacyAllPatients(10);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 		// encounterService.encounterLegacythread();
