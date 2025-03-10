@@ -642,7 +642,6 @@ FROM patient p join patient_account pa on pa."uuid" = uuid(p.previous_patient_ac
                 try{
                     String tags = record.getString("religious_affiliation");
                 pd.setReligiousAffiliation(tags);
-System.err.println(tags);
             }catch(Exception e){
                     System.err.println("error");
                 }
@@ -672,15 +671,15 @@ System.err.println(tags);
         
       
         
-       addressRepo.saveAll(address.values().stream().toList());
+     //  addressRepo.saveAll(address.values().stream().toList());
        //saveLegacyAddressInSerenity(address.values().stream().toList());
 
-       persons.values().stream().forEach(e -> 
+     /*   persons.values().stream().forEach(e -> 
        {
         saveRelatedPersion(e);
     relatedRepo.saveAll(e);
     }
-       );
+       ); */
 
     }
 
