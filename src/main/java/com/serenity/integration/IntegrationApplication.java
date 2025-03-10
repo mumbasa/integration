@@ -11,22 +11,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import com.serenity.integration.cron.NoteServiceCron;
-import com.serenity.integration.cron.VisitsCron;
-import com.serenity.integration.models.Diagnosis;
-import com.serenity.integration.repository.EncounterRepository;
-import com.serenity.integration.repository.InvoiceRepository;
-import com.serenity.integration.repository.VisitRepository;
-import com.serenity.integration.service.AdmissionService;
+
 import com.serenity.integration.service.AllergyService;
 import com.serenity.integration.service.ChargeItemService;
-import com.serenity.integration.service.DiagnosisService;
 import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.InvoiceService;
-import com.serenity.integration.service.MedicalRequestService;
 import com.serenity.integration.service.NoteService;
-import com.serenity.integration.service.NoteWrangling;
 import com.serenity.integration.service.ObservationService;
 import com.serenity.integration.service.PatientMigrationService;
 import com.serenity.integration.service.PatientService;
@@ -119,12 +110,13 @@ InvoiceService invoiceService;
 		//encounterService.getLegacyEncounters(1000);
 		//noteService.getLegacyEncounters(1000);
 		//noteService.getLegacyVisitNotesEncounters(1000);
-	patientService.getLegacyAllPatients(10);
+		patientService.getLegacyAllPatients(10);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
-		// encounterService.encounterLegacythread();
-	// noteService.moveVisitNote();
-		// diagnosisService.getNursingDiagnosis();
+
+		//encounterService.encounterLegacythread();
+	    //noteService.moveVisitNote();
+		//diagnosisService.getNursingDiagnosis();
 		// diagnosisService.getProvisionalDiagnosis();;
 		
 		//diagnosisService.getLegacyDiagnosis();

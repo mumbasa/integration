@@ -591,8 +591,9 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    SELECT id, "uuid", created_at, modified_at, txid, ts, resource_type, status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased, is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, managing_organization_id, user_id, email, mobile, national_mobile_number, previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id, current_visit_uuid
-FROM patient order by  id asc offset ? LIMIT ?
+          SELECT p.id, p."uuid", p.created_at, p.modified_at, txid, ts, resource_type, p.status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased,p.is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, p.managing_organization_id, user_id, email, mobile, national_mobile_number, pa.uuid as previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id,currency, current_visit_uuid
+FROM patient p join patient_account pa on pa."uuid"  = uuid(p.previous_patient_account_uuid)
+            order by  p.id asc offset ? LIMIT ?
                      """;
             SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (record.next()) {
@@ -601,6 +602,9 @@ FROM patient order by  id asc offset ? LIMIT ?
                 pd.setLastName(record.getString("last_name"));
                 pd.setFirstName(record.getString("first_name"));
                 pd.setMobile(record.getString("mobile"));
+                pd.setPaymentMethod(record.getString("previous_payment_method"));
+                pd.setPreviousPatientAccountUuid(record.getString("previous_patient_account_uuid"));
+                pd.setPaymentCurrency(record.getString("currency"));
                 if(pd.getMobile()!=null){
                 pd.setMobile(generateMobile(pd.getMobile().replaceAll("\u0000", "")));
                 }else{
@@ -671,7 +675,7 @@ System.err.println(tags);
 
        persons.values().stream().forEach(e -> 
        {
-   //     saveRelatedPersion(e);
+        saveRelatedPersion(e);
     relatedRepo.saveAll(e);
     }
        );
