@@ -94,7 +94,7 @@ InvoiceService invoiceService;
 	@PostConstruct
 	public void coke() {
 		logger.info("Starting import");
-		//setupService.getProdToken();
+		setupService.loadToProd();
 		
 		long start = System.currentTimeMillis();
 		
