@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,26 +26,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.serenity.integration.models.AvailableTime;
 import com.serenity.integration.models.Category;
 import com.serenity.integration.models.CustomerGroup;
 import com.serenity.integration.models.CustomerGroupResponse;
+import com.serenity.integration.models.HealthCareServices;
 import com.serenity.integration.models.Healthcare;
 import com.serenity.integration.models.HealthcareService;
 import com.serenity.integration.models.HealthcareServiceResponse;
 import com.serenity.integration.models.PriceTier;
 import com.serenity.integration.models.Report;
 import com.serenity.integration.models.ServiceData;
-import com.serenity.integration.setup.Location;
-import com.serenity.integration.repository.ReportRepo;
-import com.serenity.integration.repository.ServiceDataRepo;
 import com.serenity.integration.models.ServicePriceResponse;
 import com.serenity.integration.models.ServicePricing;
 import com.serenity.integration.models.ServiceType;
 import com.serenity.integration.models.Specialty;
 import com.serenity.integration.models.User;
 import com.serenity.integration.models.V1Response;
+import com.serenity.integration.repository.HealthCareRepository;
+import com.serenity.integration.repository.ReportRepo;
+import com.serenity.integration.repository.ServiceDataRepo;
+import com.serenity.integration.setup.Location;
 
 @Service
 public class SetupService {
@@ -57,30 +59,32 @@ public class SetupService {
     ServiceDataRepo serviceDataRepo;
 
     @Autowired
+    HealthCareRepository repository;
+
+    @Autowired
     ReportRepo reportRepo;
     Logger LOGGER = LoggerFactory.getLogger("ME");
 
     public static void main(String[] args) {
-        Integer[] data ={0,1,2,3,4,5,6,7,8,9,10,11,12,13,15,16,17,18,19};
+        Integer[] data = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19 };
         List<Integer> das = Arrays.asList(data);
-        int as = (das.size()/3);
+        int as = (das.size() / 3);
         System.err.println(as);
-        int rounds=0;
-        for(int a=0;a<=as;a++){
-            if(rounds<as){
+        int rounds = 0;
+        for (int a = 0; a <= as; a++) {
+            if (rounds < as) {
                 System.err.println(true);
-            System.err.println(das.subList(a*3, (a*3)+3));
-            }else{
+                System.err.println(das.subList(a * 3, (a * 3) + 3));
+            } else {
 
                 System.err.println(false);
 
-                System.err.println(das.subList(rounds*3, das.size()));
+                System.err.println(das.subList(rounds * 3, das.size()));
 
             }
             rounds++;
 
         }
-
 
     }
 
@@ -143,7 +147,7 @@ public class SetupService {
     }
 
     public List<ServicePricing> getServicePrice(String orgId) {
-        List<ServicePricing> prices =  new ArrayList<>();
+        List<ServicePricing> prices = new ArrayList<>();
         // LOGGER.info("Searching for "+stock.getFullName());
         String url = "https://stag.api.cloud.serenity.health/v2/billing/service-prices?managing_organization=" + orgId;
 
@@ -156,19 +160,18 @@ public class SetupService {
                 ServicePriceResponse.class);
 
         int total = response.getBody().getTotal();
-        int rounds = 100/50;
-        for(int i=1;i<=(rounds+1);i++){
-            System.err.println("goint for round "+i);
-            response = restTemplate.exchange(url+"&page="+i, HttpMethod.GET, httpEntity,
-            ServicePriceResponse.class);
+        int rounds = 100 / 50;
+        for (int i = 1; i <= (rounds + 1); i++) {
+            System.err.println("goint for round " + i);
+            response = restTemplate.exchange(url + "&page=" + i, HttpMethod.GET, httpEntity,
+                    ServicePriceResponse.class);
             System.err.println(response.getBody().getData());
             prices.addAll(response.getBody().getData());
 
         }
-     
+
         return prices;
     }
-
 
     public ServicePricing getServicePrices(int id) {
         // LOGGER.info("Searching for "+stock.getFullName());
@@ -180,18 +183,12 @@ public class SetupService {
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ServicePricing> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity,
-        ServicePricing.class);
-System.err.println(response.getBody());
-        
+                ServicePricing.class);
+        System.err.println(response.getBody());
+
         return response.getBody();
     }
 
-
-
-
-
-
-    
     public List<Healthcare> getHealthService(String orgId) {
         // LOGGER.info("Searching for "+stock.getFullName());
         String url = "https://staging.nyaho.serenity.health/v1/providers/" + orgId
@@ -230,32 +227,69 @@ System.err.println(response.getBody());
         return (response.getBody());
     }
 
-    public void addHealthService(String orgId, String c) {
-        LOGGER.info("Searching for ");
+
+    public V1Response getProdToken() {
+        User user = new User();
+        user.setEmail("rejoicehormeku@gmail.com");
+        user.setPassword("5CYYkZhr92HwiPq");
+        Gson g = new Gson();
+        String data = g.toJson(user);
+        System.err.println(data);
+        String url = "https://api.services.serenity.health/v1/providers/auth/login";
+        System.err.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", "Bearer " + token);
+        headers.add("PROVIDER-PORTAL-ID", "J9DG4WcX+eV<;5xuKtY[yp8g&Sa@~R%wUMnE_6^.jbH{=Lf)>d");
+        HttpEntity<String> httpEntity = new HttpEntity<>(data, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<V1Response> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
+                V1Response.class);
+         System.err.println(response.getBody());
+        return (response.getBody());
+    }
+
+    public String addHealthService(String orgId, String c) {
+        LOGGER.info("Searching for " + c);
         String url = "https://staging.nyaho.serenity.health/v1/providers/" + orgId
                 + "/administration/healthcareservices";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
-        headers.add("Authorization", "Bearer " + token);
+        headers.add("Authorization", "Bearer " + getToken().getAccess());
         headers.add("PROVIDER-PORTAL-ID", "j&4P8F<6+dF7/HASJ^hI92/6a&jdJOj*O\"[pHsh}t{o\"&7]\"}1~wg&SI%--,h{/");
         HttpEntity<String> httpEntity = new HttpEntity<>(c, headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<HealthcareServiceResponse> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
-                HealthcareServiceResponse.class);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
+                String.class);
         System.err.println(response.getBody());
-        // return (response.getBody().getData());
+        return (response.getBody());
     }
 
-   
+    public String addHealthServiceProd(String c) {
+        LOGGER.info("Searching for " + c);
+        String url = "https://api.services.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
+        System.err.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.add("Authorization", "Bearer " + getProdToken().getAccess());
+        headers.add("provider-portal-id", "J9DG4WcX+eV<;5xuKtY[yp8g&Sa@~R%wUMnE_6^.jbH{=Lf)>d");
+        HttpEntity<String> httpEntity = new HttpEntity<>(c, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
+                String.class);
+        System.err.println(response.getBody());
+        return (response.getBody());
+    }
+
     public void setPricing(String orgId, String v1Provider) {
-          int count=1;
+        int count = 1;
         List<CustomerGroup> groups = getCustomerGroups(orgId);
         Map<String, CustomerGroup> groupMap = groups.stream().collect(Collectors.toMap(e -> e.getName(), e -> e));
         Map<String, ServicePricing> pricings = getServicePrice(orgId).stream()
                 .collect(Collectors.toMap(e -> e.getName(), e -> e));
 
-              System.err.println(pricings.keySet().size());
+        System.err.println(pricings.keySet().size());
         Map<String, Healthcare> healthMap = getHealthService(v1Provider).stream()
                 .collect(Collectors.toMap(e -> e.getHealthcareServiceName(), e -> e));
 
@@ -270,45 +304,42 @@ System.err.println(response.getBody());
 
             Iterable<CSVRecord> records = csvFormat.parse(in);
             for (CSVRecord record : records) {
-              
 
-                    ServicePricing servicePricing = new ServicePricing(record);
-                    servicePricing.setManagingOrganization(orgId);
-                    if (groupMap.containsKey(servicePricing.getCustomerGroupName())) {
-                        servicePricing
-                                .setCustomerGroupId(groupMap.get(servicePricing.getCustomerGroupName()).getUuid());
+                ServicePricing servicePricing = new ServicePricing(record);
+                servicePricing.setManagingOrganization(orgId);
+                if (groupMap.containsKey(servicePricing.getCustomerGroupName())) {
+                    servicePricing
+                            .setCustomerGroupId(groupMap.get(servicePricing.getCustomerGroupName()).getUuid());
 
-                    }
-                    if (healthMap.containsKey(servicePricing.getHealthcareServiceName())) {
-                        servicePricing
-                                .setHealthcareServiceId(healthMap.get(servicePricing.getHealthcareServiceName()).getId());
+                }
+                if (healthMap.containsKey(servicePricing.getHealthcareServiceName())) {
+                    servicePricing
+                            .setHealthcareServiceId(healthMap.get(servicePricing.getHealthcareServiceName()).getId());
 
-                    }
+                }
 
-                    if (servicePricing.getHealthcareServiceId() != null) {
-                      
-                        try{
-                            if (!pricings.containsKey(record.get(0))) {
-                                System.err.println("saving prices "+(count++));
+                if (servicePricing.getHealthcareServiceId() != null) {
 
-                      //  savePricing(servicePricing);
-                            }
-                            else {
-                               ServicePricing p = pricings.get(record.get(0));
-                               p.setAmount(record.get("basePrice"));
-                                System.err.println("already exit prices");
+                    try {
+                        if (!pricings.containsKey(record.get(0))) {
+                            System.err.println("saving prices " + (count++));
 
-                              //  LOGGER.info("already exist");
-                               updatePricing(servicePricing);
-                            }
-                        }catch(Exception e){
-                            System.err.println(e.getMessage());
-                            Gson k = new Gson();
-                           // System.err.println("error" +k.toJson(servicePricing));
+                            // savePricing(servicePricing);
+                        } else {
+                            ServicePricing p = pricings.get(record.get(0));
+                            p.setAmount(record.get("basePrice"));
+                            System.err.println("already exit prices");
+
+                            // LOGGER.info("already exist");
+                            updatePricing(servicePricing);
                         }
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                        Gson k = new Gson();
+                        // System.err.println("error" +k.toJson(servicePricing));
                     }
+                }
 
-                
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -588,7 +619,7 @@ System.err.println(response.getBody());
         reportRepo.saveAllAndFlush(daps);
     }
 
-    public  void savePricing(ServicePricing price) {
+    public void savePricing(ServicePricing price) {
 
         String url = "https://stag.api.cloud.serenity.health/v2/billing/service-prices";
 
@@ -603,10 +634,10 @@ System.err.println(response.getBody());
 
     }
 
-
     private void updatePricing(ServicePricing price) {
 
-        String url = "https://stag.api.cloud.serenity.health/v2/billing/service-prices/"+price.getHealthcareServiceId();
+        String url = "https://stag.api.cloud.serenity.health/v2/billing/service-prices/"
+                + price.getHealthcareServiceId();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -615,11 +646,172 @@ System.err.println(response.getBody());
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
-
         restTemplate.setRequestFactory(requestFactory);
         ResponseEntity<ServicePriceResponse> response = restTemplate.exchange(url, HttpMethod.PATCH, httpEntity,
                 ServicePriceResponse.class);
         LOGGER.info(response.getBody().toString());
+
+    }
+
+    public String getFromObject() {
+        // for(long id : repository.findAllId()){
+
+        HealthCareServices services = repository.findByPk(14);
+        String payload = formulatePayload(services);
+
+        try {
+            System.err.println(" add ing data");
+
+            addHealthServiceProd(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(1 + " failed");
+        }
+
+        return "done";
+
+    }
+
+    public String loadToProd() {
+        for (long id : repository.findAllId()) {
+
+            HealthCareServices services = repository.findByPk(id);
+            String payload = formulatePayload(services);
+            if (id > 1) {
+                try {
+                    System.err.println(" add ing data");
+
+                    addHealthServiceProd(payload);
+                } catch (Exception e) {
+                    System.err.println(id + " failed");
+                }
+            }
+        }
+
+        return "done";
+
+    }
+
+    public String formulatePayload(HealthCareServices healthcareService) {
+        String priceTiers = null;
+        try {
+            priceTiers = new ObjectMapper().writeValueAsString(healthcareService.getPriceTiers());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        String payload = String.format(
+                """
+                                 {
+                            "healthcare_service_not_available_times": [],
+                            "healthcare_service_available_times": [
+                                {
+                                    "is_all_day": false,
+                                    "availableStartTime": "00:00:00",
+                                    "availableEndTime": "20:00:00",
+                                    "daysOfWeek": [
+                                        "Sunday",
+                                        "Monday",
+                                        "Tuesday",
+                                        "Wednesday",
+                                        "Thursday",
+                                        "Friday",
+                                        "Saturday"
+                                    ]
+                                }
+                            ],
+                            "characteristic": null,
+                            "comment": "Healthcare service for %s",
+                            "communication": null,
+                            "extra_details": null,
+                            "healthcare_service_appointment_required": true,
+                            "healthcare_service_categories": [
+                                {
+                                    "code": "Diagnostic"
+                                }
+                            ],
+                            "healthcare_service_locations": [
+                                {
+                                    "id": "29e22113-9d7b-46a6-a857-810ca3567ca7",
+                                    "location_hours_of_operation": null,
+                                    "location_name": "Airport Main",
+                                    "location_alias": null,
+                                    "location_description": null,
+                                    "location_mode": "instance",
+                                    "location_contact_number": "+233307086490",
+                                    "street_address": "35 Kofi Annan St, Accra",
+                                    "location_physical_status": "building",
+                                    "location_availability_exception": null,
+                                    "uuid": "2f7d4c40-fe53-491d-877b-c2fee7edc1f2",
+                                    "created_at": "2021-12-02T16:54:00.658123Z",
+                                    "is_deleted": false,
+                                    "modified_at": "2021-12-02T16:54:02.089735Z",
+                                    "resource": null,
+                                    "resource_type": null,
+                                    "status": "active",
+                                    "operational_status": null,
+                                    "location_type": null,
+                                    "postal_code": "00233",
+                                    "city": "Accra",
+                                    "country": "GH",
+                                    "availability_exception": null,
+                                    "physical_type": "building",
+                                    "is_branch": true,
+                                    "longitude": "0.000000",
+                                    "latitude": "0.000000",
+                                    "altitude": "0.000000",
+                                    "managing_organization": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                                    "part_of": null
+                                }
+                            ],
+                            "healthcare_service_name": "%s",
+                            "healthcare_service_service_provision_code": "cost",
+                            "healthcare_service_specialties": [
+                                {
+                                    "code": "Radiology"
+                                }
+                            ],
+                            "healthcare_service_types": [
+                                {
+                                    "id": 378,
+                                    "coding": [
+                                        {
+                                            "code": "General Care",
+                                            "display": "General Care",
+                                            "system": null
+                                        }
+                                    ],
+                                    "text": "General Care",
+                                    "uuid": "6ee9eff0-9d7d-48e7-8a84-93706328b75d",
+                                    "created_at": "2024-02-10T09:39:13.831603Z",
+                                    "code": "General Care"
+                                }
+                            ],
+                            "id": "%s",
+                            "uuid": "%s",
+                            "is_active": true,
+                            "is_outsourced": false,
+                            "price_tiers": %s
+                            ,
+                            "program": null,
+                            "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                            "referral_method": null,
+                            "slot_duration": "30",
+                            "service_class": "Diagnostic",
+                            "service_request_category": "Imaging",
+                            "diagnostic_service_section": "Radiology",
+                            "service_request_specimen": null,
+                            "telecom": null,
+                            "virtual_service": false,
+                            "order_code": "%s",
+                            "revenue_tag_display": "X-Ray Fees"
+                        }
+
+                        """, healthcareService.getServiceName(), healthcareService.getServiceName(),
+                healthcareService.getId(), healthcareService.getUuid(), priceTiers, healthcareService.getOrderCode());
+
+        return payload;
 
     }
 }

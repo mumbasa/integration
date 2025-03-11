@@ -685,18 +685,6 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
 
 
 
-    public static String convertSerialClobToString(Clob clob)  {
-        if (clob == null) {
-            return null;
-        }
-        try {
-            return clob.getSubString(1, (int) clob.length());
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        }  // Convert SerialClob to String
-    }
     public void getLegacyPatients(int offset) {
         List<PatientData> patientData = new ArrayList<>();
         // Note: Set<String> mrNumbers is declared but never used
