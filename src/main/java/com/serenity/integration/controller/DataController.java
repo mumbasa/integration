@@ -25,8 +25,8 @@ HealthCareRepository repository;
 @Autowired
 SetupService setupService;
 @GetMapping("/data")
-public ResponseEntity<List<SensorData>> getData(){
-    return ResponseEntity.ok(noiseRepo.findAll());
+public ResponseEntity<HealthCareServices> getData(int key){
+    return ResponseEntity.ok(repository.findByPk(key));
 }
 
 @GetMapping("/services")

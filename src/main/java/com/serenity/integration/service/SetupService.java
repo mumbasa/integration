@@ -48,6 +48,7 @@ import com.serenity.integration.models.V1Response;
 import com.serenity.integration.repository.HealthCareRepository;
 import com.serenity.integration.repository.ReportRepo;
 import com.serenity.integration.repository.ServiceDataRepo;
+import com.serenity.integration.repository.ServicePriceRepo;
 import com.serenity.integration.setup.Location;
 
 @Service
@@ -60,6 +61,8 @@ public class SetupService {
 
     @Autowired
     HealthCareRepository repository;
+    @Autowired
+    ServicePriceRepo servicePriceRepo;
 
     @Autowired
     ReportRepo reportRepo;
@@ -673,19 +676,22 @@ public class SetupService {
     }
 
     public String loadToProd() {
-        for (long id : repository.findAllId()) {
+        for (long id : repository.findAllId().subList(0, 10)) {
 
             HealthCareServices services = repository.findByPk(id);
+            services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(id));
+            services.getPriceTiers().size();
             String payload = formulatePayload(services);
             if (id !=14) {
                 try {
-                    System.err.println(" adding data");
+                    System.err.println(payload);
                
                     addHealthServiceProd(payload);
                     
                 } catch (Exception e) {
                     System.err.println(id + " failed");
                     e.printStackTrace();
+                    break;
                 }
             }
         }
