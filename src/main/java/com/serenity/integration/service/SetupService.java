@@ -677,11 +677,12 @@ public class SetupService {
 
             HealthCareServices services = repository.findByPk(id);
             String payload = formulatePayload(services);
-            if (id > 1) {
+            if (id >4 & id !=14) {
                 try {
                     System.err.println(" add ing data");
-
+               
                     addHealthServiceProd(payload);
+                    
                 } catch (Exception e) {
                     System.err.println(id + " failed");
                 }
