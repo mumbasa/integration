@@ -666,12 +666,17 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 pd.setFirstName(record.getString("first_name"));
                 pd.setMobile(record.getString("mobile"));
               String paymentInformation[] = record.getString("payer_information").split("#");
-                pd.setPayerId(paymentInformation[3]);
+             try{
+              pd.setPayerId(paymentInformation[3]);
                 pd.setPayerName(paymentInformation[4]);
                 pd.setPolicyNumber(paymentInformation[0]);
                 pd.setPaymentMethod(paymentInformation[2]);
-                pd.setPreviousPatientAccountUuid(record.getString("previous_patient_account_uuid"));
                 pd.setPaymentCurrency(paymentInformation[1]);
+
+             }catch(Exception e){
+                System.out.println("Error in parsing payment information "+record.getString("payer_information"));
+             }
+                pd.setPreviousPatientAccountUuid(record.getString("previous_patient_account_uuid"));
               
               
                 if(pd.getMobile()!=null){
