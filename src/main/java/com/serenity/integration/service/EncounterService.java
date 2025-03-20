@@ -430,10 +430,10 @@ public class EncounterService {
 
 
 
-      //  Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-       //         .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+    //   Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
+      //          .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
        // Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-         //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+        //        .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
 
                 String sqlRow = "SELECT count(*) from encounter";
                 long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
@@ -446,7 +446,7 @@ public class EncounterService {
                     int startIndex = i * batchSize;
         List<Encounter> encounters = new ArrayList<>();
         String sql = """
-        SELECT e."uuid", e.created_at, e.is_deleted,e.modified_at,e.id, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
+        SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
 FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at offset ? limit ? ;        
 
                 """;
@@ -455,9 +455,11 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
          //   System.err.println(set.getString("mr_number")+"-----------------");
            // PatientData patient = patientDataMap.get(set.getString("mr_number"));
             Encounter encounter = new Encounter();
-            encounter.setUuid(set.getString("id"));
-            encounter.setExternalId(set.getString("id"));
+            encounter.setUuid(set.getString("uuid"));
+            encounter.setEncounterType(set.getString("type"));
+            encounter.setExternalId(set.getString("uuid"));
             encounter.setCreatedAt(set.getString("created_at"));
+            encounter.setUpdatedAt(set.getString("modified_at"));
             encounter.setEncounterClass(set.getString("encounter_class"));
             encounter.setPriority(set.getString("priority"));
             encounter.setPatientId(set.getString("patient_id"));
@@ -465,13 +467,14 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
             encounter.setPatientMobile(set.getString("mobile"));
             encounter.setExternalSystem("opd");
+            encounter.setPrescription(false);
             encounter.setDisplay(set.getString("uuid"));
             encounter.setLocationId(set.getString("primary_location_id"));
             encounter.setVisitId(set.getString("visit_id"));
             encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             encounter.setServiceProviderName("Nyaho Medical Centre");
             encounter.setStatus(set.getString(6));
-            encounters.add(encounter);
+            encounter.setPrescription(set.getBoolean("has_prescriptions"));
             logger.info("adding encounter");
         }
 encounterRepository.saveAll(encounters);

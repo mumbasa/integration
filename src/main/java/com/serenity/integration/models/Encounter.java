@@ -64,6 +64,8 @@ public class Encounter {
 
     @Column(name = "ended_at")
     private String endedAt;
+    @Column(name = "encounter_type")
+    private String encounterType;
 
     @Column(name = "external_id")
     private String externalId;

@@ -101,8 +101,8 @@ InvoiceService invoiceService;
 		}
 		long start = System.currentTimeMillis();
 		//patientService.getLegacyAllPatients(1000,1000);
-		patientService.getLegacyAllPatients2(1000,1000);
-
+		//patientService.getLegacyAllPatients2(1000,1000);
+		encounterService.getLegacyEncounters(1000);
 		//visitService.getLegacyVisit(1000);
 		//visitService.updateVisits();
 		//noteService.getLegacyEncounters(2000);
