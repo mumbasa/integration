@@ -159,11 +159,11 @@ public class PatientService {
                 }
              
                 serviceRequests.add(request);
+            relatedRepo.saveAll(serviceRequests);
 
             }
           
             LOGGER.info("Saved Related result");
-            relatedRepo.saveAll(serviceRequests);
           //  saveRelatedPersion(serviceRequests);
         }
         return persons;
@@ -652,7 +652,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         WHERE ci.patientid::UUID = p.uuid 
         ORDER BY ci.created_on DESC 
         LIMIT 1
-    ) AS payerInformation
+    ) AS payer_information
 FROM patient p 
 LEFT JOIN patient_account pa 
     ON pa."uuid" = p.previous_patient_account_uuid::uuid
@@ -665,7 +665,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 pd.setLastName(record.getString("last_name"));
                 pd.setFirstName(record.getString("first_name"));
                 pd.setMobile(record.getString("mobile"));
-              String paymentInformation[] = record.getString("payerInformation").split("#");
+              String paymentInformation[] = record.getString("payer_information").split("#");
                 pd.setPayerId(paymentInformation[3]);
                 pd.setPayerName(paymentInformation[4]);
                 pd.setPolicyNumber(paymentInformation[0]);
