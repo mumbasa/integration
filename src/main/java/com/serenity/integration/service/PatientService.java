@@ -755,7 +755,109 @@ ORDER BY p.id asc  offset ? LIMIT ?
  
     }
 
-
+    public void getLegacyAllPatients2(int batchSize,int sized) {
+        Map<String,Address> address = getLegacyAddress(batchSize);
+     Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
+    
+            Set<String> mrs = new HashSet<>();
+    
+            String sql = "SELECT count(*) from patient";
+            long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+    
+            long totalSize = rows;
+            long batches = (totalSize + sized - 1) / sized; // Ceiling division
+            LOGGER.info("Stating patient fetching");
+            for (int i = 0; i < batches; i++) {
+                List<PatientData> patients = new ArrayList<PatientData>();
+                int startIndex = i * sized;
+                String sqlQuery = """
+            SELECT p.id, p."uuid", p.created_at, p.modified_at, txid, ts, resource_type, p.status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased,p.is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, p.managing_organization_id, user_id, email, mobile, national_mobile_number, pa.uuid as previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id,currency, current_visit_uuid
+FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patient_account_uuid)  ORDER BY p.id asc  offset ? LIMIT ?
+                         """;
+                SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, sized);
+                while (record.next()) {
+                    PatientData pd = new PatientData();
+                    pd.setExternalId(record.getString("uuid"));
+                    pd.setLastName(record.getString("last_name"));
+                    pd.setFirstName(record.getString("first_name"));
+                    pd.setMobile(record.getString("mobile"));
+                    pd.setPaymentMethod(record.getString("previous_payment_method"));
+                    pd.setPaymentCurrency(record.getString("currency"));
+                  
+                    pd.setPreviousPatientAccountUuid(record.getString("previous_patient_account_uuid"));
+                  
+                  
+                    if(pd.getMobile()!=null){
+                    pd.setMobile(generateMobile(pd.getMobile().replaceAll("\u0000", "")));
+                    }else{
+                        pd.setMobile("");
+                    }
+                    pd.setEmail(record.getString("email"));
+                    pd.setBirthDate(record.getString("birth_date"));
+                    pd.setCreatedAt(record.getString("created_at"));
+                    String str = record.getString("created_at");
+    
+    
+                    if (str != null) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        LocalDate dateTime = LocalDate.parse(str.split(" ")[0], formatter);
+                        String mr = generateMRNumber("NMC", dateTime);
+                        pd.setMrNumber(checkAndGenereate(mrs, mr, "NMC", dateTime));
+                    }
+        
+                    pd.setUuid(record.getString("uuid"));
+                    pd.setId(record.getLong("id"));
+                    pd.setGender(record.getString("gender").toUpperCase());
+                    pd.setExternalSystem("opd");
+                    pd.setNationalMobileNumber(record.getString("national_mobile_number"));
+                    pd.setOtherNames(record.getString("other_names"));
+                    pd.setTitle(record.getString("name_prefix"));
+                    pd.setOccupation(record.getString("occupation"));
+                    pd.setEmployer(record.getString("employer"));
+                    pd.setBloodType(record.getString("blood_type"));
+                    pd.setPhoto(record.getString("photo"));
+                    pd.setMaritalStatus(record.getString("marital_status"));
+                    pd.setPassportNumber(record.getString("passport_number"));
+                    pd.setBirthTime(record.getString("birth_time"));
+                    pd.setFullName(pd.getFirstName()+pd.getOtherNames()==null?" ":" "+pd.getOtherNames()+" "+pd.getLastName());
+    
+                    try{
+                        String tags = record.getString("religious_affiliation");
+                    pd.setReligiousAffiliation(tags);
+                }catch(Exception e){
+                        System.err.println("error");
+                    }
+                   pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                    pd.setManagingOrganization("Nyaho Medical Centre");
+                    pd.setDeceased(record.getBoolean("is_deceased"));
+                    pd.setActive(record.getBoolean("is_active"));
+                    pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
+                    pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
+                      try{
+                    String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
+                    String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
+                    pd.setRelatedPerson(relatedJson);
+                    pd.setAddress(addressJson);
+                   } catch(Exception e){
+                    System.err.println("data not exit");
+                    e.printStackTrace();
+    
+                   }   
+                    patients.add(pd);
+    
+                }
+            patientRepository.saveAll(patients);
+            //  addressRepo.saveAll(address.values());
+                LOGGER.info("Saved patient result");
+            }
+            
+          
+            
+         
+     
+        }
+    
+    
 
     public void getLegacyPatients(int offset) {
         List<PatientData> patientData = new ArrayList<>();
