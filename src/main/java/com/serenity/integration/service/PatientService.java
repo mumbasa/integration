@@ -576,7 +576,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
   
 
-    public void getLegacyAllPatients(int batchSize) {
+    public void getLegacyAllPatients(int batchSize,int sized) {
     Map<String,Address> address = getLegacyAddress(batchSize);
  Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
 
@@ -586,11 +586,11 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
-        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+        long batches = (totalSize + sized - 1) / sized; // Ceiling division
         LOGGER.info("Stating patient fetching");
         for (int i = 0; i < batches; i++) {
             List<PatientData> patients = new ArrayList<PatientData>();
-            int startIndex = i * batchSize;
+            int startIndex = i * sized;
             String sqlQuery = """
         SELECT 
     p.id, 
@@ -658,7 +658,7 @@ LEFT JOIN patient_account pa
     ON pa."uuid" = p.previous_patient_account_uuid::uuid
 ORDER BY p.id asc  offset ? LIMIT ?
                      """;
-            SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, sized);
             while (record.next()) {
                 PatientData pd = new PatientData();
                 pd.setExternalId(record.getString("uuid"));

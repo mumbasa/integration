@@ -100,7 +100,7 @@ InvoiceService invoiceService;
 			e.printStackTrace();
 		}
 		long start = System.currentTimeMillis();
-		patientService.getLegacyAllPatients(1000);
+		patientService.getLegacyAllPatients(1000,100);
 		//visitService.getLegacyVisit(1000);
 		//visitService.updateVisits();
 		//noteService.getLegacyEncounters(2000);
