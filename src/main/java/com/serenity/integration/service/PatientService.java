@@ -163,6 +163,7 @@ public class PatientService {
             }
           
             LOGGER.info("Saved Related result");
+            relatedRepo.saveAll(serviceRequests);
           //  saveRelatedPersion(serviceRequests);
         }
         return persons;
@@ -213,6 +214,7 @@ FROM patient_address pa join patient p on p.id=pa.patient_id order by pa.id  asc
                 serviceRequests.add(request);
 
             }
+            addressRepo.saveAll(serviceRequests);
         //  saveLegacyAddressInSerenity(serviceRequests);
             LOGGER.info("Saved Related result");
          
@@ -737,15 +739,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
         
       
         
-     addressRepo.saveAll(address.values().stream().toList());
-  //  saveLegacyAddressInSerenity(address.values().stream().toList());
-
-       persons.values().stream().forEach(e -> 
-       {
-       // saveRelatedPersion(e);
-    relatedRepo.saveAll(e);
-    }
-       );
+     
  
     }
 
