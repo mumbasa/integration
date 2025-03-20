@@ -730,7 +730,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 patients.add(pd);
 
             }
-           patientRepository.saveAll(patients);
+        patientRepository.saveAll(patients);
         //  addressRepo.saveAll(address.values());
             LOGGER.info("Saved patient result");
         }
@@ -738,11 +738,11 @@ ORDER BY p.id asc  offset ? LIMIT ?
       
         
      addressRepo.saveAll(address.values().stream().toList());
-    saveLegacyAddressInSerenity(address.values().stream().toList());
+  //  saveLegacyAddressInSerenity(address.values().stream().toList());
 
        persons.values().stream().forEach(e -> 
        {
-        saveRelatedPersion(e);
+       // saveRelatedPersion(e);
     relatedRepo.saveAll(e);
     }
        );
