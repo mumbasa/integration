@@ -95,7 +95,7 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		try{
-		setupService.getProdToken();
+		//setupService.getProdToken();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

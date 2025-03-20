@@ -575,8 +575,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
   
 
     public void getLegacyAllPatients(int batchSize) {
-  //     Map<String,Address> address = getLegacyAddress(batchSize);
-   // Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
+    Map<String,Address> address = getLegacyAddress(batchSize);
+ Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
 
         Set<String> mrs = new HashSet<>();
 
@@ -590,15 +590,71 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             List<PatientData> patients = new ArrayList<PatientData>();
             int startIndex = i * batchSize;
             String sqlQuery = """
-          SELECT p.id, p."uuid", p.created_at, p.modified_at, txid, ts, resource_type, p.status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased,p.is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, p.managing_organization_id, user_id, email, mobile, national_mobile_number, pa.uuid as previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id,currency, current_visit_uuid,
-          (
-select concat(policy_id,'#',ci.currency,'#',payment_method,'#',ca.owner_id,'#',o."name") as payer_info from "ChargeItem" ci LEFT JOIN
-    "public"."organization_clientaccount" ca ON ci.payer_account_id::uuid = ca.uuid
-LEFT JOIN
-    "public"."organization" o ON ca.owner_id = o.id where patientid::uuid =p.uuid order by ci.created_on  desc limit 1
-    ) as payerInformation
-FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patient_account_uuid)
-            order by  p.id asc offset ? LIMIT ?
+        SELECT 
+    p.id, 
+    p."uuid", 
+    p.created_at, 
+    p.modified_at, 
+    p.txid, 
+    p.ts, 
+    p.resource_type, 
+    p.status, 
+    p.resource, 
+    p.mr_number, 
+    p.birth_date, 
+    p.birth_time, 
+    p.blood_type, 
+    p.deceased_date_time, 
+    p.employer, 
+    p.first_name, 
+    p.gender, 
+    p.is_active, 
+    p.is_deceased, 
+    p.is_deleted, 
+    p.last_name, 
+    p.marital_status, 
+    p.meta, 
+    p.multiple_birth_boolean, 
+    p.multiple_birth_integer, 
+    p.name_prefix, 
+    p.occupation, 
+    p.other_names, 
+    p.religious_affiliation::TEXT AS religious_affiliation, 
+    p.photo, 
+    p.passport_number, 
+    p.general_practitioner_id, 
+    p.managing_organization_id, 
+    p.user_id, 
+    p.email, 
+    p.mobile, 
+    p.national_mobile_number, 
+    pa.uuid AS previous_patient_account_uuid, 
+    p.previous_payment_method, 
+    p.is_hospitalized, 
+    p.admission_id, 
+    p.current_visit_uuid,
+    (
+        SELECT 
+            CONCAT(
+                COALESCE(ci.policy_id, 0), '#', 
+                COALESCE(ci.currency, ' '), '#', 
+                COALESCE(ci.payment_method, ' '), '#', 
+                COALESCE(ca.owner_id, ' '), '#', 
+                COALESCE(o."name", ' ')
+            ) AS payer_info 
+        FROM "ChargeItem" ci 
+        LEFT JOIN "public"."organization_clientaccount" ca 
+            ON ci.payer_account_id::UUID = ca.uuid 
+        LEFT JOIN "public"."organization" o 
+            ON ca.owner_id = o.id 
+        WHERE ci.patientid::UUID = p.uuid 
+        ORDER BY ci.created_on DESC 
+        LIMIT 1
+    ) AS payerInformation
+FROM patient p 
+LEFT JOIN patient_account pa 
+    ON pa."uuid" = p.previous_patient_account_uuid::uuid
+ORDER BY p.id asc  offset ? LIMIT ?
                      """;
             SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (record.next()) {
@@ -661,7 +717,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 pd.setActive(record.getBoolean("is_active"));
                 pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
                 pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
-             /*     try{
+                  try{
                 String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
                 String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
                 pd.setRelatedPerson(relatedJson);
@@ -670,7 +726,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 System.err.println("data not exit");
                 e.printStackTrace();
 
-               }  */
+               }  
                 patients.add(pd);
 
             }
@@ -681,16 +737,16 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
         
       
         
-   //   addressRepo.saveAll(address.values().stream().toList());
-       //saveLegacyAddressInSerenity(address.values().stream().toList());
+     addressRepo.saveAll(address.values().stream().toList());
+    saveLegacyAddressInSerenity(address.values().stream().toList());
 
-    /*    persons.values().stream().forEach(e -> 
+       persons.values().stream().forEach(e -> 
        {
-       /// saveRelatedPersion(e);
+        saveRelatedPersion(e);
     relatedRepo.saveAll(e);
     }
        );
- */
+ 
     }
 
 
