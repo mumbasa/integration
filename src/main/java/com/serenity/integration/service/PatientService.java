@@ -159,10 +159,10 @@ public class PatientService {
                 }
              
                 serviceRequests.add(request);
-            relatedRepo.saveAll(serviceRequests);
+          
 
             }
-          
+            relatedRepo.saveAll(serviceRequests);
             LOGGER.info("Saved Related result");
           //  saveRelatedPersion(serviceRequests);
         }
@@ -216,7 +216,7 @@ FROM patient_address pa join patient p on p.id=pa.patient_id order by pa.id  asc
             }
             addressRepo.saveAll(serviceRequests);
         //  saveLegacyAddressInSerenity(serviceRequests);
-            LOGGER.info("Saved Related result");
+            LOGGER.info("Saved Address result");
          
         }
         return addresses;
@@ -587,7 +587,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
-
+        LOGGER.info("Stating patient fetching");
         for (int i = 0; i < batches; i++) {
             List<PatientData> patients = new ArrayList<PatientData>();
             int startIndex = i * batchSize;
