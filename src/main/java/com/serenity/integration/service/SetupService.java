@@ -157,6 +157,7 @@ public class SetupService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("   Content-Type", "application/json");
         headers.add("x-api-key", "efomrddi");
+
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ServicePriceResponse> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity,
@@ -230,15 +231,16 @@ public class SetupService {
         return (response.getBody());
     }
 
-
     public V1Response getProdToken() {
         User user = new User();
-        user.setEmail("rejoicehormeku@gmail.com");
-        user.setPassword("5CYYkZhr92HwiPq");
+        // user.setEmail("rejoicehormeku@gmail.com");
+        // user.setPassword("5CYYkZhr92HwiPq");
+        user.setEmail("chris@clearspacelabs.com");
+        user.setPassword("charlehaschanged");
         Gson g = new Gson();
         String data = g.toJson(user);
         System.err.println(data);
-        String url = "https://api.services.serenity.health/v1/providers/auth/login";
+        String url = "https://dev.api.serenity.health/v1/providers/auth/login";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -248,13 +250,30 @@ public class SetupService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<V1Response> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 V1Response.class);
-         System.err.println(response.getBody());
+        System.err.println(response.getBody());
         return (response.getBody());
     }
 
-    public String addHealthService(String orgId, String c) {
+    public String addHealthService(String org, String c) {
         LOGGER.info("Searching for " + c);
-        String url = "https://staging.nyaho.serenity.health/v1/providers/" + orgId
+        String url = "https://staging.nyaho.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9"
+                + "/administration/healthcareservices";
+        System.err.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.add("Authorization", "Bearer " + getToken().getAccess());
+        headers.add("PROVIDER-PORTAL-ID", "j&4P8F<6+dF7/HASJ^hI92/6a&jdJOj*O\"[pHsh}t{o\"&7]\"}1~wg&SI%--,h{/");
+        HttpEntity<String> httpEntity = new HttpEntity<>(c, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
+                String.class);
+        System.err.println(response.getBody());
+        return (response.getBody());
+    }
+
+    public String addHealthService(String c) {
+        LOGGER.info("Searching for " + c);
+        String url = "https://staging.nyaho.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9"
                 + "/administration/healthcareservices";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
@@ -271,11 +290,27 @@ public class SetupService {
 
     public String addHealthServiceProd(String c) {
         LOGGER.info("Searching for " + c);
-        String url = "https://api.services.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
+        String url = "https://dev.api.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         headers.add("Authorization", "Bearer " + getProdToken().getAccess());
+        headers.add("provider-portal-id", "J9DG4WcX+eV<;5xuKtY[yp8g&Sa@~R%wUMnE_6^.jbH{=Lf)>d");
+        HttpEntity<String> httpEntity = new HttpEntity<>(c, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
+                String.class);
+        System.err.println(response.getBody());
+        return (response.getBody());
+    }
+
+    public String addHealthServiceProdWithAuth(String c, String auth) {
+        LOGGER.info("Searching for " + c);
+        String url = "https://dev.api.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
+        System.err.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.add("Authorization", "Bearer " + auth);
         headers.add("provider-portal-id", "J9DG4WcX+eV<;5xuKtY[yp8g&Sa@~R%wUMnE_6^.jbH{=Lf)>d");
         HttpEntity<String> httpEntity = new HttpEntity<>(c, headers);
         RestTemplate restTemplate = new RestTemplate();
@@ -656,44 +691,44 @@ public class SetupService {
 
     }
 
-    public String getFromObject() {
+    public String getFromObject(int id) {
         // for(long id : repository.findAllId()){
 
-        HealthCareServices services = repository.findByPk(14);
+        HealthCareServices services = repository.findByPk(id);
         String payload = formulatePayload(services);
 
         try {
             System.err.println(" add ing data");
 
-            addHealthServiceProd(payload);
+            return addHealthServiceProd(payload);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(1 + " failed");
+            return "error";
         }
-
-        return "done";
 
     }
 
     public String loadToProd() {
-        for (long id : repository.findAllId().subList(0, 10)) {
+        V1Response response = getProdToken();
+        for (long id : repository.findAllId()) {
 
             HealthCareServices services = repository.findByPk(id);
             services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(id));
             services.getPriceTiers().size();
             String payload = formulatePayload(services);
-            if (id !=14) {
-                try {
-                    System.err.println(payload);
-               
-                    addHealthServiceProd(payload);
-                    
-                } catch (Exception e) {
-                    System.err.println(id + " failed");
-                    e.printStackTrace();
-                    break;
+
+            try {
+                System.err.println(payload);
+                if (id > 6) {
+                    addHealthServiceProdWithAuth(payload, response.getAccess());
                 }
+            } catch (Exception e) {
+                System.err.println(id + " failed");
+                e.printStackTrace();
+
             }
+
         }
 
         return "done";

@@ -40,6 +40,19 @@ public class PatientData {
 
   @SerializedName("external_system")
   private String externalSystem;
+
+  @SerializedName("payer_id")
+  private String payerId;
+
+  @SerializedName("policy_number")
+  private String policyNumber;
+
+  @SerializedName("payer_name")
+  private String payerName;
+
+  private String photo;
+
+
   @Column(nullable = true)
 
   @SerializedName("created_at")

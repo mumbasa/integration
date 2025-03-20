@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,12 +27,15 @@ public class HealthCareServices {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pk")
+    @JsonIgnore
     private Long pk;
 
     @Column(name = "uuid", unique = true, nullable = false)
+    @JsonIgnore
     private UUID uuid;
 
     @Column(name = "id", unique = true, nullable = false)
+    @JsonIgnore
     private UUID id;
 
     @Column(name = "service_name", nullable = false,columnDefinition = "TEXT")

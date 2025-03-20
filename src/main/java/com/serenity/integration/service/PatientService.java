@@ -575,8 +575,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
   
 
     public void getLegacyAllPatients(int batchSize) {
-       Map<String,Address> address = getLegacyAddress(batchSize);
-    Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
+  //     Map<String,Address> address = getLegacyAddress(batchSize);
+   // Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
 
         Set<String> mrs = new HashSet<>();
 
@@ -588,12 +588,16 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
         for (int i = 0; i < batches; i++) {
             List<PatientData> patients = new ArrayList<PatientData>();
-
             int startIndex = i * batchSize;
             String sqlQuery = """
-          SELECT p.id, p."uuid", p.created_at, p.modified_at, txid, ts, resource_type, p.status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased,p.is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, p.managing_organization_id, user_id, email, mobile, national_mobile_number, pa.uuid as previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id,currency, current_visit_uuid
+          SELECT p.id, p."uuid", p.created_at, p.modified_at, txid, ts, resource_type, p.status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased,p.is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, p.managing_organization_id, user_id, email, mobile, national_mobile_number, pa.uuid as previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id,currency, current_visit_uuid,
+          (
+select concat(policy_id,'#',ci.currency,'#',payment_method,'#',ca.owner_id,'#',o."name") as payer_info from "ChargeItem" ci LEFT JOIN
+    "public"."organization_clientaccount" ca ON ci.payer_account_id::uuid = ca.uuid
+LEFT JOIN
+    "public"."organization" o ON ca.owner_id = o.id where patientid::uuid =p.uuid order by ci.created_on  desc limit 1
+    ) as payerInformation
 FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patient_account_uuid)
-
             order by  p.id asc offset ? LIMIT ?
                      """;
             SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
@@ -603,9 +607,15 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 pd.setLastName(record.getString("last_name"));
                 pd.setFirstName(record.getString("first_name"));
                 pd.setMobile(record.getString("mobile"));
-                pd.setPaymentMethod(record.getString("previous_payment_method"));
+              String paymentInformation[] = record.getString("payerInformation").split("#");
+                pd.setPayerId(paymentInformation[3]);
+                pd.setPayerName(paymentInformation[4]);
+                pd.setPolicyNumber(paymentInformation[0]);
+                pd.setPaymentMethod(paymentInformation[2]);
                 pd.setPreviousPatientAccountUuid(record.getString("previous_patient_account_uuid"));
-                pd.setPaymentCurrency(record.getString("currency"));
+                pd.setPaymentCurrency(paymentInformation[1]);
+              
+              
                 if(pd.getMobile()!=null){
                 pd.setMobile(generateMobile(pd.getMobile().replaceAll("\u0000", "")));
                 }else{
@@ -651,7 +661,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 pd.setActive(record.getBoolean("is_active"));
                 pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
                 pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
-                 try{
+             /*     try{
                 String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
                 String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
                 pd.setRelatedPerson(relatedJson);
@@ -660,7 +670,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 System.err.println("data not exit");
                 e.printStackTrace();
 
-               } 
+               }  */
                 patients.add(pd);
 
             }
@@ -671,16 +681,16 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
         
       
         
-      addressRepo.saveAll(address.values().stream().toList());
+   //   addressRepo.saveAll(address.values().stream().toList());
        //saveLegacyAddressInSerenity(address.values().stream().toList());
 
-       persons.values().stream().forEach(e -> 
+    /*    persons.values().stream().forEach(e -> 
        {
        /// saveRelatedPersion(e);
     relatedRepo.saveAll(e);
     }
        );
-
+ */
     }
 
 

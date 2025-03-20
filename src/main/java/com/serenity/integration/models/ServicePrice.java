@@ -28,10 +28,12 @@ public class ServicePrice {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id") // Maps JSON key to this field
+    @JsonIgnore
     private Long id;
 
     @Column(name = "uuid", unique = true, nullable = false)
     @JsonProperty("uuid")
+    @JsonIgnore
     private UUID uuid;
 
     @Column(name = "display")

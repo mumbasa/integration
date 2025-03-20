@@ -1,6 +1,7 @@
 package com.serenity.integration.models;
 
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -136,6 +138,9 @@ public class Encounter {
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "encounter_d")
     private EncounterNote note; */
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "encounteruuid")
+    private List<Observation> observations;
 
 public Encounter (){}
     public Encounter(EncounterNote notes,Visits visit,PatientData p){
