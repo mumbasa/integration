@@ -578,8 +578,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
   
 
     public void getLegacyAllPatients(int batchSize,int sized) {
-   // Map<String,Address> address = getLegacyAddress(batchSize);
- //Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
+    Map<String,Address> address = getLegacyAddress(batchSize);
+ Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
 
         Set<String> mrs = new HashSet<>();
 
@@ -731,7 +731,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 pd.setActive(record.getBoolean("is_active"));
                 pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
                 pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
-             /*      try{
+                  try{
                 String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
                 String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
                 pd.setRelatedPerson(relatedJson);
@@ -740,7 +740,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 System.err.println("data not exit");
                 e.printStackTrace();
 
-               }   */
+               }   
                 patients.add(pd);
 
             }
