@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -577,8 +578,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
   
 
     public void getLegacyAllPatients(int batchSize,int sized) {
-    Map<String,Address> address = getLegacyAddress(batchSize);
- Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
+   // Map<String,Address> address = getLegacyAddress(batchSize);
+ //Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
 
         Set<String> mrs = new HashSet<>();
 
@@ -665,7 +666,12 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 pd.setLastName(record.getString("last_name"));
                 pd.setFirstName(record.getString("first_name"));
                 pd.setMobile(record.getString("mobile"));
-              String paymentInformation[] = record.getString("payer_information").split("#");
+
+              String[] paymentInformation = Optional.ofNullable(record.getString("payer_information"))
+                                .map(val -> val.split("#"))
+                                .orElse(new String[0]); // Returns an empty array if value is null
+
+
              try{
               pd.setPayerId(paymentInformation[3]);
                 pd.setPayerName(paymentInformation[4]);
@@ -707,6 +713,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 pd.setOccupation(record.getString("occupation"));
                 pd.setEmployer(record.getString("employer"));
                 pd.setBloodType(record.getString("blood_type"));
+                pd.setPhoto(record.getString("photo"));
                 pd.setMaritalStatus(record.getString("marital_status"));
                 pd.setPassportNumber(record.getString("passport_number"));
                 pd.setBirthTime(record.getString("birth_time"));
@@ -724,7 +731,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 pd.setActive(record.getBoolean("is_active"));
                 pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
                 pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
-                  try{
+             /*      try{
                 String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
                 String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
                 pd.setRelatedPerson(relatedJson);
@@ -733,7 +740,7 @@ ORDER BY p.id asc  offset ? LIMIT ?
                 System.err.println("data not exit");
                 e.printStackTrace();
 
-               }  
+               }   */
                 patients.add(pd);
 
             }
