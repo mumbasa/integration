@@ -32,7 +32,7 @@ public class Encounter {
     private long id; 
 
 
-    @Column(name = "uuid", nullable = false, unique = true)
+    @Column(name = "uuid", nullable = false)
     private String uuid;
 
     @Column(name = "created_at")
