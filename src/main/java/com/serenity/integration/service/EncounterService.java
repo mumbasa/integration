@@ -475,6 +475,8 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setServiceProviderName("Nyaho Medical Centre");
             encounter.setStatus(set.getString(6));
             encounter.setPrescription(set.getBoolean("has_prescriptions"));
+            encounters.add(encounter);
+
             logger.info("adding encounter");
         }
 encounterRepository.saveAll(encounters);
