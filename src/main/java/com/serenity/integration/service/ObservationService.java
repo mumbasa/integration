@@ -167,6 +167,7 @@ FROM observation o join patient p on p.id=o.patient_id join encounter e  on e.id
                 request.setReferenceRangeLow(set.getString("reference_range_low"));
                 request.setSpecimen(set.getString("specimen"));
                 request.setVisitId(set.getString("visit_id"));
+                request.setDiagnosticReportId(set.getString("diagnostic_report_id"));
                 serviceRequests.add(request);
 
             }
