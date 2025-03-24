@@ -452,8 +452,8 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
                 """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
-         //   System.err.println(set.getString("mr_number")+"-----------------");
-           // PatientData patient = patientDataMap.get(set.getString("mr_number"));
+            System.err.println(set.getString("mr_number")+"-----------------");
+            //PatientData patient = patientDataMap.get(set.getString("mr_number"));
             Encounter encounter = new Encounter();
             encounter.setUuid(set.getString("uuid"));
             encounter.setEncounterType(set.getString("type"));
@@ -473,7 +473,7 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setVisitId(set.getString("visit_id"));
             encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             encounter.setServiceProviderName("Nyaho Medical Centre");
-            encounter.setStatus(set.getString(6));
+            encounter.setStatus(set.getString("status"));
             encounter.setPrescription(set.getBoolean("has_prescriptions"));
             encounters.add(encounter);
 
