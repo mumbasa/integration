@@ -452,7 +452,7 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
                 """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
-            System.err.println(set.getString("mr_number")+"-----------------");
+            //System.err.println(set.getString("mr_number")+"-----------------");
             //PatientData patient = patientDataMap.get(set.getString("mr_number"));
             Encounter encounter = new Encounter();
             encounter.setUuid(set.getString("uuid"));
