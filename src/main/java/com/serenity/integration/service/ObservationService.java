@@ -205,7 +205,7 @@ FROM observation o join patient p on p.id=o.patient_id join encounter e  on e.id
                 ps.setString(2, observation.getIssued());
                 ps.setString(3, observation.getUnit());
                 ps.setString(4, observation.getEffectiveDateTime());
-                ps.setLong(5, observation.getId());
+                ps.setLong(5, observation.getId()+69);
 
                 ps.setString(6, observation.getEncounterId());
                 ps.setString(7, "161380e9-22d3-4627-a97f-0f918ce3e4a9");
