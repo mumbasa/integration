@@ -856,7 +856,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 LOGGER.info("Saved patient result");
             }
             
-          
+          cleanPatient();
             
          
      
@@ -1082,4 +1082,14 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
 
         return callables;
     }
+
+public void cleanPatient(){
+    String sql ="""
+            DELETE FROM patient_information T1
+    USING   patient_information T2
+WHERE   T1.ID < T2.ID  
+    AND T1."uuid"  = T2."uuid";  
+            """;
+    vectorJdbcTemplate.update(sql);
+}
 }
