@@ -411,7 +411,7 @@ public class EncounterService {
     public void encounterOPDthread() {
         logger.info("kooooooooooooooading");
         long dataSize = encounterRepository.count();
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+       /*  ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             List<Future<Integer>> futures = executorService.invokeAll(submitTask2(1000, dataSize));
             for (Future<Integer> future : futures) {
@@ -421,7 +421,7 @@ public class EncounterService {
             e.printStackTrace();
         }
 
-        executorService.shutdown();
+        executorService.shutdown(); */
         System.err.println("patiend count is " + dataSize);
 
     }

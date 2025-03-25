@@ -102,14 +102,15 @@ InvoiceService invoiceService;
 		long start = System.currentTimeMillis();
 		//patientService.getLegacyAllPatients(1000,1000);
 		//patientService.getLegacyAllPatients2(1000,1000);
+		patientMigrationService.getPatientsThreads();
 		//encounterService.getLegacyEncounters(1000);
 		//observationService.getLegacyObservations(1000);
 		//visitService.getLegacyVisit(1000);
 		//visitService.updateVisits();
 		//noteService.getLegacyEncounters(2000);
 		//noteService.getLegacyVisitNotesEncounters(1000);
-		encounterService.encounterLegacythread();
-		observationService.migrateObservationThread(1000);
+		//encounterService.encounterLegacythread();
+	//	observationService.migrateObservationThread(1000);
 		//noteService.noteThread();
 
 	

@@ -1,9 +1,11 @@
 package com.serenity.integration.service;
 
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +20,8 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.repository.PatientRepository;
 
@@ -54,7 +58,7 @@ public class PatientMigrationService {
         List<PatientData> patientData = patientRepository.findySystem().stream().filter(e -> !set.contains(e.getExternalId())).toList();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(sumitTask(patientData,  100));
+            List<Future<Integer>> futures = executorService.invokeAll(sumitTask(patientData,  1000));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -180,8 +184,36 @@ return callables;
     }
 
     public int task(List<PatientData> data) {
-       
-        String sql = "INSERT INTO public.patients(created_at, id,  \"uuid\", first_name, last_name, full_name, other_names, mobile, email, birth_date, gender, nationality, mr_number,  blood_type,  managing_organization_id, managing_organization_name,marital_status, name_prefix, occupation,  national_mobile_number, passport_number,  external_id, external_system) VALUES (CAST(? AS TIMESTAMP WITH TIME ZONE),nextval('patients_id_seq'::regclass),uuid(?),?,?,?,?,?,?,CAST(? AS DATE),?,?,?,?,CAST(? AS UUID),?,?,?,?,?,?,?,?)";
+          ObjectMapper objectMapper = new ObjectMapper(); // Jackson ObjectMapper
+        String sql = """
+                
+INSERT INTO public.patients (
+    created_at, id, "uuid", first_name, last_name, full_name, other_names, 
+    mobile, email, birth_date, gender, nationality, mr_number, blood_type, 
+    managing_organization_id, managing_organization_name, marital_status, 
+    name_prefix, occupation, national_mobile_number, passport_number, 
+    external_id, external_system, 
+      religious_affliation,  employer,  multiple_birth_boolean, multiple_birth_integer, 
+    photo,  previous_payment_method, previous_patient_account_uuid, payment_currency, 
+    contribution_value,contribution_type, related_persons, address
+) 
+VALUES (
+    CAST(? AS TIMESTAMP WITH TIME ZONE), nextval('patients_id_seq'::regclass), uuid(?), ?, ?, ?, ?, 
+    ?, ?, CAST(? AS DATE),  ?, ?, ?, ?, 
+    CAST(? AS UUID), ?, ?, 
+    ?, ?, ?, ?, 
+    ?,?, 
+
+    -- Values for newly added fields
+    CAST(? AS VARCHAR[]), ?, ?,?, 
+    ?,  ?, cast(? AS UUID),?,
+     ?, ?, ?::jsonb,?::jsonb
+);
+
+
+                """;;
+                   
+
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             @SuppressWarnings("null")
@@ -189,9 +221,9 @@ return callables;
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 PatientData k = data.get(i);
                 try{
-                ps.setString(1, k.getCreatedAt().split("T")[0] + " 00:00:00.000 +0000");
+                ps.setString(1, k.getCreatedAt().split("T")[0] + " +0000");
                 }catch (Exception e){
-                    ps.setString(1,LocalDate.now() + " 00:00:00.000 +0000");
+                    ps.setString(1,LocalDate.now() + " +0000");
 
                 }
                 ps.setString(2, k.getUuid());
@@ -215,6 +247,50 @@ return callables;
                 ps.setString(20, k.getPassportNumber());
                 ps.setString(21, k.getExternalId());
                 ps.setString(22, k.getExternalSystem());
+
+                if(k.getReligiousAffiliation() !=null){
+                String[] reliString = k.getReligiousAffiliation().replaceAll("[{}]","").split(",");
+                Array sqlArray = ps.getConnection().createArrayOf("VARCHAR", reliString);
+
+                ps.setArray(23, sqlArray);
+                }else{
+                    ps.setArray(23, null);
+                }
+                ps.setString(24, k.getEmployer());
+                ps.setBoolean(25, k.isMultipleBirth());
+                ps.setInt(26, k.getMultipleBirthInteger());
+
+                ps.setString(27, k.getPhoto());
+                ps.setString(28, k.getPaymentMethod());
+                ps.setString(29, k.getPreviousPatientAccountUuid());
+                ps.setString(30, k.getPaymentCurrency());
+
+                ps.setDouble(31, k.getContributionValue());
+                ps.setString(32, k.getContributionType());
+                try {
+                    String validJson = objectMapper.writeValueAsString(objectMapper.readTree(k.getRelatedPerson()));
+                    ps.setString(33,validJson);
+
+                } catch (JsonProcessingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                  ps.setString(33, null);
+                }
+
+
+                try {
+                    String validJson = objectMapper.writeValueAsString(objectMapper.readTree(k.getAddress()));
+                    ps.setString(34, validJson);
+
+
+                } catch (JsonProcessingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    ps.setString(34, null);
+                }
+
+                
+
 
             }
 
