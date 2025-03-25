@@ -108,6 +108,7 @@ InvoiceService invoiceService;
 		//visitService.updateVisits();
 		//noteService.getLegacyEncounters(2000);
 		//noteService.getLegacyVisitNotesEncounters(1000);
+		encounterService.encounterLegacythread();
 		observationService.migrateObservationThread(1000);
 		//noteService.noteThread();
 

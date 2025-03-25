@@ -242,7 +242,7 @@ public class EncounterService {
                     ps.setString(1, notes.get(i).getCreatedAt() + " 14:55:37");
 
                 }
-                ps.setLong(2, notes.get(i).getId());
+                ps.setLong(2, notes.get(i).getId()+10);
                 ps.setString(3, notes.get(i).getUuid());
                 ps.setString(4, "ambulatory");
                 ps.setString(5, "finished");
@@ -399,7 +399,7 @@ public class EncounterService {
                 System.out.println("future.get = " + future.get());
             }
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
+           
             e.printStackTrace();
         }
 
