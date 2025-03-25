@@ -807,7 +807,12 @@ FROM patient p right join patient_account pa on pa."uuid" = uuid(p.previous_pati
         
                     pd.setUuid(record.getString("uuid"));
                     pd.setId(record.getLong("id"));
+                    try{
+               
                     pd.setGender(record.getString("gender").toUpperCase());
+                    }catch(Exception e){
+                        
+                    }
                     pd.setExternalSystem("opd");
                     pd.setNationalMobileNumber(record.getString("national_mobile_number"));
                     pd.setOtherNames(record.getString("other_names"));
