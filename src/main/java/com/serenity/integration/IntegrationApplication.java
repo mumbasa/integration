@@ -102,7 +102,7 @@ InvoiceService invoiceService;
 		long start = System.currentTimeMillis();
 		//patientService.getLegacyAllPatients(1000,1000);
 		patientService.getLegacyAllPatients2(1000,1000);
-		patientMigrationService.getPatientsThreads();
+		//patientMigrationService.getPatientsThreads();
 		//encounterService.getLegacyEncounters(1000);
 		//observationService.getLegacyObservations(1000);
 		//visitService.getLegacyVisit(1000);
