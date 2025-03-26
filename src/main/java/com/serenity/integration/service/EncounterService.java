@@ -536,4 +536,16 @@ encounterRepository.saveAll(encounters);
 
     }
 
+    public void removeDupes() {
+        // TODO Auto-generated method stub
+String sql ="""
+        DELETE FROM encounter T1
+USING   encounter T2
+WHERE   T1.ID < T2.ID  
+AND T1."uuid"  = T2."uuid";
+
+        """;  
+    vectorJdbcTemplate.update(sql);
+    }
+
 }

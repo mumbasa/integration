@@ -108,7 +108,7 @@ InvoiceService invoiceService;
 		//observationService.getLegacyObservations(1000);
 		//visitService.getLegacyVisit(1000);
 		//visitService.updateVisits();
-		visitMigration.getVisitThreads();
+	//	visitMigration.getVisitThreads();
 	
 
 	

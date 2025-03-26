@@ -24,6 +24,8 @@ public interface EncounterRepository extends JpaRepository<Encounter,Long>{
     List<Encounter> getfirst100k();
 
     List<Encounter> findByExternalIdAndAssignedToId(String externalId,String patient);
+    Encounter findByUuid(String uuid);
+
     
     @Query(value = "select count(*) from encounter e  where external_system='opd' and assigned_to_id is not null;",nativeQuery = true)
     int getOOPCount();

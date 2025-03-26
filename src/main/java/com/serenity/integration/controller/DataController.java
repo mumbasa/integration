@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.serenity.integration.models.Encounter;
 import com.serenity.integration.models.HealthCareServices;
 import com.serenity.integration.models.HealthcareServiceResponse;
 import com.serenity.integration.models.SensorData;
+import com.serenity.integration.repository.EncounterNoteRepository;
+import com.serenity.integration.repository.EncounterRepository;
 import com.serenity.integration.repository.HealthCareRepository;
 import com.serenity.integration.repository.NoiseRepo;
 import com.serenity.integration.service.SetupService;
@@ -22,6 +25,9 @@ public class DataController {
 NoiseRepo noiseRepo;
 @Autowired
 HealthCareRepository repository;
+
+@Autowired
+EncounterRepository encounterRepository;
 @Autowired
 SetupService setupService;
 @GetMapping("/data")
@@ -43,6 +49,12 @@ public ResponseEntity<List<HealthCareServices>> all(){
 @GetMapping("/ids")
 public ResponseEntity<List<Long>> allids(){
     return ResponseEntity.ok(repository.findAllId());
+}
+
+
+@GetMapping("/encounter/{id}")
+public ResponseEntity<Encounter> allids(String encounterId){
+    return ResponseEntity.ok(encounterRepository.findByUuid(encounterId));
 }
 
 }
