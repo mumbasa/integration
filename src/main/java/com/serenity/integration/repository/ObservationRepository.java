@@ -14,5 +14,7 @@ List<Observation> findByPractitionerIdNotNull(int offset,int limit);
 
 @Query(value = "SELECT count(*) from observations",nativeQuery = true)
 long findCleanDatas();
+@Query(value = "SELECT * from observations where encounterid =?1",nativeQuery = true)
+List<Observation> findByEncounterId(String uuid);
     
 } 

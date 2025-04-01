@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.serenity.integration.models.Encounter;
@@ -16,6 +17,7 @@ import com.serenity.integration.repository.EncounterNoteRepository;
 import com.serenity.integration.repository.EncounterRepository;
 import com.serenity.integration.repository.HealthCareRepository;
 import com.serenity.integration.repository.NoiseRepo;
+import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.SetupService;
 
 @RestController
@@ -27,7 +29,7 @@ NoiseRepo noiseRepo;
 HealthCareRepository repository;
 
 @Autowired
-EncounterRepository encounterRepository;
+EncounterService encounterService;
 @Autowired
 SetupService setupService;
 @GetMapping("/data")
@@ -53,8 +55,8 @@ public ResponseEntity<List<Long>> allids(){
 
 
 @GetMapping("/encounter/{id}")
-public ResponseEntity<Encounter> allids(String encounterId){
-    return ResponseEntity.ok(encounterRepository.findByUuid(encounterId));
+public ResponseEntity<Encounter> allids(@PathVariable String id){
+    return ResponseEntity.ok(encounterService.getEncounter(id));
 }
 
 }

@@ -4,6 +4,8 @@ package com.serenity.integration.models;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.Mapping;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -136,12 +139,12 @@ public class Encounter {
     private boolean serviceRequest;
     private boolean prescription;
 
-/* 
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+
+   /*  @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "encounter_d")
-    private EncounterNote note; */
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "encounteruuid")
+    private EncounterNote note;  */
+
+    @Transient
     private List<Observation> observations;
 
 public Encounter (){}

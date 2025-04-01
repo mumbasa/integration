@@ -27,10 +27,12 @@ import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.Encounter;
 import com.serenity.integration.models.EncounterNote;
+import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.EncounterNoteRepository;
 import com.serenity.integration.repository.EncounterRepository;
+import com.serenity.integration.repository.ObservationRepository;
 import com.serenity.integration.repository.PatientRepository;
 import com.serenity.integration.repository.VisitRepository;
 
@@ -64,6 +66,9 @@ public class EncounterService {
 
     @Autowired
     DoctorRepository doctorRepository;
+
+    @Autowired
+    ObservationRepository observationRepository;
 
     @Autowired
     VisitRepository visitRepository;
@@ -392,6 +397,7 @@ public class EncounterService {
     public void encounterLegacythread() {
         logger.info("kooooooooooooooading");
         int dataSize = encounterRepository.getOOPCount();
+       
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(1000, dataSize));
@@ -411,7 +417,7 @@ public class EncounterService {
     public void encounterOPDthread() {
         logger.info("kooooooooooooooading");
         long dataSize = encounterRepository.count();
-       /*  ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             List<Future<Integer>> futures = executorService.invokeAll(submitTask2(1000, dataSize));
             for (Future<Integer> future : futures) {
@@ -421,8 +427,24 @@ public class EncounterService {
             e.printStackTrace();
         }
 
-        executorService.shutdown(); */
+        executorService.shutdown(); 
         System.err.println("patiend count is " + dataSize);
+
+    }
+
+
+    public void getter(int batchSize){
+        List<Encounter> encounters =encounterRepository.findAll().stream().distinct().toList();
+
+        long totalSize = encounters.size();
+        long batches = (totalSize + batchSize - 1) / batchSize; //
+
+         for (int i = 0; i < batches; i++) {
+            List<Encounter> serviceRequests = encounters.subList(i*batchSize,(i*batchSize)+batchSize);
+            saveEncounters(serviceRequests);
+         }
+
+
 
     }
 
@@ -546,6 +568,14 @@ AND T1."uuid"  = T2."uuid";
 
         """;  
     vectorJdbcTemplate.update(sql);
+    }
+
+
+
+    public Encounter getEncounter(String uuid){
+        Encounter e=   encounterRepository.findByUuid(uuid);
+        e.setObservations(observationRepository.findByEncounterId(uuid));
+        return e;
     }
 
 }

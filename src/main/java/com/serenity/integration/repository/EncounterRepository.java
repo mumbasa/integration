@@ -24,6 +24,8 @@ public interface EncounterRepository extends JpaRepository<Encounter,Long>{
     List<Encounter> getfirst100k();
 
     List<Encounter> findByExternalIdAndAssignedToId(String externalId,String patient);
+   
+    @Query(value = "select * from encounter e where uuid=?1 LIMIT 1",nativeQuery = true)
     Encounter findByUuid(String uuid);
 
     

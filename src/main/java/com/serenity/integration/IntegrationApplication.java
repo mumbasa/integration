@@ -100,7 +100,8 @@ InvoiceService invoiceService;
 			e.printStackTrace();
 		}
 		long start = System.currentTimeMillis();
-		encounterService.removeDupes();
+		//encounterService.getter(1000);
+		visitMigration.getVisitThreads();;
 		//patientService.getLegacyAllPatients(1000,1000);
 		//patientService.getLegacyAllPatients2(1000,1000);
 		//chargeItemService.getLegacyChargeItem(1000);
