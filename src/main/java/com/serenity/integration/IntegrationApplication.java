@@ -94,14 +94,11 @@ InvoiceService invoiceService;
 	@PostConstruct
 	public void coke() {
 		logger.info("Starting import");
-		try{
-		//setupService.getProdToken();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+	
 		long start = System.currentTimeMillis();
-		//encounterService.getter(1000);
-		visitMigration.getVisitThreads();;
+		//encounterService.getter(10);
+		//visitMigration.getVisitThreads();;
+		observationService.migrateObservationThread(10);
 		//patientService.getLegacyAllPatients(1000,1000);
 		//patientService.getLegacyAllPatients2(1000,1000);
 		//chargeItemService.getLegacyChargeItem(1000);
@@ -110,7 +107,6 @@ InvoiceService invoiceService;
 		//observationService.getLegacyObservations(1000);
 		//visitService.getLegacyVisit(1000);
 		//visitService.updateVisits();
-	//	visitMigration.getVisitThreads();
 	
 
 	

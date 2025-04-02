@@ -434,14 +434,29 @@ public class EncounterService {
 
 
     public void getter(int batchSize){
-        List<Encounter> encounters =encounterRepository.findAll().stream().distinct().toList();
+        List<Encounter> encountersD = new ArrayList<Encounter>();
+        Set<String> data = new HashSet<String>();
 
-        long totalSize = encounters.size();
+        List<Encounter> encounters =encounterRepository.getfirst100();
+        for(Encounter encounter : encounters){
+            if(!data.contains(encounter.getUuid())){
+                data.add(encounter.getUuid());
+                encountersD.add(encounter);
+            }
+            
+               
+        }
+System.err.println(encountersD.size() +" ------------------");
+        long totalSize = encountersD.size();
         long batches = (totalSize + batchSize - 1) / batchSize; //
 
          for (int i = 0; i < batches; i++) {
-            List<Encounter> serviceRequests = encounters.subList(i*batchSize,(i*batchSize)+batchSize);
+            List<Encounter> serviceRequests = encountersD.subList(i*batchSize,(i*batchSize)+batchSize);
+            try{
             saveEncounters(serviceRequests);
+            }catch (Exception e){
+            
+                e.printStackTrace();}
          }
 
 

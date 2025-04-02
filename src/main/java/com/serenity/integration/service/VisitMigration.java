@@ -89,7 +89,7 @@ public class VisitMigration {
                 List<Visits> vists = visitRepository.getfirst100k(startIndex);
 
                 try {
-
+                   // return 1;
                     return task(vists);
                 } catch (Exception e) {
                   e.printStackTrace();
@@ -212,9 +212,8 @@ return 1;
                 ps.setString(13, visits.get(i).getPatientMrNumber());
 
                 ps.setString(14, visits.get(i).getPatientId());
-
                 ps.setString(15, visits.get(i).getPatientName());
-                ps.setString(16, visits.get(i).getPatientMobile());
+                ps.setString(16, visits.get(i).getPatientMobile()==null?"":visits.get(i).getPatientMobile());
                 ps.setString(17, visits.get(i).getPatientDob());
                 ps.setString(18, visits.get(i).getGender());
                 ps.setString(19, visits.get(i).getPatientStatus());
