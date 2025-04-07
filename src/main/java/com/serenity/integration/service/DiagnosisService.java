@@ -635,11 +635,11 @@ public class DiagnosisService {
 
     public void updateWithData() {
         String sql = """
-                        update diagnosis
+                update diagnosis
                 set visitid = e.visit_id,patientid =e.patient_id,practitionerid =e.assigned_to_id,practitionername=e.assigned_to_name
                 from encounter e
                 where system = 'opd' and
-                encounterid=e.uuid;
+                encounterid=e.uuid
                         """;
         legJdbcTemplate.update(sql);
     }
