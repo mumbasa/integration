@@ -75,25 +75,27 @@ DiagnosticReportRepository diagnosticReportRepository;
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    select * from diagnostic_report dr join patient p on p.id = dr.patient_id  join service_request sr on dr.based_on_id =sr.id order by dr.id asc offset ? LIMIT ?
+                    SELECT dr.id, dr."uuid", dr.created_at, dr.is_deleted, dr.modified_at, dr.category, dr.code, dr.display, conclusion, dr.status, issued_date, effective_date_time, effective_period_start, effective_period_end, approved_date_time, approved_by_uuid, approved_by_name, rejected_by_uuid, rejected_by_name, rejected_date_time, review_request_by_uuid, review_request_by_name, review_request_date_time, based_on_id,sr."uuid" as service_request_id, dr.encounter_id, p.uuid as patient_id, dr.visit_id, service_request_category, billing_turnaround_time, intra_laboratory_turnaround_time, total_turnaround_time
+from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join service_request sr on dr.based_on_id =sr.id order by dr.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 DiagnosticReport request = new DiagnosticReport();
                 request.setCreatedAt(sql);
                 request.setAcessionNumber(set.getString("based_on_id"));
-                request.setUuid(set.getString(2));
-                request.setBasedOnId(set.getString("based_on_id"));
-                request.setDisplay(set.getString(8));
+                request.setUuid(set.getString("uuid"));
+                request.setBasedOnId(set.getString("service_request_id"));
+                request.setDisplay(set.getString("display"));
                 request.setPatientId(mps.get(set.getString("mr_number")).getUuid());
                 request.setPatientBirthDate(mps.get(set.getString("mr_number")).getBirthDate());
                 request.setPatientFullName(mps.get(set.getString("mr_number")).getFullName());
                 request.setPatientGender(mps.get(set.getString("mr_number")).getGender());
                 request.setPatientMobile(mps.get(set.getString("mr_number")).getMobile());
                 request.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
-                request.setEncounterId(set.getString(103));
+                request.setEncounterId(set.getString("encounter_id"));
                 request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));
+                
                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 if (set.getString("requesting_practitioner_role_id") != null) {
                    try{

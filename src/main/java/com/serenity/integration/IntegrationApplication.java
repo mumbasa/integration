@@ -100,13 +100,13 @@ InvoiceService invoiceService;
 		logger.info("Starting import");
 	
 		long start = System.currentTimeMillis();
-		//encounterService.getter(10);
-		//visitMigration.getVisitThreads();
-		allergyService.getLegacyAllergies(1000);
+	
+	dService.getLegacyDiagnosis();
+
 		diagnosisService.getLegacyDiagnosticReport(1000);
 		referalService.getLegacyReferral(1000);
-		dService.getLegacyDiagnosis();
 		observationService.getLegacyObservations(1000);
+		serviceRequestService.getLegacyRequest(1000);
 		//observationService.migrateObservationThread(10);
 		
 		//patientService.getLegacyAllPatients2(1000,1000);

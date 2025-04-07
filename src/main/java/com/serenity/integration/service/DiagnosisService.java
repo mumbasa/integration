@@ -570,6 +570,7 @@ public class DiagnosisService {
                 diagnosis.setRole(set.getString("role"));
                 diagnosis.setCondition(set.getString("condition"));
                 diagnosis.setRank(set.getInt("rank"));
+                
                 diagnosis.setEncounterId(set.getString("encounter_id"));
                 diagnosis.setStatus(set.getString("status"));
                 diagnosis.setNote(set.getString("note"));
