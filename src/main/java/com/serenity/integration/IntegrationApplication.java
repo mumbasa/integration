@@ -101,7 +101,7 @@ InvoiceService invoiceService;
 	
 		long start = System.currentTimeMillis();
 	
-	dService.getLegacyDiagnosis();
+//	dService.getLegacyDiagnosis();
 	noteService.getLegacyCarePlan(1000);
 	noteService.getLegacyVisitNotesEncounters(1000);
 noteService.getLegacyEncounters(1000);
