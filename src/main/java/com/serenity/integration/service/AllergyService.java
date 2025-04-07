@@ -80,8 +80,8 @@ public class AllergyService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-SELECT a."uuid", a.created_at, a.is_deleted, a.modified_at, a.id, a."type", a.category, clinical_status, verification_status, code, last_occurrence, e.uuid as encounter_id,p.uuid as  patient_id, recording_practitioner_role_id
-FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join encounter e  on e.id=a.encounter_id
+SELECT a."uuid", a.created_at, a.is_deleted, a.modified_at, a.id, a."type", a.category, clinical_status, verification_status, code, last_occurrence, e.uuid as encounter_id,e.visit_id,p.uuid as  patient_id, e.chief_complaint_author_id,e.history_of_presenting_illness_author_id 
+FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join encounter e  on e.id=a.encounter_id  
             order by a.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
@@ -102,9 +102,8 @@ FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join e
                 }
              
                  request.setPatientId(set.getString("patient_id"));            
-            
-                
-                String practitionerId =set.getString("chief_complaint_author_id")==null?set.getString("history_of_presenting_illness_author_id"):set.getString("chief_complaint_author_id");
+                            
+            String practitionerId =set.getString("chief_complaint_author_id")==null?set.getString("history_of_presenting_illness_author_id"):set.getString("chief_complaint_author_id");
                if(practitionerId !=null){
                 System.err.println(practitionerId+"----------");
                 request.setPractitionerId(practitionerId);
