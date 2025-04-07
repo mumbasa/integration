@@ -81,7 +81,7 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 DiagnosticReport request = new DiagnosticReport();
-                request.setCreatedAt(sql);
+              
                 request.setAcessionNumber(set.getString("based_on_id"));
                 request.setUuid(set.getString("uuid"));
                 request.setBasedOnId(set.getString("service_request_id"));
@@ -100,7 +100,7 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 if (set.getString("approved_by_uuid") != null) {
                    try{
                     request.setPerformerId(set.getString("approved_by_uuid"));
-                    request.setPerformerName(doc.get(set.getString("approved_by_name")).getFullName());
+                    request.setPerformerName((set.getString("approved_by_name")));
                    }catch (Exception e){
                     e.printStackTrace();
                    }
