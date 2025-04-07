@@ -496,6 +496,7 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setEncounterType(set.getString("type"));
             encounter.setExternalId(set.getString("uuid"));
             encounter.setCreatedAt(set.getString("created_at"));
+            encounter.setStartedAt(set.getString("created_at"));
             encounter.setUpdatedAt(set.getString("modified_at"));
             encounter.setEncounterClass(set.getString("encounter_class"));
             encounter.setPriority(set.getString("priority"));

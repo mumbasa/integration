@@ -156,7 +156,7 @@ FROM observation o join patient p on p.id=o.patient_id join encounter e  on e.id
                 request.setCategory(set.getString("category"));
                 }
                 if(request.getCategory()==null){
-                    request.setCategory("vital-signs");
+                    request.setCategory("outpatient-consultation");
                 }
                 request.setUpdatedAt (set.getString("created_at"));
                 request.setIssued(set.getString("issued"));
@@ -264,6 +264,23 @@ set visit_id =e.visit_id
 from encounters e
 where e.uuid = observations.encounter_id
                 """;
+
+                sql="""
+                        update observations set "system" ='http://loinc.org' where "system" ='UNKNOWN' and category ='vital-signs' 
+
+                        """;
+                        vectorJdbcTemplate.update(sql);
+
+                        sql="""
+                            update observations set "encontertype" ='vitals-observation' where  category ='vital-signs' 
+    
+                            """;
+                            vectorJdbcTemplate.update(sql);
+                sql="""
+                        update encounters  set encounter_type ='vitals-observation' where "uuid" in (select encounter_id from observations where category='vital-signs')
+
+                        """;
+                        serenityJdbcTemplate.update(sql);
     }
 
     public void migrateObservationThread(int batchSize) {

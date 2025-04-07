@@ -119,7 +119,7 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
 
     public void getLegacyPractitioner() {
         List<Doctors> doctors = new ArrayList<>();
-       String sql ="SELECT   * FROM public.practitioner_role";
+       String sql ="SELECT  * FROM public.practitioner_role";
 
        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
        while (set.next()) {
