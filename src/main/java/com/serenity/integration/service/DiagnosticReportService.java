@@ -97,10 +97,10 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setServiceRequestCategory(set.getString("category"));
                 
                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-                if (set.getString("requesting_practitioner_role_id") != null) {
+                if (set.getString("approved_by_uuid") != null) {
                    try{
-                    request.setPerformerId(set.getString("requesting_practitioner_role_id"));
-                    request.setPerformerName(doc.get(set.getString("requesting_practitioner_role_id")).getFullName());
+                    request.setPerformerId(set.getString("approved_by_uuid"));
+                    request.setPerformerName(doc.get(set.getString("approved_by_name")).getFullName());
                    }catch (Exception e){
                     e.printStackTrace();
                    }
