@@ -80,7 +80,9 @@ public class AllergyService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    select * from allergy_intolerance ai join patient p on p.id=ai.patient_id join encounter e on e.id=ai.encounter_id order by ai.id asc offset ? LIMIT ?
+SELECT a."uuid", a.created_at, a.is_deleted, a.modified_at, a.id, a."type", a.category, clinical_status, verification_status, code, last_occurrence, e.uuid as encounter_id,p.uuid as  patient_id, recording_practitioner_role_id
+FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join encounter e  on e.id=a.encounter_id
+            order by a.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
