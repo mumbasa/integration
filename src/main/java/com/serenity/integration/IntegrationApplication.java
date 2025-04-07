@@ -102,7 +102,9 @@ InvoiceService invoiceService;
 		long start = System.currentTimeMillis();
 	
 	dService.getLegacyDiagnosis();
-
+	noteService.getLegacyCarePlan(1000);
+	noteService.getLegacyVisitNotesEncounters(1000);
+noteService.getLegacyEncounters(1000);
 		diagnosisService.getLegacyDiagnosticReport(1000);
 		referalService.getLegacyReferral(1000);
 		observationService.getLegacyObservations(1000);
