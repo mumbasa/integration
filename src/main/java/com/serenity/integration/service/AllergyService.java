@@ -100,10 +100,9 @@ FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join e
                 if (encounterId != null) {
                     request.setEncounterId(encounterId);
                 }
-                String patientMrNumber = set.getString("mr_number");
-                if (patientMrNumber != null) {
-                                      request.setPatientId(mps.get(patientMrNumber).getUuid());            
-                }
+             
+                 request.setPatientId(set.getString("patient_id"));            
+            
                 
                 String practitionerId =set.getString("chief_complaint_author_id")==null?set.getString("history_of_presenting_illness_author_id"):set.getString("chief_complaint_author_id");
                if(practitionerId !=null){
