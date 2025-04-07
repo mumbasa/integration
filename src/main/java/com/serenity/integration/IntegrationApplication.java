@@ -100,8 +100,8 @@ InvoiceService invoiceService;
 		//visitMigration.getVisitThreads();;
 		//observationService.migrateObservationThread(10);
 		
-		patientService.getLegacyAllPatients2(1000,1000);
-		practitionerService.getLegacyPractitioner();
+		//patientService.getLegacyAllPatients2(1000,1000);
+		//practitionerService.getLegacyPractitioner();
 		visitService.getLegacyVisit(1000);
 		//chargeItemService.getLegacyChargeItem(1000);
 		//patientMigrationService.getPatientsThreads();
