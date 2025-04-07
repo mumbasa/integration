@@ -582,6 +582,7 @@ public class DiagnosisService {
 
             }
             diagnosisRepository.saveAll(diagnoses);
+            logger.info("saved diagnosis");
         }
 
         updateWithData();
