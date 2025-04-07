@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.serenity.integration.service.AllergyService;
 import com.serenity.integration.service.ChargeItemService;
+import com.serenity.integration.service.DiagnosisService;
 import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.InvoiceService;
@@ -71,6 +72,9 @@ public class IntegrationApplication {
 	DiagnosticReportService diagnosisService;
 
 	@Autowired
+	DiagnosisService dService;
+
+	@Autowired
 	ServiceRequestService serviceRequestService;
 
 	@Autowired
@@ -97,15 +101,20 @@ InvoiceService invoiceService;
 	
 		long start = System.currentTimeMillis();
 		//encounterService.getter(10);
-		//visitMigration.getVisitThreads();;
+		//visitMigration.getVisitThreads();
+		allergyService.getLegacyAllergies(1000);
+		diagnosisService.getLegacyDiagnosticReport(1000);
+		referalService.getLegacyReferral(1000);
+		dService.getLegacyDiagnosis();
+		observationService.getLegacyObservations(1000);
 		//observationService.migrateObservationThread(10);
 		
 		//patientService.getLegacyAllPatients2(1000,1000);
 		//practitionerService.getLegacyPractitioner();
-		visitService.getLegacyVisit(1000);
+		//visitService.getLegacyVisit(1000);
 		//chargeItemService.getLegacyChargeItem(1000);
 		//patientMigrationService.getPatientsThreads();
-		encounterService.getLegacyEncounters(1000);
+		//encounterService.getLegacyEncounters(1000);
 		//observationService.getLegacyObservations(1000);
 		//visitService.getLegacyVisit(1000);
 		//visitService.updateVisits();

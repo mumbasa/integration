@@ -59,6 +59,18 @@ public class ObservationService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     public void getLegacyObservations(int batchSize) {
+
+        Map<String, String> codeDisplayMap = new HashMap<>();
+
+        codeDisplayMap.put("RESIDENT_COUNTRY", "Resident Country");
+        codeDisplayMap.put("ALCOHOL_INTAKE", "Alcohol");
+        codeDisplayMap.put("TOBACCO_PACKS_PER_DAY", "Tobacco packs per day");
+        codeDisplayMap.put("PHYSICAL_ACTIVITY_FREQUENCY", "Physical activity frequency");
+        codeDisplayMap.put("STRESS", "Stress");
+        codeDisplayMap.put("VEGAN_STATUS", "Vegan status");
+        codeDisplayMap.put("FAMILY_HISTORY", "Family history");
+        codeDisplayMap.put("EATING_HABITS", "Eating Habits");
+
         Map<String,String> vitalMap = new HashMap<>();
         vitalMap.put("SBP", "8480-6");
         vitalMap.put("BLOOD_PRESSURE", "8462-4");
@@ -107,11 +119,11 @@ public class ObservationService {
         displayMap.put("AVPU", "Level of responsiveness (AVPU)");
 
 
-      /*Map<String, PatientData> mps = patientRepository.findAll().stream()
+     /*  Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e)); */
-
+                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e)); 
+ */
         String sql = "SELECT count(*) from observation";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -123,12 +135,11 @@ public class ObservationService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-
-            SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, o.category, o.code,
+ SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, o.category, o.code,
              issued, unit, value, data_absent_reason, body_site, "method", specimen, device, o.effective_date_time,
-             dr."uuid" as diagnostic_report_id, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
+             dr."uuid" as diagnostic_report_, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
                reference_range_high, reference_range_low, "rank", performer_id, performer_name
-FROM observation o join patient p on p.id=o.patient_id join encounter e  on e.id =o.encounter_id left join diagnostic_report dr on o.diagnostic_report_id=dr.id
+FROM observation o left join patient p on p.id=o.patient_id left join encounter e  on e.id =o.encounter_id  left join diagnostic_report dr on o.diagnostic_report_id=dr.id
             order by o.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
@@ -149,6 +160,15 @@ FROM observation o join patient p on p.id=o.patient_id join encounter e  on e.id
                     request.setCategory("vital-signs");
                     request.setEnconterType("vitals-observation");
                 }
+
+                else if(codeDisplayMap.containsKey(set.getString("unit"))){
+                    request.setCode(set.getString("unit"));
+                    request.setDisplay(codeDisplayMap.get((set.getString("unit"))));
+                    request.setUnit(set.getString("unit"));
+                    request.setCategory("social-history");
+                    request.setEnconterType("outpatient-consultation");
+
+                    }
                 else{
                 request.setCode(set.getString("unit"));
                 request.setDisplay(set.getString("display"));
