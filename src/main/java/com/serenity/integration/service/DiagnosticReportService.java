@@ -60,8 +60,8 @@ DiagnosticReportRepository diagnosticReportRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
     public void getLegacyDiagnosticReport(int batchSize) {
-           Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+           /* Map<String, PatientData> mps = patientRepository.findAll().stream()
+                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e)); */
         Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         String sql = "SELECT count(*) from diagnostic_report";
@@ -86,12 +86,12 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setUuid(set.getString("uuid"));
                 request.setBasedOnId(set.getString("service_request_id"));
                 request.setDisplay(set.getString("display"));
-                request.setPatientId(mps.get(set.getString("mr_number")).getUuid());
-                request.setPatientBirthDate(mps.get(set.getString("mr_number")).getBirthDate());
-                request.setPatientFullName(mps.get(set.getString("mr_number")).getFullName());
-                request.setPatientGender(mps.get(set.getString("mr_number")).getGender());
-                request.setPatientMobile(mps.get(set.getString("mr_number")).getMobile());
-                request.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
+                request.setPatientId(set.getString("patient_id"));
+               /*  request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
+                request.setPatientFullName(mps.get(set.getString("patient_id")).getFullName());
+                request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
+                request.setPatientMobile(mps.get(set.getString("patient_id")).getMobile());
+                request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber()); */
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));
