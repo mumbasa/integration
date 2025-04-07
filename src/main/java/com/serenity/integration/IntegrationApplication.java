@@ -102,6 +102,7 @@ InvoiceService invoiceService;
 		
 		patientService.getLegacyAllPatients2(1000,1000);
 		practitionerService.getLegacyPractitioner();
+		visitService.getLegacyVisit(1000);
 		//chargeItemService.getLegacyChargeItem(1000);
 		//patientMigrationService.getPatientsThreads();
 		encounterService.getLegacyEncounters(1000);
