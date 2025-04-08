@@ -405,7 +405,7 @@ FROM visit  v join patient p  on p.id = v.patient_id
             visit.setLocationId(set.getString("primary_location_id"));
             visit.setPatientMobile(set.getString("mobile"));
             visit.setPatientName(set.getString("first_name")+" "+set.getString("last_name"));
-            visit.setPatientDob(set.getString("birth_date"));
+            visit.setPatientDob(set.getString("birth_date")==null?"":set.getString("birth_date"));
             visit.setGender(set.getString("gender"));
             visit.setEncounterClass(set.getString("visit_class"));
             // visit.setPatientId(mps.get(set.getString("mr_number")).getUuid());
@@ -416,6 +416,7 @@ FROM visit  v join patient p  on p.id = v.patient_id
 
             // }
             visit.setDisplay("opd-"+visit.getUuid());
+            visit.setPriority(set.getString("priority")==null?"routine":set.getString("priority"));
             visit.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             visit.setServiceProviderName("Nyaho Medical Center");
             visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175\"");

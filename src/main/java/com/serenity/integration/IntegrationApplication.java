@@ -104,8 +104,9 @@ InvoiceService invoiceService;
 		logger.info("Starting import");
 	
 	long start = System.currentTimeMillis();
-	patientMigrationService.getPatientsThreads();
-	visitMigration.getVisitThreads();
+	//patientMigrationService.getPatientsThreads();
+	//visitMigration.getVisitThreads();
+	encounterService.encounterLegacythread();
 //	dService.getLegacyDiagnosis();
 	//noteService.getLegacyCarePlan(1000);
 	//noteService.getLegacyVisitNotesEncounters(1000);

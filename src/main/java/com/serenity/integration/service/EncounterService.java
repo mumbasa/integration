@@ -594,4 +594,28 @@ AND T1."uuid"  = T2."uuid";
         return e;
     }
 
+    public void cleanEncounter(){
+        String sql ="""
+                update encounter set patient_mr_number = p.mrnumber ,patient_gender =p.gender
+from patient_information p
+where p."uuid" =encounter.patient_id 
+                """;
+                vectorJdbcTemplate.update(sql);
+        sql ="""
+                update encounter set assigned_to_id =v.assignedtoid ,assigned_to_name=v.assignedtoname 
+from visits v  where v."uuid" =visit_id::uuid
+                """;
+                vectorJdbcTemplate.update(sql);
+    sql="""
+            update encounter set location_name ='Airport Primary Care'
+where location_id ='29e22113-9d7b-46a6-a857-810ca3567ca7'
+            """;
+            vectorJdbcTemplate.update(sql);
+            sql ="""
+                    update encounter set patient_birth_date ='' where patient_birth_date is null;
+
+                    """;
+                    vectorJdbcTemplate.update(sql);
+    }
+
 }
