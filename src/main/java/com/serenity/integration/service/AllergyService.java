@@ -146,7 +146,7 @@ uuid(?), ?, ?, ?, ?,
            ps.setString(4,intolerance.getRecordedDate());
            ps.setString(5,intolerance.getRecordedDate());
 
-           ps.setLong(6,intolerance.getId());
+           ps.setLong(6,intolerance.getId()+7871);
            ps.setString(7,    intolerance.getEncounterId());
            ps.setString(8,     intolerance.getServiceProviderId());
            ps.setString(9,intolerance.getPatientId());
@@ -201,6 +201,13 @@ where allergy_intolerance.encounterid =v.uuid ;
 
      public void migrateAllergyThread(int batchSize) {
 
+        String clean ="""
+                
+        update allergy_intolerance 
+set practitioner_id =v.assignedtoid ,practitioner_name =v.assignedtoname 
+from visits v where v."uuid" =visit_id::uuid
+                """;
+                vectorJdbcTemplate.update(clean);
         long rows = allergyRepository.count();
         logger.info("Rows size is: {}", rows);
 

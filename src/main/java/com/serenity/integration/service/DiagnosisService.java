@@ -432,7 +432,7 @@ public class DiagnosisService {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 Diagnosis diagnosis = diagnoses.get(i);
                 ps.setString(1, diagnosis.getCreatedAt().replaceAll("T|Z", " "));
-                ps.setLong(2, diagnosis.getId());
+                ps.setLong(2, diagnosis.getId()+3243);
                 ps.setString(3, diagnosis.getUuid());
                 ps.setString(4, diagnosis.getCondition());
                 ps.setString(5, diagnosis.getRole());
@@ -457,6 +457,13 @@ public class DiagnosisService {
     }
 
     public void migrationThread() {
+        String clean ="""
+                update diagnosis 
+set practitionerid =e.assigned_to_id ,practitionername=assigned_to_name 
+from encounter e
+where e."uuid" =encounterid
+                """;
+                vectorJdbcTemplate.update(clean);
         logger.info("kooooooooooooooading");
 
         long dataSize = diagnosisRepository.count();

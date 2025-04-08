@@ -105,9 +105,13 @@ InvoiceService invoiceService;
 	
 	long start = System.currentTimeMillis();
 	//patientMigrationService.getPatientsThreads();
+	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
-	encounterService.encounterLegacythread();
-//	dService.getLegacyDiagnosis();
+allergyService.migrateAllergyThread(1000);
+//;
+//dService.migrationThread();
+//diagnosisService.migrateDiagReportThread(1000);
+	//	dService.getLegacyDiagnosis();
 	//noteService.getLegacyCarePlan(1000);
 	//noteService.getLegacyVisitNotesEncounters(1000);
 //noteService.getLegacyEncounters(1000);

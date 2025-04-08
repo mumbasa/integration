@@ -605,11 +605,17 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
 
 
     public int migrateDoctors(){
+        String sq="SELECT uuid from practitioners";
+
+        HashSet<String> uuid = new HashSet<>( serenityJdbcTemplate.queryForList(sq,String.class));
+       System.err.println(uuid.size()+"--------------");
         List<Doctors> doctors = doctorRepository.findAll();
+        doctors.removeIf(e -> uuid.contains(e.getSerenityUUid()));
+
         String sql ="""
                 INSERT INTO public.practitioners
-                        (created_at,  id, \"uuid\", first_name, last_name, full_name, mobile, email, birth_date, gender, is_active, managing_organization_id, managing_organization_name,  external_id, external_system, name_prefix, national_mobile_number) 
-                        VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('practitioners_id_seq'::regclass), uuid(?), ?, ?, ?, ?, ?, to_date(?, 'YYYY-MM-DD'), ?, false, uuid('161380e9-22d3-4627-a97f-0f918ce3e4a9'), 'Nyaho Medical Centre',  ?, ?, ?, ?);
+                        (created_at,  id, \"uuid\", first_name, last_name, full_name, mobile, email, birth_date, gender, is_active, managing_organization_id, managing_organization_name,  external_id, external_system, name_prefix, national_mobile_number,updated_at) 
+                        VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('practitioners_id_seq'::regclass), uuid(?), ?, ?, ?, ?, ?, to_date(?, 'YYYY-MM-DD'), ?, false, uuid('161380e9-22d3-4627-a97f-0f918ce3e4a9'), 'Nyaho Medical Centre',  ?, ?, ?, ?,now());
 
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {

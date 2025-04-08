@@ -3,6 +3,7 @@ package com.serenity.integration.service;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -400,7 +401,7 @@ public class EncounterService {
        
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(1000, dataSize));
+            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(100, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -465,7 +466,13 @@ System.err.println(encountersD.size() +" ------------------");
 
     public void getLegacyEncounters(int batchSize) {
 
-
+Map<String, String> locationMap = new HashMap<>();
+locationMap.put("6b46da79-5613-4827-91ae-f46aaf65d4da", "Accra Central (Octagon)");
+locationMap.put("23f59485-8518-4f4e-9146-d061dfe58175", "Airport Primary Care");
+locationMap.put("b60c55f5-63dd-4ba2-9fe9-8192f57aaed2", "Tema Primary Care");
+locationMap.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care");
+locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
+locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
     //   Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
       //          .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
@@ -507,7 +514,12 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setExternalSystem("opd");
             encounter.setPrescription(false);
             encounter.setDisplay(set.getString("uuid"));
-            encounter.setLocationId(set.getString("primary_location_id"));
+            encounter.setLocationId(set.getString("primary_location_id")==null?"23f59485-8518-4f4e-9146-d061dfe58175":set.getString("primary_location_id"));
+           try{
+            encounter.setLocationName(locationMap.get(encounter.getLocationId()));
+           }catch(NullPointerException e){
+
+           }
             encounter.setVisitId(set.getString("visit_id"));
             encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             encounter.setServiceProviderName("Nyaho Medical Centre");
