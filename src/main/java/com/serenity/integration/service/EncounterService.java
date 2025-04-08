@@ -401,7 +401,7 @@ public class EncounterService {
        
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(100, dataSize));
+            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(1000, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }

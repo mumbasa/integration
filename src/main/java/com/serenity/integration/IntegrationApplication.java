@@ -107,41 +107,8 @@ InvoiceService invoiceService;
 	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
-allergyService.migrateAllergyThread(1000);
-//;
-//dService.migrationThread();
-//diagnosisService.migrateDiagReportThread(1000);
-	//	dService.getLegacyDiagnosis();
-	//noteService.getLegacyCarePlan(1000);
-	//noteService.getLegacyVisitNotesEncounters(1000);
-//noteService.getLegacyEncounters(1000);
-	//	diagnosisService.getLegacyDiagnosticReport(1000);
-	//patientService.getLegacyAllPatients2(1000, 1000);
-	//	referalService.getLegacyReferral(1000);
-	//	observationService.getLegacyObservations(1000);
-		//serviceRequestService.getLegacyRequest(1000);
-	//	chargeItemService.getLegacyChargeItem(1000);
-		//medicalRequestService.getLegacyRequest2();
-		
-		//observationService.migrateObservationThread(10);
-		
-		//patientService.getLegacyAllPatients2(1000,1000);
-		//practitionerService.getLegacyPractitioner();
-		//visitService.getLegacyVisit(1000);
-		//chargeItemService.getLegacyChargeItem(1000);
-		//patientMigrationService.getPatientsThreads();
-		//encounterService.getLegacyEncounters(1000);
-		//observationService.getLegacyObservations(1000);
-		//visitService.getLegacyVisit(1000);
-		//visitService.updateVisits();
-	
+	encounterService.encounterLegacythread();
 
-	
-	
-		//encounterService.getLegacyEncounters(1000);
-		//noteService.getLegacyEncounters(1000);
-		//noteService.getLegacyVisitNotesEncounters(1000);
-		//patientService.getLegacyAllPatients(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 
