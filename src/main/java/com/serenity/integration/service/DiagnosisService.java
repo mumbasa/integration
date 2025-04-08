@@ -423,8 +423,8 @@ public class DiagnosisService {
                         INSERT INTO public.diagnoses
                 (created_at,  id, "uuid", "condition", "role",
                 "system", status, note, practitioner_name, patient_id,
-                practitioner_id, visit_id )
-                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS') ,?, uuid(?), ?, ?, ?, ?, ?, ?, uuid(?), uuid(?), uuid(?))
+                practitioner_id, visit_id ,updated_at)
+                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS') ,?, uuid(?), ?, ?, ?, ?, ?, ?, uuid(?), uuid(?), uuid(?),now())
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
