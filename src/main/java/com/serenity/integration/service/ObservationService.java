@@ -137,7 +137,7 @@ public class ObservationService {
             String sqlQuery = """
  SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, o.category, o.code,
              issued, unit, value, data_absent_reason, body_site, "method", specimen, device, o.effective_date_time,
-             dr."uuid" as diagnostic_report_, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
+             dr."uuid" as diagnostic_report_id, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
                reference_range_high, reference_range_low, "rank", performer_id, performer_name
 FROM observation o left join patient p on p.id=o.patient_id left join encounter e  on e.id =o.encounter_id  left join diagnostic_report dr on o.diagnostic_report_id=dr.id
             order by o.id asc offset ? LIMIT ?
