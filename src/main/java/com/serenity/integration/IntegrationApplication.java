@@ -107,8 +107,10 @@ InvoiceService invoiceService;
 	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
-	encounterService.encounterLegacythread();
-
+	//encounterService.encounterLegacythread();
+	allergyService.getLegacyAllergies(1000);
+allergyService.migrateAllergyThread(1000);
+//referalService.migrateReferalThread(1000);
 		long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 
