@@ -108,8 +108,9 @@ InvoiceService invoiceService;
 	//	diagnosisService.getLegacyDiagnosticReport(1000);
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//	referalService.getLegacyReferral(1000);
-		observationService.getLegacyObservations(1000);
-		serviceRequestService.getLegacyRequest(1000);
+	//	observationService.getLegacyObservations(1000);
+	//	serviceRequestService.getLegacyRequest(1000);
+		chargeItemService.getLegacyChargeItem(1000);
 		//observationService.migrateObservationThread(10);
 		
 		//patientService.getLegacyAllPatients2(1000,1000);
