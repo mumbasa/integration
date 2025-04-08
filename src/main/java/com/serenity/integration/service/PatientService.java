@@ -777,7 +777,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                 SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, sized);
                 while (record.next()) {
                     PatientData pd = new PatientData();
-                    pd.setExternalId(record.getString("uuid"));
+                    pd.setExternalId(record.getString("mr_number"));
                     pd.setLastName(record.getString("last_name"));
                     pd.setFirstName(record.getString("first_name"));
                     pd.setMobile(record.getString("mobile"));

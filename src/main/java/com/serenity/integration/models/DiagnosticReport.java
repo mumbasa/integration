@@ -31,6 +31,8 @@ public class DiagnosticReport {
     private String approvedDateTime;
     private String reviewedDateTime;
     private String effectiveDateTime;
+    private String rejectedById;
+    private String rejectedByName;
 
     // Turnaround Times
     private double billingTurnaroundTime;
