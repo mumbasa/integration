@@ -211,7 +211,7 @@ VALUES (
 );
 
 
-                """;;
+                """;
                    
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {

@@ -103,8 +103,9 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 	
-		long start = System.currentTimeMillis();
-	
+	long start = System.currentTimeMillis();
+	patientMigrationService.getPatientsThreads();
+	visitMigration.getVisitThreads();
 //	dService.getLegacyDiagnosis();
 	//noteService.getLegacyCarePlan(1000);
 	//noteService.getLegacyVisitNotesEncounters(1000);
@@ -113,9 +114,9 @@ InvoiceService invoiceService;
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//	referalService.getLegacyReferral(1000);
 	//	observationService.getLegacyObservations(1000);
-		serviceRequestService.getLegacyRequest(1000);
+		//serviceRequestService.getLegacyRequest(1000);
 	//	chargeItemService.getLegacyChargeItem(1000);
-		medicalRequestService.getLegacyRequest2();
+		//medicalRequestService.getLegacyRequest2();
 		
 		//observationService.migrateObservationThread(10);
 		
