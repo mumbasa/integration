@@ -128,7 +128,7 @@ FROM
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
-                request.setId(set.getLong("id"));
+               // request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
                 request.setCharge(set.getDouble("charge"));
                 request.setCurrency(set.getString("currency"));
