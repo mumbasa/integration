@@ -18,6 +18,7 @@ import com.serenity.integration.service.DiagnosisService;
 import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.InvoiceService;
+import com.serenity.integration.service.MedicalRequestService;
 import com.serenity.integration.service.NoteService;
 import com.serenity.integration.service.ObservationService;
 import com.serenity.integration.service.PatientMigrationService;
@@ -72,6 +73,9 @@ public class IntegrationApplication {
 	DiagnosticReportService diagnosisService;
 
 	@Autowired
+	MedicalRequestService medicalRequestService;
+
+	@Autowired
 	DiagnosisService dService;
 
 	@Autowired
@@ -109,8 +113,10 @@ InvoiceService invoiceService;
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//	referalService.getLegacyReferral(1000);
 	//	observationService.getLegacyObservations(1000);
-	//	serviceRequestService.getLegacyRequest(1000);
-		chargeItemService.getLegacyChargeItem(1000);
+		serviceRequestService.getLegacyRequest(1000);
+	//	chargeItemService.getLegacyChargeItem(1000);
+		medicalRequestService.getLegacyRequest2();
+		
 		//observationService.migrateObservationThread(10);
 		
 		//patientService.getLegacyAllPatients2(1000,1000);
