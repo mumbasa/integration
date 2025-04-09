@@ -103,6 +103,7 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
+		encounterService.getLegacyEncounters(1000);
 		encounterService.encounterLegacythread();
 		allergyService.migrateAllergyThread(1000);
 	observationService.migrateObservationThread(1000);

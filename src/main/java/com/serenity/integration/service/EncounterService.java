@@ -508,10 +508,10 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setEncounterClass(set.getString("encounter_class"));
             encounter.setPriority(set.getString("priority"));
             encounter.setPatientId(set.getString("patient_id"));
-            encounter.setPatientBirthDate(set.getString("birth_date"));
+            encounter.setPatientBirthDate(set.getString("birth_date")==null?"":set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
             encounter.setPatientMobile(set.getString("mobile"));
-            encounter.setPatientGender(set.getString("gender"));
+            encounter.setPatientGender(set.getString("gender")==null?"":set.getString("gender"));
             encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setEncounterType("outpatient-consultation");
