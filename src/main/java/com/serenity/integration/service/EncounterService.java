@@ -259,8 +259,8 @@ public class EncounterService {
                 ps.setString(10, notes.get(i).getPatientId());
                 ps.setString(11, notes.get(i).getPatientFullName());
                 ps.setString(12, notes.get(i).getPatientMobile() == null ? "" : notes.get(i).getPatientMobile());
-                ps.setString(13, notes.get(i).getPatientBirthDate());
-                ps.setString(14, notes.get(i).getPatientGender());
+                ps.setString(13, notes.get(i).getPatientBirthDate()== null ? "":notes.get(i).getPatientBirthDate());
+                ps.setString(14, notes.get(i).getPatientGender()==null?"":notes.get(i).getPatientGender());
 
                 ps.setString(15, notes.get(i).getEncounterClass());
                 ps.setString(16, notes.get(i).getAssignedToName());
