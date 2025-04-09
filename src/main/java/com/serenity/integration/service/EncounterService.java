@@ -476,8 +476,8 @@ locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
      Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-       // Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-        //        .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
+               .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
 
                 String sqlRow = "SELECT count(*) from encounter";
                 long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
@@ -511,6 +511,7 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
             encounter.setPatientMobile(set.getString("mobile"));
+            encounter.setPatientGender(set.getString("gender"));
             encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setPrescription(false);
@@ -536,7 +537,8 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
         }
 encounterRepository.saveAll(encounters);
                 }
-       
+
+       cleanEncounter();
     }
 
     public Set<Callable<Integer>> submitNote(List<Encounter> notes, int batchSize) {
@@ -612,21 +614,11 @@ AND T1."uuid"  = T2."uuid";
     }
 
     public void cleanEncounter(){
-        String sql ="""
-                update encounter set patient_mr_number = p.mrnumber ,patient_gender =p.gender
-from patient_information p
-where p."uuid" =encounter.patient_id 
-                """;
-                vectorJdbcTemplate.update(sql);
-        sql ="""
+              String sql ="""
                 update encounter set assigned_to_id =v.assignedtoid ,assigned_to_name=v.assignedtoname 
 from visits v  where v."uuid" =visit_id::uuid
                 """;
-                vectorJdbcTemplate.update(sql);
-    sql="""
-            update encounter set location_name ='Airport Primary Care'
-where location_id ='29e22113-9d7b-46a6-a857-810ca3567ca7'
-            """;
+               
             vectorJdbcTemplate.update(sql);
             sql ="""
                     update encounter set patient_birth_date ='' where patient_birth_date is null;

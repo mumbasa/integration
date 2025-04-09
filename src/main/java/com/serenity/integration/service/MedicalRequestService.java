@@ -468,6 +468,11 @@ public class MedicalRequestService {
                 request.setAuthoredOn(set.getString("authored_on"));
                 request.setName(set.getString("name"));
                 request.setCategory(set.getString("category"));
+                if(set.getString("quantity")==null){
+
+                }else{
+                request.setDose(set.getDouble("quantity"));
+                }
                 request.setCode(set.getString("code"));
                 request.setNotes(set.getString("notes"));
                 request.setPriority(set.getString("priority"));
@@ -749,6 +754,10 @@ public void getLegacyRequest2() {
     logger.info("Starting importing Medical Requests");
     Map<String, PatientData> mps = patientRepository.findAll().stream()
     .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+
+    Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
+    .collect(Collectors.toMap(e -> e.getSerenityUUid(), e->e ));
+
     // Step 1: Get the total number of rows
     String sqlCount = "SELECT count(*) FROM medication_request m JOIN patient p ON m.patient_id = p.id";
     int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
@@ -758,12 +767,12 @@ public void getLegacyRequest2() {
     for (int i = 0; i < batches; i++) {
         int startIndex = i * batchSize;
 
-movetoHub(startIndex, batchSize,mps);
+movetoHub(startIndex, batchSize,mps,doctorMap);
     }
     cleanLegacyRequest();
             // Step 6: Clean up resources
 }
-    public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps) {
+    public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc) {
         Set<Callable<Integer>> callables = new HashSet<>();
         long totalSize = rows; // Use long to avoid potential overflow
         long batches = ((totalSize + batchSize - 1) / batchSize); // Ceiling division
@@ -777,7 +786,7 @@ movetoHub(startIndex, batchSize,mps);
                         batchNumber + 1, batches, startIndex);
     
                 try {
-                    movetoHub(startIndex, batchSize,mps);
+                    movetoHub(startIndex, batchSize,mps,doc);
                     // Return the number of rows processed or a status code
                     return batchSize;
                 } catch (Exception e) {
@@ -791,12 +800,16 @@ movetoHub(startIndex, batchSize,mps);
         return callables;
     }
 
-    public int movetoHub(int offset,int limit,Map<String, PatientData> mps){
+    public int movetoHub(int offset,int limit,Map<String, PatientData> mps,Map<String,Doctors> docs){
         List<MedicalRequest> medicalRequests = new ArrayList<>();
-        String sql ="SELECT * FROM medication_request m join patient p on m.patient_id=p.id order by patient_id OFFSET ? LIMIT ?";
+        String sql ="""
+        
+        SELECT mr."uuid", mr.created_at, mr.is_deleted, mr.modified_at, mr.id, authored_on, "name", category, code, "date", form, intended_dispenser, priority, careplan, mr.status, status_reason, intent, do_not_perform, performer_type, course_of_therapy_type, quantity, past_refills, next_refill, dispense_interval_in_days, number_of_repeats_allowed, encounter_id, p.uuid as patient_id, concat(p.first_name,' ',p.last_name) as patient_name,performer_practitioner_id, performer_practitioner_role_id, prior_prescription_id, recorder_practitioner_id, recorder_practitioner_role_id, requester_patient_id, requester_practitioner_id, requester_practitioner_role_id, visit_id, dosage_form, is_mismatched, is_mismatched_comment
+FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  order by mr.patient_id OFFSET ? LIMIT ?
+        """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,offset,limit);
         while (set.next()) {
-            PatientData patient = mps.get(set.getString("mr_number"));
+            PatientData patient = mps.get(set.getString("patient_id"));
             MedicalRequest request = new MedicalRequest();
             request.setCode(set.getString("code"));
             request.setCategory(set.getString("category"));
@@ -810,6 +823,13 @@ movetoHub(startIndex, batchSize,mps);
             request.setPatientId(patient.getUuid());
             request.setMrNumber(patient.getMrNumber());
             
+            request.setStatus(set.getString("status"));
+                request.setPractitionerId(set.getString("requester_practitioner_id"));
+            try{
+            request.setPractitionerName(docs.get(request.getPractitionerId()).getFullName());
+            }catch(Exception e){
+                
+            }
             request.setPatientName(patient.getFullName());
             request.setVisitId(set.getString("visit_id"));
             request.setPriority(set.getString("priority"));
