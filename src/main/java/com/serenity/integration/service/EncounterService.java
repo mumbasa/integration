@@ -490,8 +490,8 @@ locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
                     int startIndex = i * batchSize;
         List<Encounter> encounters = new ArrayList<>();
         String sql = """
-        SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
-FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at offset ? limit ? ;        
+        SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, hs.name  as service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
+FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id  order by  E.created_at offset ? limit ? ;        
 
                 """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
@@ -514,6 +514,9 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setPrescription(false);
+            encounter.setSlotId(set.getString("slot_id"));
+            encounter.setServiceTypeId(set.getString("service_type_id"));
+            encounter.setServiceTypeName(set.getString("service_type_name"));
             encounter.setStartedAt(set.getString("created_at"));
             encounter.setDisplay(set.getString("uuid"));
             encounter.setLocationId(set.getString("primary_location_id")==null?"23f59485-8518-4f4e-9146-d061dfe58175":set.getString("primary_location_id"));

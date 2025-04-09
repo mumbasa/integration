@@ -95,7 +95,7 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setRejectedById(set.getString("rejected_by_uuid"));
                 request.setRejectedDatetime(set.getString("rejected_date_time"));
                 request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
-                request.setPatientFullName(mps.get(set.getString("patient_id")).getFullName());
+                request.setPatientFullName(mps.get(set.getString("patient_id")).getFirstName() +" "+mps.get(set.getString("patient_id")).getLastName());
                 request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
                 request.setPatientMobile(mps.get(set.getString("patient_id")).getMobile());
                 request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber());

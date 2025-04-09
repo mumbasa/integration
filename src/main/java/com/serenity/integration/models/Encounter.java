@@ -138,6 +138,8 @@ public class Encounter {
 
     private boolean serviceRequest;
     private boolean prescription;
+    private String slotId;
+   
 
 
    /*  @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
