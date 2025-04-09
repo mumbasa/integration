@@ -753,7 +753,7 @@ where medicalrequest.externalid =v.external_id
 public void getLegacyRequest2() {
     logger.info("Starting importing Medical Requests");
     Map<String, PatientData> mps = patientRepository.findAll().stream()
-    .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+    .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
 
     Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
     .collect(Collectors.toMap(e -> e.getSerenityUUid(), e->e ));

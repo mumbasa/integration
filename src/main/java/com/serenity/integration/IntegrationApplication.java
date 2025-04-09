@@ -107,7 +107,7 @@ InvoiceService invoiceService;
 	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
-	encounterService.getLegacyEncounters(1000);
+	//encounterService.getLegacyEncounters(1000);
 	medicalRequestService.getLegacyRequest2();
 	//allergyService.getLegacyAllergies(1000);
 //allergyService.migrateAllergyThread(1000);
