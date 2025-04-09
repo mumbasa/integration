@@ -474,8 +474,8 @@ locationMap.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care")
 locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
 locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
-    //   Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-      //          .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+     Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
+               .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
        // Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
         //        .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
 
@@ -497,7 +497,7 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
             //System.err.println(set.getString("mr_number")+"-----------------");
-            //PatientData patient = patientDataMap.get(set.getString("mr_number"));
+            PatientData patient = patientDataMap.get(set.getString("patient_id"));
             Encounter encounter = new Encounter();
             encounter.setUuid(set.getString("uuid"));
             encounter.setEncounterType(set.getString("type"));
@@ -511,8 +511,10 @@ FROM encounter e join patient p on p.id =e.patient_id order by  E.created_at off
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
             encounter.setPatientMobile(set.getString("mobile"));
+            encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setPrescription(false);
+            encounter.setStartedAt(set.getString("created_at"));
             encounter.setDisplay(set.getString("uuid"));
             encounter.setLocationId(set.getString("primary_location_id")==null?"23f59485-8518-4f4e-9146-d061dfe58175":set.getString("primary_location_id"));
            try{

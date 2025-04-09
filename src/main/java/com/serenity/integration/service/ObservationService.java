@@ -71,7 +71,7 @@ public class ObservationService {
         codeDisplayMap.put("FAMILY_HISTORY", "Family history");
         codeDisplayMap.put("EATING_HABITS", "Eating Habits");
 
-        Map<String,String> vitalMap = new HashMap<>();
+        Map<String, String> vitalMap = new HashMap<>();
         vitalMap.put("SBP", "8480-6");
         vitalMap.put("BLOOD_PRESSURE", "8462-4");
         vitalMap.put("RESPIRATORY_RATE", "9279-1");
@@ -85,9 +85,8 @@ public class ObservationService {
         vitalMap.put("HEIGHT_CM", "8302-2");
         vitalMap.put("HEART_RATE", "8867-4");
         vitalMap.put("AVPU", "67775-7");
-        
 
-        Map<String,String> unitlMap = new HashMap<>();
+        Map<String, String> unitlMap = new HashMap<>();
         unitlMap.put("SBP", "mm[Hg]");
         unitlMap.put("BLOOD_PRESSURE", "mm[Hg]");
         unitlMap.put("RESPIRATORY_RATE", "beats/min");
@@ -102,8 +101,7 @@ public class ObservationService {
         unitlMap.put("HEART_RATE", "beats/min");
         unitlMap.put("AVPU", "");
 
-
-        Map<String,String> displayMap = new HashMap<>();
+        Map<String, String> displayMap = new HashMap<>();
         displayMap.put("SBP", "Systolic blood pressure");
         displayMap.put("BLOOD_PRESSURE", "Diastolic blood pressure");
         displayMap.put("RESPIRATORY_RATE", "Respiratory rate");
@@ -118,12 +116,12 @@ public class ObservationService {
         displayMap.put("HEART_RATE", "Heart rate");
         displayMap.put("AVPU", "Level of responsiveness (AVPU)");
 
-
-     /*  Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e)); 
- */
+        /*
+         * Map<String, PatientData> mps = patientRepository.findAll().stream()
+         * .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+         * Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
+         * .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+         */
         String sql = "SELECT count(*) from observation";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -135,13 +133,13 @@ public class ObservationService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
- SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, o.category, o.code,
-             issued, unit, value, data_absent_reason, body_site, "method", specimen, device, o.effective_date_time,
-             dr."uuid" as diagnostic_report_id, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
-               reference_range_high, reference_range_low, "rank", performer_id, performer_name
-FROM observation o left join patient p on p.id=o.patient_id left join encounter e  on e.id =o.encounter_id  left join diagnostic_report dr on o.diagnostic_report_id=dr.id
-            order by o.id asc offset ? LIMIT ?
-                     """;
+                     SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, o.category, o.code,
+                                 issued, unit, value, data_absent_reason, body_site, "method", specimen, device, o.effective_date_time,
+                                 dr."uuid" as diagnostic_report_id, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
+                                   reference_range_high, reference_range_low, "rank", performer_id, performer_name
+                    FROM observation o left join patient p on p.id=o.patient_id left join encounter e  on e.id =o.encounter_id  left join diagnostic_report dr on o.diagnostic_report_id=dr.id
+                                order by o.id asc offset ? LIMIT ?
+                                         """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 Observation request = new Observation();
@@ -149,46 +147,52 @@ FROM observation o left join patient p on p.id=o.patient_id left join encounter 
                 request.setCreatedAt(set.getString(3));
                 request.setPatientId(set.getString("patient_id"));
                 request.setEncounterId(set.getString("encounter_id"));
-                request.setStatus(set.getString("status")==null?"registered":set.getString("status"));
+                request.setStatus(set.getString("status") == null ? "registered" : set.getString("status"));
                 request.setEffectiveDateTime(set.getString("effective_date_time"));
-                String codes=set.getString("unit");
-                
-                if(vitalMap.keySet().contains(set.getString("unit"))){
+                String codes = set.getString("unit");
+
+                if (vitalMap.keySet().contains(set.getString("unit"))) {
                     request.setCode(vitalMap.get(codes));
                     request.setDisplay(displayMap.get(codes));
                     request.setUnit(unitlMap.get(codes));
                     request.setCategory("vital-signs");
                     request.setEnconterType("vitals-observation");
+
                 }
 
-                else if(codeDisplayMap.containsKey(set.getString("unit"))){
+                else if (codeDisplayMap.containsKey(set.getString("unit"))) {
                     request.setCode(set.getString("unit"));
                     request.setDisplay(codeDisplayMap.get((set.getString("unit"))));
                     request.setUnit(set.getString("unit"));
                     request.setCategory("social-history");
                     request.setEnconterType("outpatient-consultation");
-
-                    }
-                else{
-                request.setCode(set.getString("unit"));
-                request.setDisplay(set.getString("display"));
-                request.setUnit(set.getString("unit"));
-                request.setCategory(set.getString("category"));
+                    request.setRank(set.getInt("rank"));
+                } else {
+                    request.setCode(set.getString("unit"));
+                    request.setDisplay(set.getString("display"));
+                    request.setUnit(set.getString("unit"));
+                    request.setCategory(set.getString("category"));
+                    request.setRank(set.getInt("rank"));
                 }
-                if(request.getCategory()==null){
+                if (request.getCategory() == null) {
                     request.setCategory("outpatient-consultation");
+                    request.setRank(set.getInt("rank"));
                 }
-                request.setUpdatedAt (set.getString("created_at"));
+                request.setUpdatedAt(set.getString("created_at"));
                 request.setIssued(set.getString("issued"));
                 request.setValue(set.getString("value"));
                 request.setBodySite(set.getString("body_site"));
                 request.setInterpretation(set.getString("interpretation"));
-                request.setRank(set.getInt("rank"));
+
                 request.setReferenceRangeHigh(set.getString("reference_range_high"));
                 request.setReferenceRangeLow(set.getString("reference_range_low"));
                 request.setSpecimen(set.getString("specimen"));
                 request.setVisitId(set.getString("visit_id"));
                 request.setDiagnosticReportId(set.getString("diagnostic_report_id"));
+                request.setScore("The score associated with this observation");
+                request.setSystem("http://loinc.org");
+                request.setHexColorCode(
+                        "The color code associated with the score or interpretation of this observation");
                 serviceRequests.add(request);
 
             }
@@ -206,14 +210,14 @@ FROM observation o left join patient p on p.id=o.patient_id left join encounter 
                 practitioner_name, status, category, tag, code,
                  display,  value, score, "rank", reference_range_high,
                  reference_range_low, reference_range_text, interpretation, body_site, "method",
-                 specimen, service_request_id, diagnostic_report_id
+                 specimen, service_request_id, diagnostic_report_id,hex_color_code,system,updated_at,encounter_type
                   )
                 VALUES( ?::timestamp, ?::timestamp, ?, ?::timestamp, ?,
                 uuid(?), uuid(?), uuid(?), uuid(?), uuid(?),
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, uuid(?), uuid(?))
+                ?, uuid(?), uuid(?),?,?,now(),?)
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -241,7 +245,9 @@ FROM observation o left join patient p on p.id=o.patient_id left join encounter 
 
                 ps.setString(16, observation.getDisplay());
                 ps.setString(17, observation.getValue()==null?"":observation.getValue());
-                ps.setString(18, observation.getScore());
+
+             
+                ps.setString(18,"The score associated with this observation" );
                 ps.setInt(19, observation.getRank());
                 ps.setString(20, observation.getReferenceRangeHigh());
 
@@ -254,6 +260,22 @@ FROM observation o left join patient p on p.id=o.patient_id left join encounter 
                 ps.setString(26, observation.getSpecimen());
                 ps.setString(27, observation.getServiceRequestId());
                 ps.setString(28, observation.getDiagnosticReportId());
+                ps.setString(29,"The color code associated with the score or interpretation of this observation");
+              
+                ps.setString(30, "http://loinc.org");
+                switch (observation.getCategory()) {
+                    case "vital-signs": 
+                    ps.setString(31, "vitals-observation");
+                        break;
+                    case "laboratory":
+                    ps.setString(31, "");
+                    break;
+                    default:
+                    ps.setString(31, "outpatient-consultation");
+
+                        break;
+                }
+               
 
                 // ps.setString(7, observation.getServiceProviderId());
 
@@ -278,29 +300,29 @@ FROM observation o left join patient p on p.id=o.patient_id left join encounter 
                 where observations.encounterid =e."uuid" and practitionerid is null ;
                             """;
         vectorJdbcTemplate.update(sql);
-        sql ="""
-                update observations 
-set visit_id =e.visit_id
-from encounters e
-where e.uuid = observations.encounter_id
+        sql = """
+                                update observations
+                set visit_id =e.visit_id
+                from encounters e
+                where e.uuid = observations.encounter_id
+                                """;
+
+        sql = """
+                update observations set "system" ='http://loinc.org' where "system" ='UNKNOWN' and category ='vital-signs'
+
                 """;
+        vectorJdbcTemplate.update(sql);
 
-                sql="""
-                        update observations set "system" ='http://loinc.org' where "system" ='UNKNOWN' and category ='vital-signs' 
+        sql = """
+                update observations set "encontertype" ='vitals-observation' where  category ='vital-signs'
 
-                        """;
-                        vectorJdbcTemplate.update(sql);
+                """;
+        vectorJdbcTemplate.update(sql);
+        sql = """
+                update encounters  set encounter_type ='vitals-observation' where "uuid" in (select encounter_id from observations where category='vital-signs')
 
-                        sql="""
-                            update observations set "encontertype" ='vitals-observation' where  category ='vital-signs' 
-    
-                            """;
-                            vectorJdbcTemplate.update(sql);
-                sql="""
-                        update encounters  set encounter_type ='vitals-observation' where "uuid" in (select encounter_id from observations where category='vital-signs')
-
-                        """;
-                        serenityJdbcTemplate.update(sql);
+                """;
+        serenityJdbcTemplate.update(sql);
     }
 
     public void migrateObservationThread(int batchSize) {
@@ -310,7 +332,7 @@ where e.uuid = observations.encounter_id
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 30000));
             for (Future<Integer> future : futures) {
                 logger.info("Future result: {}", future.get());
             }
@@ -326,6 +348,7 @@ where e.uuid = observations.encounter_id
                 executorService.shutdownNow();
             }
         }
+     //   cleanEncounters();
     }
 
     public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
@@ -345,5 +368,18 @@ where e.uuid = observations.encounter_id
         }
 
         return callables;
+    }
+
+    public void cleanEncounters() {
+        String sql = """
+                update encounters set encounter_type='vitals-observation' where "uuid" in (select encounter_id from observations where category='vital-signs')
+                        """;
+        serenityJdbcTemplate.update(sql);
+
+        sql = """
+                update encounters set encounter_type='outpatient-consultation' where "uuid" in (select encounter_id from observations where category='social-history')
+                        """;
+        serenityJdbcTemplate.update(sql);
+
     }
 }

@@ -437,7 +437,7 @@ public class DiagnosisService {
                 ps.setString(4, diagnosis.getCondition());
                 ps.setString(5, diagnosis.getRole());
                 ps.setString(6, diagnosis.getSystem());
-                ps.setString(7, diagnosis.getStatus());
+                ps.setString(7, diagnosis.getStatus().toLowerCase());
                 ps.setString(8, diagnosis.getNote());
                 ps.setString(9, diagnosis.getPractitionerName());
                 ps.setString(10, diagnosis.getPatientId());

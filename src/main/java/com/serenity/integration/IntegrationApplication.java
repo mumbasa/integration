@@ -102,13 +102,13 @@ InvoiceService invoiceService;
 	@PostConstruct
 	public void coke() {
 		logger.info("Starting import");
-	
-	long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
+	//observationService.migrateObservationThread(1000);
 	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
 	//encounterService.encounterLegacythread();
-	//allergyService.getLegacyAllergies(1000);
+	allergyService.getLegacyAllergies(1000);
 //allergyService.migrateAllergyThread(1000);
 //referalService.migrateReferalThread(1000);
 //dService.migrationThread();
@@ -118,7 +118,7 @@ long stop = System.currentTimeMillis();
 
 	//	encounterService.encounterLegacythread();
 	  //  medicalRequestService.saveMedicalRequestNoThread();
-	  diagnosisService.getLegacyDiagnosticReport(1000);
+	  //diagnosisService.getLegacyDiagnosticReport(1000);
 		//diagnosisService.migrateDiagReportThread(1000);
 		//noteService.moveVisitNote();
 		//diagnosisService.getNursingDiagnosis();

@@ -159,7 +159,7 @@ uuid(?), ?, ?, ?, ?,
            ps.setString(15,intolerance.getCriticality());
 
            ps.setString(16,intolerance.getCode());
-           ps.setString(17,    intolerance.getDisplay());
+           ps.setString(17,    intolerance.getCode());
            ps.setString(18,     intolerance.getPractitionerId()==null?"4c4db061-1f31-4a7b-b5fc-04b6501fc3cf":intolerance.getPractitionerId());
            ps.setString(19,intolerance.getPractitionerName()==null?"":intolerance.getPractitionerName());
     
