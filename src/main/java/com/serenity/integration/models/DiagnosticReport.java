@@ -42,12 +42,16 @@ public class DiagnosticReport {
 
     // Identifiers
     private String uuid;
+    @Column(columnDefinition = "TEXT")
     private String display;
     private String category;
+    @Column(columnDefinition = "TEXT")
+
     private String code;
     private String system;
 
-    // Descriptive Fields
+    @Column(columnDefinition = "TEXT")
+
     private String conclusion;
     private String purpose;
     private String passportNumber;
