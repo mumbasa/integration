@@ -112,7 +112,7 @@ InvoiceService invoiceService;
 //allergyService.migrateAllergyThread(1000);
 //referalService.migrateReferalThread(1000);
 //dService.migrationThread();
-noteService.noteThread();
+//noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 
