@@ -60,8 +60,8 @@ DiagnosticReportRepository diagnosticReportRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
     public void getLegacyDiagnosticReport(int batchSize) {
-           /* Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e)); */
+        Map<String, PatientData> mps = patientRepository.findAll().stream()
+                .collect(Collectors.toMap(e -> e.getUuid(), e -> e)); 
         Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         String sql = "SELECT count(*) from diagnostic_report";
@@ -75,7 +75,7 @@ DiagnosticReportRepository diagnosticReportRepository;
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    SELECT dr.id, dr."uuid", dr.created_at, dr.is_deleted, dr.modified_at, dr.category, dr.code, dr.display, conclusion, dr.status, issued_date, effective_date_time, effective_period_start, effective_period_end, approved_date_time, approved_by_uuid, approved_by_name, rejected_by_uuid, rejected_by_name, rejected_date_time, review_request_by_uuid, review_request_by_name, review_request_date_time, based_on_id,sr."uuid" as service_request_id, dr.encounter_id, p.uuid as patient_id, dr.visit_id, service_request_category, billing_turnaround_time, intra_laboratory_turnaround_time, total_turnaround_time
+                    SELECT dr.id, dr."uuid", dr.created_at, dr.is_deleted, dr.modified_at, dr.category, dr.code, dr.display, conclusion, dr.status, issued_date, effective_date_time, effective_period_start, effective_period_end, approved_date_time, approved_by_uuid, approved_by_name, rejected_by_uuid, rejected_by_name, rejected_date_time, review_request_by_uuid, review_request_by_name, review_request_date_time, based_on_id,sr."uuid" as service_request_id, sr.encounter_id, p.uuid as patient_id, dr.visit_id, service_request_category, billing_turnaround_time, intra_laboratory_turnaround_time, total_turnaround_time
 from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join service_request sr on dr.based_on_id =sr.id order by dr.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
@@ -94,11 +94,11 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setReviewedByName(set.getString("rejected_by_name"));
                 request.setRejectedById(set.getString("rejected_by_uuid"));
                 request.setRejectedDatetime(set.getString("rejected_date_time"));
-               /*  request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
+                request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
                 request.setPatientFullName(mps.get(set.getString("patient_id")).getFullName());
                 request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
                 request.setPatientMobile(mps.get(set.getString("patient_id")).getMobile());
-                request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber()); */
+                request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber());
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));

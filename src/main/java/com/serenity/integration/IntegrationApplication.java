@@ -118,6 +118,7 @@ long stop = System.currentTimeMillis();
 
 	//	encounterService.encounterLegacythread();
 	  //  medicalRequestService.saveMedicalRequestNoThread();
+	  diagnosisService.getLegacyDiagnosticReport(1000);
 		diagnosisService.migrateDiagReportThread(1000);
 		//noteService.moveVisitNote();
 		//diagnosisService.getNursingDiagnosis();
