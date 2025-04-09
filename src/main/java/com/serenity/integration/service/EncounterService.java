@@ -232,11 +232,11 @@ public class EncounterService {
                 "display,  external_id, external_system,  service_provider_id, patient_mr_number," +
                 "patient_id, patient_full_name, patient_mobile, patient_birth_date, patient_gender," +
                 "encounter_type, practitioner_name, practitioner_id, service_provider_name,  visit_id," +
-                "has_prescriptions,has_service_requests)" + //
+                "has_prescriptions,has_service_requests,updated_at)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "'',?, ?,uuid(?),?,uuid(?), ?," +
-                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?)";
+                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now())";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -514,6 +514,7 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setPatientGender(set.getString("gender"));
             encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
+            encounter.setEncounterType("outpatient-consultation");
             encounter.setPrescription(false);
             encounter.setSlotId(set.getString("slot_id"));
             encounter.setServiceTypeId(set.getString("service_type_id"));

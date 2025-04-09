@@ -813,6 +813,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             MedicalRequest request = new MedicalRequest();
             request.setCode(set.getString("code"));
             request.setCategory(set.getString("category"));
+            request.setDose(set.getDouble("quantity"));
             request.setAuthoredOn(set.getString("authored_on"));
             request.setCreatedAt(set.getString("created_at"));
             request.setUuid(set.getString("id"));
