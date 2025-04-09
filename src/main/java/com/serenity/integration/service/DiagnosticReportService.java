@@ -133,11 +133,11 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
         healthcare_service_id, service_provider_id, status, performer_name, performer_id,
         approved_by_name, approved_by_id, reviewed_by_name, reviewed_by_id, encounter_id,
         based_on_id, patient_id, visit_id, service_request_category, patient_mr_number,
-        patient_full_name, patient_mobile, patient_birth_date, patient_gender,accession_number
+        patient_full_name, patient_mobile, patient_birth_date, patient_gender,accession_number,updated_at
     ) VALUES (
         ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamp,
         ?::timestamp, ?, uuid(?), ?, ?, ?, ?, ?, uuid(?), uuid(?), ?, ?, uuid(?), ?,
-        uuid(?), ?, uuid(?), ?, ?, ?, ?, ?, ?, ?, ?, cast(? AS DATE), ?,?
+        uuid(?), ?, uuid(?), ?, ?, ?, ?, ?, ?, ?, ?, cast(? AS DATE), ?,?,now()
     );
 """;
 serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -198,6 +198,12 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
     }
 
     public void migrateDiagReportThread(int batchSize) {
+        String cleaner ="""
+                update diagnostic_report 
+set patientbirthdate =p.birthdate ,patientmobile =p.mobile ,patientgender =p.gender ,patientfullname=concat(p.firstname,' ',p.lastname) 
+from patient_information p
+where p."uuid" =patientid ;
+                """;
 
         long rows = diagnosticReportRepository.findCleanCount();
         logger.info("Rows size is: {}", rows);

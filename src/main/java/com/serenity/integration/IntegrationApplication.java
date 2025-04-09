@@ -116,8 +116,10 @@ noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 
-		//encounterService.encounterLegacythread();
-	    //noteService.moveVisitNote();
+	//	encounterService.encounterLegacythread();
+	  //  medicalRequestService.saveMedicalRequestNoThread();
+		diagnosisService.migrateDiagReportThread(1000);
+		//noteService.moveVisitNote();
 		//diagnosisService.getNursingDiagnosis();
 		// diagnosisService.getProvisionalDiagnosis();;
 		
