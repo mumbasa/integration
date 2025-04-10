@@ -116,7 +116,7 @@ InvoiceService invoiceService;
 	//medicalRequestService.getLegacyRequest2();
 	
 	//
-noteService.noteThread();
+//noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 
