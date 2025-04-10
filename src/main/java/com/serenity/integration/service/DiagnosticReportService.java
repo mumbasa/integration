@@ -161,7 +161,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(15, report.getServiceProviderId()); // service_provider_id
         ps.setString(16, report.getStatus()== null ? "partial" : report.getStatus()); // status
         ps.setString(17, report.getPerformerName()==null?"":report.getPerformerName()); // performer_name
-        ps.setString(18, report.getPerformerId()==null?"":report.getPerformerId()); // performer_id
+        ps.setString(18, report.getPerformerId()); // performer_id
         ps.setString(19, report.getApprovedByName()); // approved_by_name
         ps.setString(20, report.getApprovedById()); // approved_by_id
         ps.setString(21, report.getReviewedByName()); // reviewed_by_name
