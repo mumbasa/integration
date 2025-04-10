@@ -113,7 +113,8 @@ InvoiceService invoiceService;
 	//referalService.migrateReferalThread(1000);
 	//observationService.migrateObservationThread(10000);
 	//noteService.noteThread();
-	diagnosisService.migrateDiagReportThread(1000);
+	//diagnosisService.migrateDiagReportThread(1000);
+	serviceRequestService.migrateThread(1000);
 	//medicalRequestService.getLegacyRequest2();
 	
 	//
