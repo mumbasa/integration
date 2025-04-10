@@ -20,5 +20,7 @@ public interface MedicalRequestRepository extends JpaRepository<MedicalRequest,L
     @Query(value = "select count(*) from medicalrequest where externalsystem=?1  and practitionerid is not null and visitid is not null and patientid  is not null and encounterid is not  null",nativeQuery = true)
     int findByCountSystem(String system);
 
+    @Query(value = "select count(*) from medicalrequest where  patientid  is not null and encounterid is not  null",nativeQuery = true)
+    int findByCount();
 
 }
