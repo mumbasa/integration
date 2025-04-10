@@ -283,4 +283,29 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
 
     return callables;
 }
+
+
+
+public void migrate(int batchSize) {
+    long rows = serviceRequestRepository.getParactionerIdCount();
+    long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+    
+    logger.info("Total batches: {}", batches);
+    for (int i = 0; i < batches; i++) {
+        final int batchNumber = i;
+
+        
+            int startIndex = batchNumber * batchSize;
+       migrateServiceRequestToSerenity(serviceRequestRepository.findOffset(startIndex, batchSize));
+           
+        }
+    
+
+    
+}
+
+
+
+
+
 }
