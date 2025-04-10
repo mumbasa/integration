@@ -108,11 +108,11 @@ InvoiceService invoiceService;
 	//visitMigration.getVisitThreads();
 	//encounterService.getLegacyEncounters(1000);
 	encounterService.encounterLegacythread();
-	allergyService.migrateAllergyThread(1000);
-	dService.migrationThread();
-	referalService.migrateReferalThread(1000);
-	observationService.migrateObservationThread(10000);
-	noteService.noteThread();
+//	allergyService.migrateAllergyThread(1000);
+//	dService.migrationThread();
+//	referalService.migrateReferalThread(1000);
+//	observationService.migrateObservationThread(10000);
+//	noteService.noteThread();
 	//medicalRequestService.getLegacyRequest2();
 	
 	//
