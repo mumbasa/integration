@@ -103,18 +103,19 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
-		//encounterService.getLegacyEncounters(1000);
-		//encounterService.encounterLegacythread();
-		//allergyService.migrateAllergyThread(1000);
-	//observationService.migrateObservationThread(1000);
-	//patientMigrationService.getPatientsThreads();
+		//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
-	
-	//dService.migrationThread();
+	//encounterService.getLegacyEncounters(1000);
+	encounterService.encounterLegacythread();
+	allergyService.migrateAllergyThread(1000);
+	dService.migrationThread();
+	referalService.migrateReferalThread(1000);
+	observationService.migrateObservationThread(10000);
+	noteService.noteThread();
 	//medicalRequestService.getLegacyRequest2();
 	
-	//referalService.migrateReferalThread(1000);
+	//
 noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");

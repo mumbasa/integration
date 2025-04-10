@@ -232,11 +232,11 @@ public class EncounterService {
                 "display,  external_id, external_system,  service_provider_id, patient_mr_number," +
                 "patient_id, patient_full_name, patient_mobile, patient_birth_date, patient_gender," +
                 "encounter_type, practitioner_name, practitioner_id, service_provider_name,  visit_id," +
-                "has_prescriptions,has_service_requests,updated_at)" + //
+                "has_prescriptions,has_service_requests,updated_at,slot_id,service_type_id,service_type_name)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "'',?, ?,uuid(?),?,uuid(?), ?," +
-                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now())";
+                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now(),?,?,?)";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -270,6 +270,9 @@ public class EncounterService {
                 ps.setString(19, notes.get(i).getVisitId());
                 ps.setBoolean(20, false);
                 ps.setBoolean(21, false);
+                ps.setString(23, notes.get(i).getSlotId());
+                ps.setString(24,notes.get(i).getServiceTypeId());
+                ps.setString(25, notes.get(i).getServiceTypeName());
             }
 
             @Override
@@ -396,12 +399,17 @@ public class EncounterService {
 
 
     public void encounterLegacythread() {
+
+        String ss ="""
+                delete from encounters where id>30;
+                """;
+                serenityJdbcTemplate.update(ss);
         logger.info("kooooooooooooooading");
         int dataSize = encounterRepository.getOOPCount();
        
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(1000, dataSize));
+            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(2000, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
