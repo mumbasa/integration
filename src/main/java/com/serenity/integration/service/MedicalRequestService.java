@@ -565,7 +565,7 @@ public class MedicalRequestService {
     
     public void saveMedicalRequestThread() {
 
-        long count = medicalRequestRepository.count();
+        long count = medicalRequestRepository.findByCount();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -622,11 +622,11 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id)
+                practitioner_name, practitioner_id,  visit_id,dose,updated_at)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,
-                  uuid(?), uuid(?))
+                  uuid(?), uuid(?),?,now())
                         """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -654,6 +654,7 @@ public class MedicalRequestService {
 
                 ps.setString(16, request.getPractitionerId());
                 ps.setString(17, request.getVisitId());
+                ps.setDouble(18, request.getDose());
 
             }
 

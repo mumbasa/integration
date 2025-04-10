@@ -212,7 +212,7 @@ ps.setString(34, request.getNote());
             }
 
         });
-        clean();
+    
 
     }
 
