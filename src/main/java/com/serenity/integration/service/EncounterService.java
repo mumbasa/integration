@@ -400,10 +400,7 @@ public class EncounterService {
 
     public void encounterLegacythread() {
 
-        String ss ="""
-                delete from encounters where id>30;
-                """;
-                serenityJdbcTemplate.update(ss);
+     
         logger.info("kooooooooooooooading");
         int dataSize = encounterRepository.getOOPCount();
        
