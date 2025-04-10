@@ -831,7 +831,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             }catch(Exception e){
                 
             }
-            request.setPatientName(patient.getFullName());
+            request.setPatientName(set.getString("patient_name"));
             request.setVisitId(set.getString("visit_id"));
             request.setPriority(set.getString("priority"));
             request.setStatus(set.getString("status"));
