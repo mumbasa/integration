@@ -846,12 +846,23 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
 
 public void cleanLegacyRequest(){
 String sql ="""
-  update medicalrequest k
-set practitionerid=e.assigned_to_id,practitionername=assigned_to_name ,visitid=e.visit_id 
-from  encounter e
-where e.external_id =k.encounterid  and k.externalsystem ='opd'
-        """;
+ update medicalrequest set visitid = e.visit_id,practitionername=e.assigned_to_name ,practitionerid =assigned_to_id 
+from encounter e 
+where encounterid= e.uuid and visit_id 
 
+        """;
+        vectorJdbcTemplate.update(sql);
+sql ="""
+        update medicalrequest set priority = 'routine' where priority  is null; 
+
+        """;
 vectorJdbcTemplate.update(sql);
+
+sql ="""
+    update medicalrequest set category = 'outpatient' where category  is null; 
+
+        """;
+vectorJdbcTemplate.update(sql);
+
 }
 }
