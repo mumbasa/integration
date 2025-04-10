@@ -111,12 +111,11 @@ InvoiceService invoiceService;
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
 	
-	dService.migrationThread();
-	medicalRequestService.getLegacyRequest2();
+	//dService.migrationThread();
+	//medicalRequestService.getLegacyRequest2();
 	
 	//referalService.migrateReferalThread(1000);
-//dService.migrationThread();
-//noteService.noteThread();
+noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/60000+" time taken to finish");
 

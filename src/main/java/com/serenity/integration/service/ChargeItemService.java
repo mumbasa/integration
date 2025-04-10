@@ -352,4 +352,15 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
     });
 
 }
+
+public void cleanItems(){
+String sql = """
+        update charge_item set patientmrnumber =p.mrnumber 
+from patient_information p
+where patientid = p.uuid
+        """;
+
+        
+
+}
 }

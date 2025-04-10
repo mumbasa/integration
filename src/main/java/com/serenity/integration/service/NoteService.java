@@ -557,8 +557,6 @@ public class NoteService {
                 ps.setString(14, note.getEncounterDate().replaceAll("T|Z", " ").strip());
                 }catch(Exception e){
                     ps.setString(14, notes.get(i).getCreatedAt()+" 14:55:37");
-
-
                 }
                 ps.setString(15, note.getPractitionerName());
                 ps.setString(16, "doctor");
