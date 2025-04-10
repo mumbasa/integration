@@ -146,7 +146,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
      healthcare_service_id, healthcare_service_name, charge_item_id, status,
      status_reason, group_identifier, intent, practitioner_name, patient_mr_number,
      patient_mobile, patient_birth_date, patient_gender, patient_full_name,
-     encounter_class, notes,is_paid)
+     encounter_class, notes,is_paid,updated_at)
 VALUES (
     ?::timestamp, ?::timestamp, ?::timestamp, ?, ?::timestamp,  
     ?, ARRAY[?], uuid(?), uuid(?), uuid(?),                    
@@ -155,7 +155,7 @@ VALUES (
     uuid(?), ?, uuid(?), ?,                                
     ?, ?, ?, ?, ?,  
     ?,CAST(? AS DATE),?,? ,                                           
-    ? ,? ,true                                                
+    ? ,? ,true ,now()                                               
 );
 
                                 """;
@@ -212,6 +212,7 @@ ps.setString(34, request.getNote());
             }
 
         });
+        clean();
 
     }
 
@@ -226,6 +227,14 @@ set priority='routine'
 where service_request.priority is null ;
                 """;
         vectorJdbcTemplate.update(sql);
+
+        sql ="""
+                
+                update service_request set visitid = e.visit_id
+from encounter e 
+where encounterid= e.uuid;
+                """;
+                vectorJdbcTemplate.update(sql);
     }
 
 
