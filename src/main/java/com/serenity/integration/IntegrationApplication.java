@@ -114,25 +114,15 @@ InvoiceService invoiceService;
 	//observationService.migrateObservationThread(10000);
 	//noteService.noteThread();
 //	diagnosisService.migrateDiagReportThread(5000);
-	serviceRequestService.migrateThread(10000);
+	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedicalRequestThread();
-	//chargeItemService.
+	chargeItemService.getLegacyChargeItem(1000);
 		//
 //noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
 
-	//	encounterService.encounterLegacythread();
-	  //  medicalRequestService.saveMedicalRequestNoThread();
-	  //diagnosisService.getLegacyDiagnosticReport(1000);
-		//diagnosisService.migrateDiagReportThread(1000);
-		//noteService.moveVisitNote();
-		//diagnosisService.getNursingDiagnosis();
-		// diagnosisService.getProvisionalDiagnosis();;
-		
-		//diagnosisService.getLegacyDiagnosis();
-
-//		diagnosisService.migrationThread();
+	
 
 		logger.info("finishi.ng import");
 

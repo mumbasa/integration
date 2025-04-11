@@ -65,6 +65,8 @@ public class ChargeItem {
     private String invoiceId;
     private String createdAt;
     private String paidAt;
+    private String policyId;
+    private String payerId;
     private String paymentMethod;
     private String status;
     private long transactionId;

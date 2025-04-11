@@ -141,7 +141,10 @@ FROM
                 request.setLocationName(set.getString("location_name"));
                 request.setProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setProviderName("Nyaho Medical Center");
+                request.setPolicyId(set.getString("policy_id"));
+                request.setPayerId(set.getString("payer_id"));
                 request.setQuantity(set.getInt("quantity"));
+                request.setInvoiceId(set.getString("invoice_id"));
                 request.setServiceId(set.getString("service_id"));
                 request.setServiceOrProductName(set.getString("service_or_product_name"));
                 request.setServiceRequestId(set.getString("service_request_id"));
@@ -155,7 +158,8 @@ FROM
                request.setPractitionerName(set.getString("practitioner_name"));
                request.setUpdatedAt(set.getString("updated_at"));
                request.setPaidAt(set.getString("paid_at"));
-                
+               request.setMedicationRequestId(set.getString("medication_request_id"));
+                request.setPaymentMethod(set.getString("payment_method"));
              
               
                 serviceRequests.add(request);
@@ -166,7 +170,7 @@ FROM
             logger.info("Saved chargeItem");
         }
         logger.info("Cleaning Requests");
-       
+       cleanItems();
 
     }
 
@@ -360,7 +364,7 @@ from patient_information p
 where patientid = p.uuid
         """;
 
-        
+        vectorJdbcTemplate.update(sql);
 
 }
 }
