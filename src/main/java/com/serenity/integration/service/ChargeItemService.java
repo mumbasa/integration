@@ -234,7 +234,7 @@ FROM
 
     ExecutorService executorService = Executors.newFixedThreadPool(10);
     try {
-        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 3000));
         for (Future<Integer> future : futures) {
             logger.info("Future result: {}", future.get());
         }
@@ -287,7 +287,7 @@ encounter_id, location_id, location_name, medication_request_id, practitioner_id
 practitioner_name, product_id, provider_id, provider_name,quantity, 
 revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
   visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
-  appointment_id, payer_name, payment_method,status,updated_at)
+  appointment_id, payer_name, payment_method,status,updated_at,payer_id)
   VALUES (
   ?::timestamp,?,?,?,?,
   ?,uuid(?),?,?,?,
@@ -295,7 +295,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
   ?,?,?,?,?,
   ?,?,?,?,?,
   ?,?,?,?::timestamp,?,
-  ?,?,?,? ,now()
+  ?,?,?,? ,now(),?
   )
 """    
         ;
@@ -319,7 +319,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(11, item.getEncounterId());
             ps.setString(12,item.getLocationId()==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":item.getLocationId());
             ps.setString(13, item.getLocationName()==null?"Airport Main":item.getLocationName());
-            ps.setString(14, item.getMedicationRequestId());
+            ps.setString(14, item.getMedicationRequestId()==null?"":item.getMedicationRequestId());
             ps.setString(15, item.getPractitionerId());
 
             ps.setString(16, item.getPractitionerName());
@@ -344,6 +344,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(32, item.getPayerName()==null?"":item.getPayerName());
             ps.setString(33, item.getPaymentMethod()==null?"":item.getPaymentMethod());
             ps.setString(34, item.getStatus()==null?"":item.getStatus());
+            ps.setString(35, item.getStatus()==null?"":item.getPayerId());
 
         }
 
