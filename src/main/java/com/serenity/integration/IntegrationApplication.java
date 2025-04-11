@@ -116,8 +116,8 @@ InvoiceService invoiceService;
 //	diagnosisService.migrateDiagReportThread(5000);
 	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedicalRequestThread();
-	chargeItemService.getLegacyChargeItem(1000);
-		//
+	//chargeItemService.getLegacyChargeItem(1000);
+		chargeItemService.chargeThread(1000);
 //noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");

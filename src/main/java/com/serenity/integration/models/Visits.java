@@ -32,6 +32,7 @@ public class Visits {
     private String startedAt;
     private String endedAt;
     private String locationId;
+    private String invoiceId;
     private String locationName;
     private String assignedToName;
     private String assignedToId;
