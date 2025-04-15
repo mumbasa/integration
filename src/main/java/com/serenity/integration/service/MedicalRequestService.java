@@ -465,7 +465,7 @@ public class MedicalRequestService {
                 MedicalRequest request = new MedicalRequest();
                 request.setUuid(UUID.randomUUID().toString());
                 request.setCreatedAt(set.getString("created_at"));
-                request.setAuthoredOn(set.getString("authored_on"));
+                request.setAuthoredOn(set.getString("created_at"));
                 request.setName(set.getString("name"));
                 request.setCategory(set.getString("category"));
                 if(set.getString("quantity")==null){

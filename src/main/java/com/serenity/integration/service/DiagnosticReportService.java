@@ -102,7 +102,7 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));
-                
+                request.setStatus(set.getString("status"));
                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 if (set.getString("approved_by_uuid") != null) {
                    try{

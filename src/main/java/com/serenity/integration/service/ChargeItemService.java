@@ -120,6 +120,7 @@ public class ChargeItemService {
 "ChargeItem"."created_by" AS "created_by_name",
 "ChargeItem"."revenue_tag_display" AS "revenue_tag_display",
 "ChargeItem"."paid_at" AS "paid_at",
+"ChargeItem"."status" AS "status",
 "ChargeItem"."payer_contribution" AS "payer_contribution",
  "Encounter"."id" AS "encounter_id"
 FROM
@@ -273,10 +274,19 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
            return 1;
         });
     }
-
+migrateClean();
     return callables;
 }
 
+public void migrateClean(){
+    String sql="""
+            update chargeitem 
+set patient_gender=p.gender,patient_mobile=p.mobile,patient_mr_number=p.mr_number,patient_name=concat(p.first_name,' ',p.last_name) 
+from patients p
+where p.uuid=patient_id::"uuid" 
+            """;
+            serenityJdbcTemplate.update(sql);
+}
 
 public void migrateChargeitems(List<ChargeItem> items){
 String sql ="""
@@ -344,7 +354,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(32, item.getPayerName()==null?"":item.getPayerName());
             ps.setString(33, item.getPaymentMethod()==null?"":item.getPaymentMethod());
             ps.setString(34, item.getStatus()==null?"":item.getStatus());
-            ps.setString(35, item.getStatus()==null?"":item.getPayerId());
+            ps.setString(35, item.getPayerId()==null?"":item.getPayerId());
 
         }
 
