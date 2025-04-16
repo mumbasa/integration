@@ -81,7 +81,7 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
                 DiagnosticReport request = new DiagnosticReport();
-              
+                
                 request.setAcessionNumber(set.getString("based_on_id"));
                 request.setUuid(set.getString("uuid"));
                 request.setBasedOnId(set.getString("service_request_id"));
@@ -94,6 +94,10 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setReviewedByName(set.getString("rejected_by_name"));
                 request.setRejectedById(set.getString("rejected_by_uuid"));
                 request.setRejectedDatetime(set.getString("rejected_date_time"));
+                request.setReviewedDateTime(set.getString("review_request_date_time"));
+                request.setApprovedDateTime(set.getString("approved_date_time"));
+                request.setEffectiveDateTime(set.getString("effective_date_time"));
+
                 request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
                 request.setPatientFullName(mps.get(set.getString("patient_id")).getFirstName() +" "+mps.get(set.getString("patient_id")).getLastName());
                 request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
