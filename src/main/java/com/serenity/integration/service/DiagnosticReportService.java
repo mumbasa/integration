@@ -145,7 +145,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
     public void setValues(PreparedStatement ps, int i) throws SQLException {
         DiagnosticReport report = reports.get(i);
         ps.setString(1, report.getCreatedAt()); // created_at
-        ps.setString(2, report.getIssuedDate()); // issued_date
+        ps.setString(2, report.getCreatedAt()); // issued_date
         ps.setString(3, report.getSampleReceivedDateTime()); // sample_received_date_time (fixed)
         ps.setString(4, report.getApprovedDateTime()); // approved_date_time
         ps.setString(5, report.getReviewedDateTime()); // reviewed_date_time
