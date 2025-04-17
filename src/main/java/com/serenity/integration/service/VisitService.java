@@ -373,8 +373,8 @@ return visits.size();
             int startIndex = i * batchSize;
         List<Visits> visits = new ArrayList<>();
         String sql = """
-                SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names,  encounter_history, p.name_prefix as ttile
-FROM visit  v join patient p  on p.id = v.patient_id  left join  ChargeItem on visit_id=uuid
+                SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names,  encounter_history, p.name_prefix as title,c.user_friendly_id as user_friendly_id
+FROM visit  v join patient p  on p.id = v.patient_id  left join  ChargeItem c on visit_id=uuid
                 order by v.created_at offset ? limit ?
                 """;;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
@@ -406,18 +406,13 @@ FROM visit  v join patient p  on p.id = v.patient_id  left join  ChargeItem on v
             visit.setPatientDob(set.getString("birth_date")==null?"":set.getString("birth_date"));
             visit.setGender(set.getString("gender"));
             visit.setEncounterClass(set.getString("visit_class"));
-            // visit.setPatientId(mps.get(set.getString("mr_number")).getUuid());
-            // try{
-            // visit.setPatientMrNumber(mps.get(set.getString("mr_number")).getMrNumber());
-            // }catch(Exception e){
-            //     logger.info("patient not found");
-
-            // }
+            visit.setUserFriendlyId(set.getString("user_friendly_id"));
+        
             visit.setDisplay("opd-"+visit.getUuid());
             visit.setPriority(set.getString("priority")==null?"routine":set.getString("priority"));
             visit.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             visit.setServiceProviderName("Nyaho Medical Center");
-            visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175\"");
+            visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
             visit.setLocationName("Airport Primary Care");
             visits.add(visit);
 
