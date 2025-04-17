@@ -71,6 +71,17 @@ public class ObservationService {
         codeDisplayMap.put("FAMILY_HISTORY", "Family history");
         codeDisplayMap.put("EATING_HABITS", "Eating Habits");
 
+        Map<String, String> previousCode = new HashMap<>();
+
+        codeDisplayMap.put("PREVIOUS_MEDICATION", "10160-0");
+        codeDisplayMap.put("PREVIOUS_ILLNESS", "11348-0");
+
+        Map<String, String> prevDisplay = new HashMap<>();
+
+        codeDisplayMap.put("PREVIOUS_MEDICATION", "Medications");
+        codeDisplayMap.put("PREVIOUS_ILLNESS", "Medical Conditions");
+      
+
         Map<String, String> vitalMap = new HashMap<>();
         vitalMap.put("SBP", "8480-6");
         vitalMap.put("BLOOD_PRESSURE", "8462-4");
@@ -157,6 +168,14 @@ public class ObservationService {
                     request.setUnit(unitlMap.get(codes));
                     request.setCategory("vital-signs");
                     request.setEnconterType("vitals-observation");
+                    request.setEffectiveDateTime(set.getString("effective_date_time"));
+
+                }else if(previousCode.containsKey(set.getString("unit"))){
+                    request.setCode(previousCode.get(codes));
+                    request.setDisplay(prevDisplay.get(codes));
+                    //request.setUnit(unitlMap.get(codes));
+                    request.setCategory("previous-medical-history");
+                    request.setEnconterType("outpatient-consultation");
 
                 }
 

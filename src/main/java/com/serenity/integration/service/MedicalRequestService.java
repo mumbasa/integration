@@ -622,11 +622,11 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id,dose,updated_at)
+                practitioner_name, practitioner_id,  visit_id,dose,updated_at,course_of_therapy)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,
-                  uuid(?), uuid(?),?,now())
+                  uuid(?), uuid(?),?,now(),?)
                         """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -655,6 +655,7 @@ public class MedicalRequestService {
                 ps.setString(16, request.getPractitionerId());
                 ps.setString(17, request.getVisitId());
                 ps.setDouble(18, request.getDose());
+                ps.setString(19,request.getCourseOfTherapy());
 
             }
 
@@ -815,6 +816,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setCode(set.getString("code"));
             request.setCategory(set.getString("category"));
             request.setDose(set.getDouble("quantity"));
+            request.setDosageForm(set.getString("dosage_form"));
             request.setAuthoredOn(set.getString("authored_on"));
             request.setCreatedAt(set.getString("created_at"));
             request.setUuid(set.getString("id"));
@@ -824,7 +826,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setExternalSystem("opd");
             request.setPatientId(patient.getUuid());
             request.setMrNumber(patient.getMrNumber());
-            
+            request.setCourseOfTherapy(set.getString("course_of_therapy_type"));
             request.setStatus(set.getString("status"));
                 request.setPractitionerId(set.getString("requester_practitioner_id"));
             try{

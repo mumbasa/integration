@@ -109,6 +109,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
                 request.setModifiedAt(set.getString("modified_at"));
                 request.setDiagnosticServiceSection(set.getString("diagnostic_service_section"));
                 request.setPaid(true);
+                request.setAccessionNumber(set.getString("id"));
                 request.setNote(set.getString("note"));
                 request.setGroupIdentifier(set.getString("group_identifier"));
                 request.setChargeItemId(set.getString("charge_item_uuid"));
@@ -146,7 +147,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
      healthcare_service_id, healthcare_service_name, charge_item_id, status,
      status_reason, group_identifier, intent, practitioner_name, patient_mr_number,
      patient_mobile, patient_birth_date, patient_gender, patient_full_name,
-     encounter_class, notes,is_paid,updated_at)
+     encounter_class, notes,is_paid,updated_at,accession_number)
 VALUES (
     ?::timestamp, ?::timestamp, ?::timestamp, ?, ?::timestamp,  
     ?, ARRAY[?], uuid(?), uuid(?), uuid(?),                    
@@ -155,7 +156,7 @@ VALUES (
     uuid(?), ?, uuid(?), ?,                                
     ?, ?, ?, ?, ?,  
     ?,CAST(? AS DATE),?,? ,                                           
-    ? ,? ,true ,now()                                               
+    ? ,? ,true ,now(),?                                               
 );
 
                                 """;
@@ -200,6 +201,7 @@ ps.setString(31, request.getPatientGender());
 ps.setString(32, request.getPatientFullName());
 ps.setString(33, "ambulatory"); // encounter_class
 ps.setString(34, request.getNote());
+ps.setString(35,request.getAccessionNumber());
 
                 
 
