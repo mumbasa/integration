@@ -314,7 +314,7 @@ practitioner_name, product_id, provider_id, provider_name,quantity,
 revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
   visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
   appointment_id, payer_name, payment_method,status,updated_at,payer_id,unit_price,
-  cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id canceled_at, canceled_by_name, canceled_by_id
+  cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id, canceled_at, canceled_by_name, canceled_by_id
   )
   VALUES (
   ?::timestamp,?,?,?,?,
