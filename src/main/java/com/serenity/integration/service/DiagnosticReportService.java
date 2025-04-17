@@ -174,7 +174,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(28, report.getPatientMrNumber()); // patient_mr_number
         ps.setString(29, report.getPatientFullName()); // patient_full_name
         ps.setString(30, report.getPatientMobile()==null? "":report.getPatientMobile()); // patient_mobile
-        ps.setString(31, report.getPatientBirthDate()==null?"": report.getPatientBirthDate()); // patient_birth_date
+        ps.setString(31, report.getPatientBirthDate()==null?"2026-01-01": report.getPatientBirthDate()); // patient_birth_date
         ps.setString(32, report.getPatientGender()); // patient_gender (added)
         ps.setString(33, report.getAcessionNumber());
     }

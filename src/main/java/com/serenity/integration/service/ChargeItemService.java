@@ -3,10 +3,7 @@ package com.serenity.integration.service;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -14,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +21,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
-import com.serenity.integration.models.AllergyIntolerance;
 import com.serenity.integration.models.ChargeItem;
-import com.serenity.integration.models.Doctors;
-import com.serenity.integration.models.EncounterNote;
-import com.serenity.integration.models.PatientData;
-import com.serenity.integration.models.ServiceRequest;
-import com.serenity.integration.repository.AllergyRepository;
 import com.serenity.integration.repository.ChargeItemRepository;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.PatientRepository;
@@ -120,11 +110,22 @@ public class ChargeItemService {
 "ChargeItem"."created_by" AS "created_by_name",
 "ChargeItem"."revenue_tag_display" AS "revenue_tag_display",
 "ChargeItem"."paid_at" AS "paid_at",
-"ChargeItem"."status" AS "status",
 "ChargeItem"."payer_contribution" AS "payer_contribution",
- "Encounter"."id" AS "encounter_id"
+ "Encounter"."id" AS "encounter_id",
+  cic.uuid AS cancelation_uuid as cancelation_id,   
+  cic.requested_date_time as cancelation_requested_at,  
+   cic.requested_by_uuid as requested_by_id,  
+    cic.requested_by_name as requested_by,  
+     cic.canceled_date_time as canceled_at,   
+     cic.approved_by_name as approved_by,   
+     cic.approved_by_uuid as approved_by_id,  
+      cic.approved_date_time approved_at,  
+
+       cic.canceled_by_uuid canceled_by_id,   
+       cic.canceled_by_name as canceled_by_name,   
+       cic.reason as reason
 FROM
-"ChargeItem" left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  order by "ChargeItem".id offset ? limit ?
+"ChargeItem" ci left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  join charge_item_cancelation cic on cic.charge_item_id=ci.uuid  order by "ChargeItem".id offset ? limit ?
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -144,6 +145,7 @@ FROM
                 request.setProviderName("Nyaho Medical Center");
                 request.setPolicyId(set.getString("policy_id"));
                 request.setPayerId(set.getString("payer_id"));
+                request.setPayerName("payer_name");
                 request.setQuantity(set.getInt("quantity"));
                 request.setInvoiceId(set.getString("invoice_id"));
                 request.setServiceId(set.getString("service_id"));
@@ -155,14 +157,29 @@ FROM
                request.setRelationship(set.getString("relationship"));
                request.setPractitionerId(set.getString("practitioner_id"));
                 request.setCreatedAt(set.getString("created_at"));
+                request.setUpdatedAt(set.getString("updated_at"));
                 request.setEncounterId(set.getString("encounter_id"));
                request.setPractitionerName(set.getString("practitioner_name"));
                request.setUpdatedAt(set.getString("updated_at"));
                request.setPaidAt(set.getString("paid_at"));
                request.setMedicationRequestId(set.getString("medication_request_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
-             
+                request.setStatus(set.getString("status"));
               
+                request.setCanceledAt(set.getString("canceled_at"));
+                request.setCancellationRequestedAt(set.getString("cancelation_requested_at"));
+                request.setCancellationRequestedById(set.getString("requested_by_id"));
+                request.setCancellationRequestedByName(set.getString("requested_by"));
+
+                request.setCancellationApprovedName(set.getString("approved_by"));
+                request.setCancellationApprovedById(set.getString("approved_by_id"));
+                request.setCancellationApprovedAt(set.getString("approved_at"));
+
+                request.setCanceledById(set.getString("canceled_by_id"));
+                request.setCanceledByName(set.getString("canceled_by_name"));
+                request.setCancellationReason(set.getString("reason"));
+
+
                 serviceRequests.add(request);
 
             }
@@ -297,7 +314,7 @@ encounter_id, location_id, location_name, medication_request_id, practitioner_id
 practitioner_name, product_id, provider_id, provider_name,quantity, 
 revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
   visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
-  appointment_id, payer_name, payment_method,status,updated_at,payer_id)
+  appointment_id, payer_name, payment_method,status,updated_at,payer_id,unit_price)
   VALUES (
   ?::timestamp,?,?,?,?,
   ?,uuid(?),?,?,?,
@@ -305,7 +322,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
   ?,?,?,?,?,
   ?,?,?,?,?,
   ?,?,?,?::timestamp,?,
-  ?,?,?,? ,now(),?
+  ?,?,?,? ,now(),?,?
   )
 """    
         ;
@@ -355,6 +372,7 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(33, item.getPaymentMethod()==null?"":item.getPaymentMethod());
             ps.setString(34, item.getStatus()==null?"":item.getStatus());
             ps.setString(35, item.getPayerId()==null?"":item.getPayerId());
+            ps.setDouble(36, item.getUnitPrice());
 
         }
 

@@ -55,6 +55,8 @@ public class ChargeItem {
     private String cancellationApprovedAt;
     private String cancellationApprovedName;
     private String cancellationApprovedById;
+        private String cancellationReason;
+
 
     private String canceledAt;
     private String canceledByName;
