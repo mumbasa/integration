@@ -381,12 +381,12 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(37, item.getCancellationRequestedAt());
             ps.setString(38, item.getCancellationRequestedByName());
             ps.setString(39, item.getCancellationRequestedById());
-            ps.setString(41, item.getCancellationApprovedAt());
-            ps.setString(42, item.getCancellationApprovedName());
-            ps.setString(43, item.getCancellationApprovedById());
-            ps.setString(44, item.getCanceledAt());
-            ps.setString(45, item.getCanceledByName());
-            ps.setString(46,item.getCanceledById());
+            ps.setString(40, item.getCancellationApprovedAt());
+            ps.setString(41, item.getCancellationApprovedName());
+            ps.setString(42, item.getCancellationApprovedById());
+            ps.setString(43, item.getCanceledAt());
+            ps.setString(44, item.getCanceledByName());
+            ps.setString(45,item.getCanceledById());
 
         }
 
