@@ -281,7 +281,7 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
             int startIndex = batchNumber * batchSize;
             logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
            try{
-            migrateChargeitems(chargeItemRepository.findBhy(startIndex, batchSize));
+            migrateChargeItems(chargeItemRepository.findBhy(startIndex, batchSize));
             
            }catch (Exception e){
             e.printStackTrace();
@@ -304,101 +304,98 @@ where p.uuid=patient_id::"uuid"
             serenityJdbcTemplate.update(sql);
 }
 
-public void migrateChargeitems(List<ChargeItem> items){
-String sql ="""
-        INSERT INTO chargeitem
-(created_at,  charge, patient_contribution, payer_contribution, unit_price, 
-pk, "uuid", category, created_by_name, currency, 
-encounter_id, location_id, location_name, medication_request_id, practitioner_id, 
-practitioner_name, product_id, provider_id, provider_name,quantity, 
-revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
-  visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
-  appointment_id, payer_name, payment_method,status,updated_at,payer_id,unit_price,
-  cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id, canceled_at, canceled_by_name, canceled_by_id
-  )
-  VALUES (
-  ?::timestamp,?,?,?,?,
-  ?,uuid(?),?,?,?,
-  ?,?,?,?,?,
-  ?,?,?,?,?,
-  ?,?,?,?,?,
-  ?,?,?,?::timestamp,?,
-  ?,?,?,? ,now(),?,?,
-  ?,?,?,?,?,
-  ?,?,?,?
-  )
-"""    
-        ;
+public void migrateChargeItems(List<ChargeItem> items) {
+    String sql = """
+        INSERT INTO chargeitem (
+            created_at, charge, patient_contribution, payer_contribution, unit_price, 
+            pk, "uuid", category, created_by_name, currency, 
+            encounter_id, location_id, location_name, medication_request_id, practitioner_id, 
+            practitioner_name, product_id, provider_id, provider_name, quantity, 
+            revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
+            visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
+            appointment_id, payer_name, payment_method, status, updated_at, payer_id,
+            cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, 
+            cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id, 
+            canceled_at, canceled_by_name, canceled_by_id
+        ) VALUES (
+            ?::timestamp, ?, ?, ?, ?, 
+            ?, uuid(?), ?, ?, ?, 
+            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?::timestamp, ?, 
+            ?, ?, ?, ?, now(), ?, 
+            ?, ?, ?, ?, ?, ?, 
+            ?, ?, ?
+        )
+    """;
+
     serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
         @Override
         public void setValues(PreparedStatement ps, int i) throws SQLException {
             ChargeItem item = items.get(i);
+
             ps.setString(1, item.getCreatedAt());
             ps.setDouble(2, item.getCharge());
             ps.setDouble(3, item.getPatientContribution());
-            ps.setDouble(4, item.getUnitPrice());
-            ps.setDouble(5, item.getPayerContribution());
+            ps.setDouble(4, item.getPayerContribution());
+            ps.setDouble(5, item.getUnitPrice());
 
             ps.setLong(6, item.getId());
-            ps.setString(7,item.getUuid());
+            ps.setString(7, item.getUuid());
             ps.setString(8, item.getCategory());
             ps.setString(9, item.getCreatedByName());
             ps.setString(10, item.getCurrency());
 
             ps.setString(11, item.getEncounterId());
-            ps.setString(12,item.getLocationId()==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":item.getLocationId());
-            ps.setString(13, item.getLocationName()==null?"Airport Main":item.getLocationName());
-            ps.setString(14, item.getMedicationRequestId()==null?"":item.getMedicationRequestId());
+            ps.setString(12, item.getLocationId() == null ? "2f7d4c40-fe53-491d-877b-c2fee7edc1f2" : item.getLocationId());
+            ps.setString(13, item.getLocationName() == null ? "Airport Main" : item.getLocationName());
+            ps.setString(14, item.getMedicationRequestId() == null ? "" : item.getMedicationRequestId());
             ps.setString(15, item.getPractitionerId());
 
             ps.setString(16, item.getPractitionerName());
-            ps.setString(17,item.getProductId());
-            ps.setString(18, item.getProviderId()==null?"":item.getProviderId());
-            ps.setString(19, item.getProviderName()==null?"":item.getProviderName());
+            ps.setString(17, item.getProductId());
+            ps.setString(18, item.getProviderId() == null ? "" : item.getProviderId());
+            ps.setString(19, item.getProviderName() == null ? "" : item.getProviderName());
             ps.setInt(20, item.getQuantity());
 
             ps.setString(21, item.getRevenueTagDisplay());
-            ps.setString(22,item.getRelationship());
-            ps.setString(23, item.getServiceId()==null?"":item.getServiceId());
-            ps.setString(24, item.getServiceOrProductName()==null?"":item.getServiceOrProductName());
+            ps.setString(22, item.getRelationship());
+            ps.setString(23, item.getServiceId() == null ? "" : item.getServiceId());
+            ps.setString(24, item.getServiceOrProductName() == null ? "" : item.getServiceOrProductName());
             ps.setString(25, item.getServiceRequestId());
 
             ps.setString(26, item.getVisitId());
-            ps.setString(27, item.getUserFriendlyId()==null?"":item.getUserFriendlyId());
-            ps.setString(28, item.getInvoiceId()==null?"":item.getInvoiceId());
+            ps.setString(27, item.getUserFriendlyId() == null ? "" : item.getUserFriendlyId());
+            ps.setString(28, item.getInvoiceId() == null ? "" : item.getInvoiceId());
             ps.setString(29, item.getPaidAt());
             ps.setString(30, item.getPatientId());
 
             ps.setString(31, item.getAppointmentId());
-            ps.setString(32, item.getPayerName()==null?"":item.getPayerName());
-            ps.setString(33, item.getPaymentMethod()==null?"":item.getPaymentMethod());
-            ps.setString(34, item.getStatus()==null?"":item.getStatus());
-            ps.setString(35, item.getPayerId()==null?"":item.getPayerId());
-            ps.setDouble(36, item.getUnitPrice());
+            ps.setString(32, item.getPayerName() == null ? "" : item.getPayerName());
+            ps.setString(33, item.getPaymentMethod() == null ? "" : item.getPaymentMethod());
+            ps.setString(34, item.getStatus() == null ? "" : item.getStatus());
+            ps.setString(35, item.getPayerId() == null ? "" : item.getPayerId());
 
-
-            ps.setString(37, item.getCancellationRequestedAt());
-            ps.setString(38, item.getCancellationRequestedByName());
-            ps.setString(39, item.getCancellationRequestedById());
-            ps.setString(40, item.getCancellationApprovedAt());
-            ps.setString(41, item.getCancellationApprovedName());
-            ps.setString(42, item.getCancellationApprovedById());
-            ps.setString(43, item.getCanceledAt());
-            ps.setString(44, item.getCanceledByName());
-            ps.setString(45,item.getCanceledById());
-
+            ps.setString(36, item.getCancellationRequestedAt());
+            ps.setString(37, item.getCancellationRequestedByName());
+            ps.setString(38, item.getCancellationRequestedById());
+            ps.setString(39, item.getCancellationApprovedAt());
+            ps.setString(40, item.getCancellationApprovedName());
+            ps.setString(41, item.getCancellationApprovedById());
+            ps.setString(42, item.getCanceledAt());
+            ps.setString(43, item.getCanceledByName());
+            ps.setString(44, item.getCanceledById());
         }
 
         @Override
         public int getBatchSize() {
-            // TODO Auto-generated method stub
             return items.size();
         }
-        
     });
-
 }
+
 
 public void cleanItems(){
 String sql = """
