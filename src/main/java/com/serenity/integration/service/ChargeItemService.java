@@ -313,7 +313,9 @@ encounter_id, location_id, location_name, medication_request_id, practitioner_id
 practitioner_name, product_id, provider_id, provider_name,quantity, 
 revenue_tag_display, relationship, service_id, service_or_product_name, service_request_id,
   visit_id, user_friendly_id, invoice_id, paid_at, patient_id, 
-  appointment_id, payer_name, payment_method,status,updated_at,payer_id,unit_price)
+  appointment_id, payer_name, payment_method,status,updated_at,payer_id,unit_price,
+  cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id canceled_at, canceled_by_name, canceled_by_id
+  )
   VALUES (
   ?::timestamp,?,?,?,?,
   ?,uuid(?),?,?,?,
@@ -321,7 +323,9 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
   ?,?,?,?,?,
   ?,?,?,?,?,
   ?,?,?,?::timestamp,?,
-  ?,?,?,? ,now(),?,?
+  ?,?,?,? ,now(),?,?,
+  ?,?,?,?,?,
+  ?,?,?,?
   )
 """    
         ;
@@ -372,6 +376,17 @@ revenue_tag_display, relationship, service_id, service_or_product_name, service_
             ps.setString(34, item.getStatus()==null?"":item.getStatus());
             ps.setString(35, item.getPayerId()==null?"":item.getPayerId());
             ps.setDouble(36, item.getUnitPrice());
+
+
+            ps.setString(37, item.getCancellationRequestedAt());
+            ps.setString(38, item.getCancellationRequestedByName());
+            ps.setString(39, item.getCancellationRequestedById());
+            ps.setString(41, item.getCancellationApprovedAt());
+            ps.setString(42, item.getCancellationApprovedName());
+            ps.setString(43, item.getCancellationApprovedById());
+            ps.setString(44, item.getCanceledAt());
+            ps.setString(45, item.getCanceledByName());
+            ps.setString(46,item.getCanceledById());
 
         }
 
