@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -25,9 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.DiagnosticReport;
 import com.serenity.integration.models.Doctors;
-import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
-import com.serenity.integration.models.ServiceRequest;
 import com.serenity.integration.repository.DiagnosticReportRepository;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.PatientRepository;
@@ -97,7 +94,6 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setReviewedDateTime(set.getString("review_request_date_time"));
                 request.setApprovedDateTime(set.getString("approved_date_time"));
                 request.setEffectiveDateTime(set.getString("effective_date_time"));
-
                 request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
                 request.setPatientFullName(mps.get(set.getString("patient_id")).getFirstName() +" "+mps.get(set.getString("patient_id")).getLastName());
                 request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
@@ -177,8 +173,8 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(27, report.getServiceRequestCategory()); // service_request_category
         ps.setString(28, report.getPatientMrNumber()); // patient_mr_number
         ps.setString(29, report.getPatientFullName()); // patient_full_name
-        ps.setString(30, report.getPatientMobile()); // patient_mobile
-        ps.setString(31, report.getPatientBirthDate()); // patient_birth_date
+        ps.setString(30, report.getPatientMobile()==null? "":report.getPatientMobile()); // patient_mobile
+        ps.setString(31, report.getPatientBirthDate()==null?"": report.getPatientBirthDate()); // patient_birth_date
         ps.setString(32, report.getPatientGender()); // patient_gender (added)
         ps.setString(33, report.getAcessionNumber());
     }
