@@ -124,7 +124,7 @@ public class ChargeItemService {
        cic.canceled_by_name as canceled_by_name,
        cic.reason as reason
 FROM
-"ChargeItem"  left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  join charge_item_cancelation cic on cic.charge_item_id="ChargeItem".id  order by "ChargeItem".id offset ? limit ?
+"ChargeItem"  left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  left join charge_item_cancelation cic on cic.charge_item_id="ChargeItem".id  order by "ChargeItem".id offset ? limit ?
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
