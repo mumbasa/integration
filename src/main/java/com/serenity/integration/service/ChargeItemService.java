@@ -187,7 +187,7 @@ FROM
             logger.info("Saved chargeItem");
         }
         logger.info("Cleaning Requests");
-       cleanItems();
+      // cleanItems();
 
     }
 
