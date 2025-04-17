@@ -325,8 +325,8 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ?, ?, ?, ?, ?, 
             ?, ?, ?, ?::timestamp, ?, 
             ?, ?, ?, ?, now(), ?, 
-            ?, ?, ?, ?, ?, ?, 
-            ?, ?, ?
+            ?::timestamp, ?, ?::uuid, ?::timestamp, ?, ?::uuid, 
+            ?::timestamp, ?, ?::uuid
         )
     """;
 
