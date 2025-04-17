@@ -75,7 +75,7 @@ public class ChargeItemService {
             int startIndex = i * batchSize;
             String sqlQuery = """
          SELECT
-"ChargeItem"."id" AS "id",         
+"ChargeItem"."id" AS "id",
 "ChargeItem"."category" AS "category",
 "ChargeItem"."charge" AS "charge",
 "ChargeItem"."clinic_name" AS "location_name",
@@ -112,20 +112,19 @@ public class ChargeItemService {
 "ChargeItem"."paid_at" AS "paid_at",
 "ChargeItem"."payer_contribution" AS "payer_contribution",
  "Encounter"."id" AS "encounter_id",
-  cic.uuid AS cancelation_uuid as cancelation_id,   
-  cic.requested_date_time as cancelation_requested_at,  
-   cic.requested_by_uuid as requested_by_id,  
-    cic.requested_by_name as requested_by,  
-     cic.canceled_date_time as canceled_at,   
-     cic.approved_by_name as approved_by,   
-     cic.approved_by_uuid as approved_by_id,  
-      cic.approved_date_time approved_at,  
-
-       cic.canceled_by_uuid canceled_by_id,   
-       cic.canceled_by_name as canceled_by_name,   
+  cic.uuid  as cancelation_id,
+  cic.requested_date_time as cancelation_requested_at,
+   cic.requested_by_uuid as requested_by_id,
+    cic.requested_by_name as requested_by,
+     cic.canceled_date_time as canceled_at,
+     cic.approved_by_name as approved_by,
+     cic.approved_by_uuid as approved_by_id,
+      cic.approved_date_time as approved_at,
+       cic.canceled_by_uuid as canceled_by_id,
+       cic.canceled_by_name as canceled_by_name,
        cic.reason as reason
 FROM
-"ChargeItem" ci left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  join charge_item_cancelation cic on cic.charge_item_id=ci.uuid  order by "ChargeItem".id offset ? limit ?
+"ChargeItem"  left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  join charge_item_cancelation cic on cic.charge_item_id="ChargeItem".id  order by "ChargeItem".id offset ? limit ?
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {

@@ -115,7 +115,7 @@ InvoiceService invoiceService;
 	//noteService.noteThread();
 	//diagnosisService.getLegacyDiagnosticReport(5000);
 //diagnosisService.migrateDiagReportThread(10000);
-	medicalRequestService.getLegacyRequest2();
+	//medicalRequestService.getLegacyRequest2();
 	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedicalRequestThread();
 	chargeItemService.getLegacyChargeItem(2000);
