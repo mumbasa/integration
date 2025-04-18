@@ -119,8 +119,8 @@ InvoiceService invoiceService;
 	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedicalRequestThread();
 	//chargeItemService.getLegacyChargeItem(2000);
-	//chargeItemService.chargeThread(1000);
-	serviceRequestService.getLegacyRequest(1000);
+	chargeItemService.chargeThread(10000);
+	//serviceRequestService.getLegacyRequest(1000);
 	//
 //noteService.noteThread();
 long stop = System.currentTimeMillis();
