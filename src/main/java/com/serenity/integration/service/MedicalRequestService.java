@@ -622,11 +622,11 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id,dose,updated_at,course_of_therapy)
+                practitioner_name, practitioner_id,  visit_id,quantity_dispensed,updated_at,course_of_therapy,dosage_form)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,
-                  uuid(?), uuid(?),?,now(),?)
+                  uuid(?), uuid(?),?,now(),?,?)
                         """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -656,6 +656,8 @@ public class MedicalRequestService {
                 ps.setString(17, request.getVisitId());
                 ps.setDouble(18, request.getDose());
                 ps.setString(19,request.getCourseOfTherapy());
+                ps.setString(20,request.getDosageForm());
+
 
             }
 
