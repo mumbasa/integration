@@ -237,6 +237,14 @@ from encounter e
 where encounterid= e.uuid;
                 """;
                 vectorJdbcTemplate.update(sql);
+
+                sql ="""
+                        update service_request 
+set patientbirthdate =p.birthdate ,patientfullname=concat(firstname,' ',p.lastname) ,patientgender =p.gender ,patientmobile =p.mobile ,patientmrnumber = p.mrnumber 
+from patient_information p
+where p."uuid" = service_request.patientid 
+                        """;
+                vectorJdbcTemplate.update(sql);
     }
 
 
