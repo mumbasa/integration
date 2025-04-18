@@ -176,7 +176,7 @@ ps.setLong(6, request.getId()); // ID (Generated)
 ps.setString(7, request.getBodySite());
 ps.setString(8, request.getEncounterId().toString());
 ps.setString(9, request.getPatientId());
-ps.setString(10, request.getPractitionerId().toString());
+ps.setString(10, request.getPractitionerId());
 ps.setString(11, request.getVisitId());
 ps.setString(12, "161380e9-22d3-4627-a97f-0f918ce3e4a9"); // service_provider_id
 ps.setString(13, request.getUuid()); // UUID
