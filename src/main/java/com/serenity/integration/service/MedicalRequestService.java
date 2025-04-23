@@ -622,11 +622,11 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id,quantity_dispensed,updated_at,course_of_therapy,dosage_form)
+                practitioner_name, practitioner_id,  visit_id,quantity_to_dispensed,updated_at,course_of_therapy,dosage_form,authored_on)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,
-                  uuid(?), uuid(?),?,now(),?,?)
+                  uuid(?), uuid(?),?,now(),?,?,?)
                         """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -657,7 +657,7 @@ public class MedicalRequestService {
                 ps.setDouble(18, request.getDose());
                 ps.setString(19,request.getCourseOfTherapy());
                 ps.setString(20,request.getDosageForm());
-
+                ps.setString(21,request.getCreatedAt());
 
             }
 
@@ -853,7 +853,7 @@ public void cleanLegacyRequest(){
 String sql ="""
  update medicalrequest set visitid = e.visit_id,practitionername=e.assigned_to_name ,practitionerid =assigned_to_id 
 from encounter e 
-where encounterid= e.uuid and visit_id 
+where encounterid= e.uuid and visit_id is not null
 
         """;
         vectorJdbcTemplate.update(sql);

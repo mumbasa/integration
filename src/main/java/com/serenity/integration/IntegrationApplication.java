@@ -112,7 +112,7 @@ InvoiceService invoiceService;
 	//dService.migrationThread();
 	//referalService.migrateReferalThread(1000);
 	//observationService.migrateObservationThread(10000);
-	//noteService.noteThread();
+	noteService.noteThread();
 	//diagnosisService.getLegacyDiagnosticReport(5000);
 //diagnosisService.migrateDiagReportThread(10000);
 	//medicalRequestService.getLegacyRequest2();
@@ -122,7 +122,7 @@ InvoiceService invoiceService;
 	//chargeItemService.chargeThread(10000);
 	//serviceRequestService.getLegacyRequest(1000);
 	//serviceRequestService.migrateThread(1000);
-	medicalRequestService.saveMedicalRequestThread();
+	//medicalRequestService.saveMedicalRequestThread();
 	//
 //noteService.noteThread();
 long stop = System.currentTimeMillis();
