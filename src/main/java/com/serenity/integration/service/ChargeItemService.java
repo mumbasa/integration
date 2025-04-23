@@ -138,8 +138,24 @@ FROM
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
-               Optional <PatientData> d = Optional.of(mps.get(set.getString("patient_id")));
                 ChargeItem request = new ChargeItem();
+
+                try{
+
+               Optional <PatientData> d = Optional.of(mps.get(set.getString("patient_id")));
+               if(d.isPresent()){
+                request.setPatientMrNumber(d.get().getMrNumber());
+                request.setPatientName(d.get().getFirstName()+" "+d.get().getLastName());
+                request.setPatientGender(d.get().getGender());
+                request.setPatientBirthDate(d.get().getBirthDate());
+                request.setPatientMobile(d.get().getMobile());
+                request.setPatientNationalMobile(d.get().getNationalMobileNumber());
+
+            }   
+            
+            }catch(Exception e){
+                    e.printStackTrace();
+                }
                 request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
                 request.setCharge(set.getDouble("charge"));
@@ -189,15 +205,7 @@ FROM
                 request.setCanceledByName(set.getString("canceled_by_name"));
                 request.setCancellationReason(set.getString("reason"));
                 
-                if(d.isPresent()){
-                    request.setPatientMrNumber(d.get().getMrNumber());
-                    request.setPatientName(d.get().getFirstName()+" "+d.get().getLastName());
-                    request.setPatientGender(d.get().getGender());
-                    request.setPatientBirthDate(d.get().getBirthDate());
-                    request.setPatientMobile(d.get().getMobile());
-                    request.setPatientNationalMobile(d.get().getNationalMobileNumber());
-
-                }
+               
                 serviceRequests.add(request);
 
             }
