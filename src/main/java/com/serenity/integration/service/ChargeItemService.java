@@ -317,7 +317,7 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
            return 1;
         });
     }
-migrateClean();
+//migrateClean();
     return callables;
 }
 
