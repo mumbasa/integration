@@ -343,7 +343,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             appointment_id, payer_name, payment_method, status, updated_at, payer_id,
             cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, 
             cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id, 
-            canceled_at, canceled_by_name, canceled_by_id,cancellation_reason,cancellation_request_uuid,cahier_name
+            canceled_at, canceled_by_name, canceled_by_id,cancellation_reason,cancellation_request_uuid,cashier_name
         ) VALUES (
             ?::timestamp, ?, ?, ?, ?, 
             ?, uuid(?), ?, ?, ?, 
