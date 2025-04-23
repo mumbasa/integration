@@ -209,12 +209,12 @@ FROM
                 serviceRequests.add(request);
 
             }
-           // chargeItemRepository.saveAll(serviceRequests);
-            migrateChargeItems(serviceRequests);
+           chargeItemRepository.saveAll(serviceRequests);
+           // migrateChargeItems(serviceRequests);
             logger.info("Saved chargeItem");
         }
         logger.info("Cleaning Requests");
-     //  cleanItems();
+      cleanItems();
 
     }
 
