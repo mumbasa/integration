@@ -278,7 +278,7 @@ FROM
 
     ExecutorService executorService = Executors.newFixedThreadPool(10);
     try {
-        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 77949));
         for (Future<Integer> future : futures) {
             logger.info("Future result: {}", future.get());
         }
@@ -444,6 +444,19 @@ where patientid = p.uuid
         """;
 
         vectorJdbcTemplate.update(sql);
+sql="""
+        
+WITH ranked AS (
+  SELECT id, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
+  FROM charge_item
+)
+DELETE FROM charge_item
+WHERE id IN (
+  SELECT id FROM ranked WHERE rn > 1
+);
 
+        """;
+
+        vectorJdbcTemplate.update(sql);
 }
 }
