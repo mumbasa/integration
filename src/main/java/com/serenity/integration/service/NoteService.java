@@ -914,4 +914,15 @@ saveNotes(encounterNoteRepository.findByNoteType("visit-note"));
     
 }
 
+public void note(){
+    String sql ="""
+            update encounter_notes 
+set practitioner_id =e.practitioner_id,practitioner_name =e.practitioner_name
+from encounters e
+where encounter_id =e.uuid
+
+            """;
+        serenityJdbcTemplate.update(sql);
+    }
+
 }

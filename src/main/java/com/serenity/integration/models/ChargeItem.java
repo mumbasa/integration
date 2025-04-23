@@ -42,6 +42,7 @@ public class ChargeItem {
     private String providerId;
     private String providerName;
     private int quantity;
+    private String cashierName;
     private String revenueTagDisplay;
     private String relationship;
     private String serialNumber;
@@ -51,11 +52,12 @@ public class ChargeItem {
     private String cancellationRequestedAt;
     private String cancellationRequestedByName;
     private String cancellationRequestedById;
+    private String cancellationRequestId;
 
     private String cancellationApprovedAt;
     private String cancellationApprovedName;
     private String cancellationApprovedById;
-        private String cancellationReason;
+    private String cancellationReason;
 
 
     private String canceledAt;
@@ -63,6 +65,11 @@ public class ChargeItem {
     private String canceledById;
     private String patientId;
     private String patientMrNumber;
+    private String patientName;
+    private String patientBirthDate;
+    private String patientGender;
+    private String patientMobile;
+    private String patientNationalMobile;
     private String payerName;
     private String invoiceId;
     private String createdAt;

@@ -748,8 +748,12 @@ where medicalrequest.externalid =v.external_id
 
         vectorJdbcTemplate.update(sql);
         sql ="""
-                
+                update medicalrequest set visitid = e.visit_id,practitionername=e.assigned_to_name ,practitionerid =assigned_to_id 
+from encounter e 
+where encounterid= e.uuid and visit_id is not null
                 """;
+        vectorJdbcTemplate.update(sql);
+
     }
 
 

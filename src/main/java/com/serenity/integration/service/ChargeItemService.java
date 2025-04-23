@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -11,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.ChargeItem;
+import com.serenity.integration.models.PatientData;
 import com.serenity.integration.repository.ChargeItemRepository;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.PatientRepository;
@@ -63,6 +67,11 @@ public class ChargeItemService {
 
     public void getLegacyChargeItem(int batchSize) {
         
+          Map<String, PatientData> mps = patientRepository.findAll().stream()
+                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
+        Map<String, String> doc = doctorRepository.findHisPractitioners().stream()
+                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+
         String sql = "select count(*) from \"ChargeItem\" ci";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -112,7 +121,7 @@ public class ChargeItemService {
 "ChargeItem"."paid_at" AS "paid_at",
 "ChargeItem"."payer_contribution" AS "payer_contribution",
  "Encounter"."id" AS "encounter_id",
-  cic.uuid  as cancelation_id,
+  cic.uuid  as cancellation_id,
   cic.requested_date_time as cancelation_requested_at,
    cic.requested_by_uuid as requested_by_id,
     cic.requested_by_name as requested_by,
@@ -122,12 +131,14 @@ public class ChargeItemService {
       cic.approved_date_time as approved_at,
        cic.canceled_by_uuid as canceled_by_id,
        cic.canceled_by_name as canceled_by_name,
-       cic.reason as reason
+       cic.reason as reason,
+       cashier_name
 FROM
 "ChargeItem"  left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  left join charge_item_cancelation cic on cic.charge_item_id="ChargeItem".id  order by "ChargeItem".id offset ? limit ?
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
+               Optional <PatientData> d = Optional.of(mps.get(set.getString("patient_id")));
                 ChargeItem request = new ChargeItem();
                 request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
@@ -139,7 +150,6 @@ FROM
                 request.setLocationId(set.getString("location_id")==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":set.getString("location_id"));
                 request.setLocationName(set.getString("location_name")==null?"Airport Main":set.getString("location_name"));
                 request.setPatientId(set.getString("patient_id"));
-                request.setLocationName(set.getString("location_name"));
                 request.setProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 request.setProviderName("Nyaho Medical Center");
                 request.setPolicyId(set.getString("policy_id"));
@@ -164,7 +174,8 @@ FROM
                request.setMedicationRequestId(set.getString("medication_request_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setStatus(set.getString("status"));
-              
+                request.setCashierName(set.getString("cashier_name"));
+                request.setCancellationRequestId(set.getString("cancellation_id"));
                 request.setCanceledAt(set.getString("canceled_at"));
                 request.setCancellationRequestedAt(set.getString("cancelation_requested_at"));
                 request.setCancellationRequestedById(set.getString("requested_by_id"));
@@ -177,8 +188,16 @@ FROM
                 request.setCanceledById(set.getString("canceled_by_id"));
                 request.setCanceledByName(set.getString("canceled_by_name"));
                 request.setCancellationReason(set.getString("reason"));
+                
+                if(d.isPresent()){
+                    request.setPatientMrNumber(d.get().getMrNumber());
+                    request.setPatientName(d.get().getFirstName()+" "+d.get().getLastName());
+                    request.setPatientGender(d.get().getGender());
+                    request.setPatientBirthDate(d.get().getBirthDate());
+                    request.setPatientMobile(d.get().getMobile());
+                    request.setPatientNationalMobile(d.get().getNationalMobileNumber());
 
-
+                }
                 serviceRequests.add(request);
 
             }
@@ -316,7 +335,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             appointment_id, payer_name, payment_method, status, updated_at, payer_id,
             cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, 
             cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id, 
-            canceled_at, canceled_by_name, canceled_by_id
+            canceled_at, canceled_by_name, canceled_by_id,cancellation_reason,cancellation_request_uuid,cahier_name
         ) VALUES (
             ?::timestamp, ?, ?, ?, ?, 
             ?, uuid(?), ?, ?, ?, 
@@ -326,7 +345,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ?, ?, ?, ?::timestamp, ?, 
             ?, ?, ?, ?, now(), ?, 
             ?::timestamp, ?, ?::uuid, ?::timestamp, ?, ?::uuid, 
-            ?::timestamp, ?, ?::uuid
+            ?::timestamp, ?, ?::uuid,?,?::uuid,?
         )
     """;
 
@@ -387,6 +406,10 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ps.setString(42, item.getCanceledAt());
             ps.setString(43, item.getCanceledByName());
             ps.setString(44, item.getCanceledById());
+
+            ps.setString(45, item.getCancellationReason());
+            ps.setString(46, item.getCancellationRequestId());
+            ps.setString(47, item.getCashierName());
         }
 
         @Override
@@ -399,7 +422,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
 
 public void cleanItems(){
 String sql = """
-        update charge_item set patientmrnumber =p.mrnumber 
+    update charge_item set patientmrnumber =p.mrnumber ,patientbirthdate=p.birthdate,patientgender=p.gender,patientmobile=p.mobile,patientname=concat(p.firstname,' ',p.lastname)
 from patient_information p
 where patientid = p.uuid
         """;
