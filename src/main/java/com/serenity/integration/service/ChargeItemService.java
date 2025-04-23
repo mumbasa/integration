@@ -170,7 +170,7 @@ FROM
                 request.setProviderName("Nyaho Medical Center");
                 request.setPolicyId(set.getString("policy_id"));
                 request.setPayerId(set.getString("payer_id"));
-                request.setPayerName("payer_name");
+                request.setPayerName(set.getString("payer_name"));
                 request.setQuantity(set.getInt("quantity"));
                 request.setInvoiceId(set.getString("invoice_id"));
                 request.setServiceId(set.getString("service_id"));
@@ -209,8 +209,8 @@ FROM
                 serviceRequests.add(request);
 
             }
-            chargeItemRepository.saveAll(serviceRequests);
-         //  migrateChargeitems(serviceRequests);
+           // chargeItemRepository.saveAll(serviceRequests);
+            migrateChargeItems(serviceRequests);
             logger.info("Saved chargeItem");
         }
         logger.info("Cleaning Requests");
