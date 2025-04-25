@@ -459,4 +459,17 @@ WHERE id IN (
 
         vectorJdbcTemplate.update(sql);
 }
+
+
+public void mig(int batchSize){
+
+    long totalSize = 77949;
+    long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+    for (int i = 0; i < batches; i++) {
+
+        int startIndex = i * batchSize;
+        migrateChargeItems(chargeItemRepository.findBhy(startIndex, batchSize));
+
+}}
 }

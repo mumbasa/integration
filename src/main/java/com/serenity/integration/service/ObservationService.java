@@ -155,7 +155,7 @@ public class ObservationService {
             while (set.next()) {
                 Observation request = new Observation();
                 request.setUuid(set.getString(2));
-                request.setCreatedAt(set.getString(3));
+                request.setCreatedAt(set.getString("created_at"));
                 request.setPatientId(set.getString("patient_id"));
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setStatus(set.getString("status") == null ? "registered" : set.getString("status"));

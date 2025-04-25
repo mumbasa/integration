@@ -118,12 +118,11 @@ InvoiceService invoiceService;
 	//medicalRequestService.getLegacyRequest2();
 	
 	
-//chargeItemService.getLegacyChargeItem(2000);
-chargeItemService.chargeThread(1000);
+chargeItemService.getLegacyChargeItem(5000);
+//chargeItemService.mig(1000);
 	//serviceRequestService.getLegacyRequest(1000);
 	//serviceRequestService.migrateThread(1000);
-	//medicalRequestService.saveMedicalRequestThread();
-	//
+	//medicalRequestService.saveMedica
 //noteService.noteThread();
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
