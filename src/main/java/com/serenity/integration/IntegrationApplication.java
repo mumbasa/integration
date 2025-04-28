@@ -118,7 +118,7 @@ InvoiceService invoiceService;
 	//medicalRequestService.getLegacyRequest2();
 	
 	
-chargeItemService.getLegacyChargeItem(5000);
+chargeItemService.getLegacyChargeItem(100);
 //chargeItemService.mig(1000);
 	//serviceRequestService.getLegacyRequest(1000);
 	//serviceRequestService.migrateThread(1000);
