@@ -278,7 +278,7 @@ FROM
 
     ExecutorService executorService = Executors.newFixedThreadPool(10);
     try {
-        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, 77949));
+        List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
         for (Future<Integer> future : futures) {
             logger.info("Future result: {}", future.get());
         }
