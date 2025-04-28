@@ -119,7 +119,7 @@ InvoiceService invoiceService;
 	
 	
 //chargeItemService.getLegacyChargeItem(10);
-chargeItemService.chargeThread(2000);
+chargeItemService.chargeThread(5000);
 	//serviceRequestService.getLegacyRequest(1000);
 	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedica
