@@ -118,8 +118,8 @@ InvoiceService invoiceService;
 	//medicalRequestService.getLegacyRequest2();
 	
 	
-chargeItemService.getLegacyChargeItem(100);
-//chargeItemService.mig(1000);
+//chargeItemService.getLegacyChargeItem(10);
+chargeItemService.mig(2000);
 	//serviceRequestService.getLegacyRequest(1000);
 	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedica

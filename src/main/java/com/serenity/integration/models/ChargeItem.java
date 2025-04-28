@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "charge_item")
+@Table(name = "charger")
 public class ChargeItem {
 
     @Id

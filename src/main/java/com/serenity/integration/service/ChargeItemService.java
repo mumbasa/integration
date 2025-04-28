@@ -67,11 +67,11 @@ public class ChargeItemService {
 
     public void getLegacyChargeItem(int batchSize) {
         
-          Map<String, PatientData> mps = patientRepository.findAll().stream()
+       /*    Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
         Map<String, String> doc = doctorRepository.findHisPractitioners().stream()
                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
-
+ */
         String sql = "select count(*) from \"ChargeItem\" ci";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -140,7 +140,7 @@ FROM
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
 
-                try{
+             /*    try{
 
                Optional <PatientData> d = Optional.of(mps.get(set.getString("patient_id")));
                if(d.isPresent()){
@@ -155,7 +155,7 @@ FROM
             
             }catch(Exception e){
                     e.printStackTrace();
-                }
+                } */
                 request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
                 request.setCharge(set.getDouble("charge"));
