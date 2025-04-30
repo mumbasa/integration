@@ -908,7 +908,6 @@ and encounternote.externalsystem ='opd'
 
     }
 
-
 public void moveVisitNote(){
 saveNotes(encounterNoteRepository.findProgressnote());
     
