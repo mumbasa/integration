@@ -74,11 +74,26 @@ public class HealthCareServices {
     @Column(name = "revenue_tag_display")
     private String revenueTagDisplay;
 
-    @Column(name = "service_specialty")
+    @Column(name = "Service Specialty")
     private String serviceSpecialty;
 
-    @Column(name = "service_type")
+    @Column(name = "Service Type")
     private String serviceType;
+
+    @Column(name = "maximum_capacity")
+    private String maximumCapacity;
+
+    @Column(name = "extra_details")
+    private String extraDetails;
+
+    @Column(name = "ward_type")
+    private String wardType;
+
+    @Column(name = "subscription_frequency")
+    private String subscriptionFrequency;
+
+ 
+
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -86,7 +101,9 @@ public class HealthCareServices {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "healthcare_service_pk") // Foreign key in `service_details` table
-    private List<ServicePrice> priceTiers;
+
+
+    //@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JoinColumn(name = "healthcare_service_pk") // Foreign key in `service_details` table
+  //  private List<ServicePrice> priceTiers;
 }

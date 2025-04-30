@@ -206,7 +206,7 @@ public class SetupService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<HealthcareServiceResponse> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity,
                 HealthcareServiceResponse.class);
-        // System.err.println(response.getBody().getData());
+        System.err.println(response.getBody().getData());
         return (response.getBody().getData());
     }
 
@@ -217,17 +217,17 @@ public class SetupService {
         Gson g = new Gson();
         String data = g.toJson(user);
         System.err.println(data);
-        String url = "https://staging.nyaho.serenity.health/v1/providers/auth/login";
+        String url = "https://api.staging.serenity.health/v1/providers/auth/login";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Authorization", "Bearer " + token);
-        headers.add("PROVIDER-PORTAL-ID", "j&4P8F<6+dF7/HASJ^hI92/6a&jdJOj*O\"[pHsh}t{o\"&7]\"}1~wg&SI%--,h{/");
+        headers.add("PROVIDER-PORTAL-ID", "J9DG4WcX+eV<;5xuKtY[yp8g&Sa@~R%wUMnE_6^.jbH{=Lf)>d");
         HttpEntity<String> httpEntity = new HttpEntity<>(data, headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<V1Response> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 V1Response.class);
-        // System.err.println(response.getBody().getData());
+         System.err.println(response.getBody().getAccess());
         return (response.getBody());
     }
 
@@ -273,13 +273,12 @@ public class SetupService {
 
     public String addHealthService(String c) {
         LOGGER.info("Searching for " + c);
-        String url = "https://staging.nyaho.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9"
-                + "/administration/healthcareservices";
+        String url = "https://api.staging.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         headers.add("Authorization", "Bearer " + getToken().getAccess());
-        headers.add("PROVIDER-PORTAL-ID", "j&4P8F<6+dF7/HASJ^hI92/6a&jdJOj*O\"[pHsh}t{o\"&7]\"}1~wg&SI%--,h{/");
+        headers.add("PROVIDER-PORTAL-ID", "J9DG4WcX+eV<;5xuKtY[yp8g&Sa@~R%wUMnE_6^.jbH{=Lf)>d");
         HttpEntity<String> httpEntity = new HttpEntity<>(c, headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
@@ -714,8 +713,8 @@ public class SetupService {
         for (long id : repository.findAllId()) {
 
             HealthCareServices services = repository.findByPk(id);
-            services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(id));
-            services.getPriceTiers().size();
+        //    services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(id));
+          //  services.getPriceTiers().size();
             String payload = formulatePayload(services);
 
             try {
@@ -736,14 +735,14 @@ public class SetupService {
     }
 
     public String formulatePayload(HealthCareServices healthcareService) {
-        String priceTiers = null;
+       /*  String priceTiers = null;
         try {
             priceTiers = new ObjectMapper().writeValueAsString(healthcareService.getPriceTiers());
 
         } catch (Exception e) {
             e.printStackTrace();
 
-        }
+        } */
         String payload = String.format(
                 """
                                  {
@@ -852,9 +851,241 @@ public class SetupService {
                         }
 
                         """, healthcareService.getServiceName(), healthcareService.getServiceName(),
-                healthcareService.getId(), healthcareService.getUuid(), priceTiers, healthcareService.getOrderCode());
+                healthcareService.getId(), healthcareService.getUuid(), null, healthcareService.getOrderCode());
 
         return payload;
 
     }
+
+
+
+    public String formulatePayloadConsultation(HealthCareServices healthcareService) {
+        
+        String payload = String.format(
+                """
+                              {
+    "healthcare_service_categories": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_specialties": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_types": [
+        {
+            "code": "%s",
+            "display": "%s"
+        }
+    ],
+    "slot_duration": 30,
+    "virtual_service": false,
+    "healthcare_service_appointment_required": false,
+    "comment": "Healthcare service for %s at Nyaho Medical Center",
+    "healthcare_service_service_provision_code": "cost",
+    "price_tiers": [],
+    "extra_details": %s,
+    "revenue_tag_display": "%s",
+    "healthcare_service_name": "%s",
+    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+    "healthcare_service_not_available_times": []
+}
+                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails(),healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName());
+
+        return payload;
+
+    }
+
+
+
+    public String formulatePayloadDiagnostics(HealthCareServices healthcareService) {
+        
+        String payload = String.format(
+                """
+                              {
+    "healthcare_service_categories": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_specialties": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_types": [
+        {
+            "code": "%s",
+            "display": "%s"
+        }
+    ],
+    "slot_duration": 30,
+    "virtual_service": false,
+    "healthcare_service_appointment_required": false,
+    "comment": "Healthcare service for %s at Nyaho Medical Center",
+    "healthcare_service_service_provision_code": "cost",
+    "price_tiers": [],
+    "extra_details": %s,
+    "revenue_tag_display": "%s",
+    "service_request_category": "%s",
+    "order_code": "%s",
+    "diagnostic_service_section": "%s",
+    "healthcare_service_name": "%s",
+    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+    "healthcare_service_not_available_times": []
+}
+                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),(healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getRevenueTagDisplay(),
+                healthcareService.getServiceRequestCategory(),healthcareService.getOrderCode(),healthcareService.getDiagnosticServiceSection(),       
+                healthcareService.getServiceName());
+
+        return payload;
+
+    }
+
+
+
+    public String formulatePayloadHospitalization(HealthCareServices healthcareService) {
+        
+        String payload = String.format(
+                """
+        {
+    "healthcare_service_categories": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_specialties": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_types": [
+        {
+            "code": "%s",
+            "display": "%s"
+        }
+    ],
+    "slot_duration": 30,
+    "virtual_service": false,
+    "healthcare_service_appointment_required": true,
+    "comment": "Healthcare service for %s at Nyaho Medical Center",
+    "healthcare_service_service_provision_code": "cost",
+    "price_tiers": [],
+    "maximum_capacity": %s,
+    "extra_details": %s,
+    "healthcare_service_name": "%s",
+    "ward_type": "%s",
+    "subscription_frequency": "%s",
+    "revenue_tag_display": "%s",
+    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+    "healthcare_service_not_available_times": []
+}
+                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),
+               healthcareService.getMaximumCapacity(), (healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getServiceName(),
+               healthcareService.getWardType(), healthcareService.getSubscriptionFrequency(),
+               healthcareService.getRevenueTagDisplay());
+
+        return payload;
+
+    }
+
+
+    public String formulatePayloadProcedure(HealthCareServices healthcareService) {
+        
+        String payload = String.format(
+                """
+                              {
+    "healthcare_service_categories": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_specialties": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_types": [
+        {
+            "code": "%s",
+            "display": "%s"
+        }
+    ],
+    "slot_duration": 30,
+    "virtual_service": false,
+    "healthcare_service_appointment_required": false,
+    "comment": "Healthcare service for %s at Nyaho Medical Center",
+    "healthcare_service_service_provision_code": "cost",
+    "price_tiers": [],
+    "extra_details": %s,
+    "revenue_tag_display": "%s",
+    "healthcare_service_name": "%s",
+    "service_request_category": "%s",
+    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+    "healthcare_service_not_available_times": []
+}
+                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),(healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName(),
+               healthcareService.getServiceRequestCategory()
+                );
+
+        return payload;
+
+    }
+
+public List<String> sethealthcareServicePayload(){
+   List<String> data = new ArrayList();
+   HealthCareServices s = repository.findByPk(259);
+List<HealthCareServices> services= repository.findAll();
+//services.stream().forEach(e ->{ data.add(convertHealthCareServices(e));});
+
+
+        addHealthService(convertHealthCareServices(s));
+
+
+
+
+return data;
+
+}
+
+
+
+public String convertHealthCareServices(HealthCareServices hCareServices){
+    String data =null;
+    switch (hCareServices.getServiceClass()) {
+
+        case "Medication": data= formulatePayloadConsultation(hCareServices);
+          
+            break;
+
+        case "Procedure": data= formulatePayloadProcedure(hCareServices);
+          
+            break;
+        
+        case "Administrative": data= formulatePayloadConsultation(hCareServices);
+          
+            break;
+
+        case "Hospitalization": data= formulatePayloadHospitalization(hCareServices);
+          
+            break;
+            case "Consultation": data= formulatePayloadConsultation(hCareServices);
+          
+            break;
+    
+    
+        default:
+        data =formulatePayloadDiagnostics(hCareServices);
+            break;
+    }
+    return data;
+
+}
+
 }

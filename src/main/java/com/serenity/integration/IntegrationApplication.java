@@ -108,7 +108,8 @@ InvoiceService invoiceService;
 	//visitMigration.getVisitThreads();
 	//encounterService.getLegacyEncounters(1000);
 	//encounterService.encounterLegacythread();
-	//allergyService.migrateAllergyThread(1000);
+	allergyService.getLegacyAllergies(1000);
+	allergyService.migrateAllergyThread(1000);
 	//dService.migrationThread();
 	//referalService.migrateReferalThread(1000);
 	//observationService.migrateObservationThread(10000);
@@ -119,14 +120,15 @@ InvoiceService invoiceService;
 	
 	
 //chargeItemService.getLegacyChargeItem(10);
-chargeItemService.chargeThread(5000);
+//chargeItemService.chargeThread(5000);
 	//serviceRequestService.getLegacyRequest(1000);
 	//serviceRequestService.migrateThread(1000);
 	//medicalRequestService.saveMedica
 //noteService.noteThread();
+
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
-
+setupService.sethealthcareServicePayload();
 	
 
 		logger.info("finishi.ng import");

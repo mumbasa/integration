@@ -47,7 +47,7 @@ public class AllergyIntolerance {
     private String onsetPeriodEnd;
 
     @Column(name = "recorded_date")
-    @CreationTimestamp
+
     private String recordedDate;
 
     @Column(name = "practitioner_id")
@@ -61,6 +61,13 @@ public class AllergyIntolerance {
 
     @Column(name = "service_provider_id")
     private String serviceProviderId;
+
+    @Column(name = "created_at")
+    private String createdAt;
+
+
+    @Column(name = "updated_at")
+    private String updatedAt;
 
     @Column(name = "patient_id", nullable = false)
     private String patientId;

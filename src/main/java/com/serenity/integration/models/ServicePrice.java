@@ -12,8 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,10 +30,10 @@ public class ServicePrice {
     @JsonIgnore
     private Long id;
 
-    @Column(name = "uuid", unique = true, nullable = false)
-    @JsonProperty("uuid")
-    @JsonIgnore
-    private UUID uuid;
+   // @Column(name = "uuid", unique = true, nullable = false)
+    //@JsonProperty("uuid")
+    ///@JsonIgnore
+    //private UUID uuid;
 
     @Column(name = "display")
     @JsonProperty("display")
@@ -56,7 +55,7 @@ public class ServicePrice {
     @JsonProperty("description")
     private String description;
 
-    @Column(name = "healthcare_service_name", nullable = false)
+    @Column(name = "healthcare_service", nullable = false)
     @JsonProperty("healthcare_service_name")
     @JsonIgnore
     private String healthcareServiceName;

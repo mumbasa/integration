@@ -66,8 +66,8 @@ public class AllergyService {
 
 
     public void getLegacyAllergies(int batchSize) {
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+       // Map<String, PatientData> mps = patientRepository.findAll().stream()
+         //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
         String sql = "Select count(*) from allergy_intolerance ";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
@@ -89,7 +89,9 @@ FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join e
                 AllergyIntolerance request = new AllergyIntolerance();
               //  request.setId(set.getLong("id"));
                 request.setUuid(set.getString("id"));
-                request.setRecordedDate(set.getString("created_at"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setRecordedDate(set.getString("last_occurrence"));
+                request.setUpdatedAt(set.getString("modified_at"));
                 request.setCategory(set.getString("type"));
                 request.setAllergyIntoleranceType(set.getString("type"));
                 request.setClinicalStatus(set.getString("clinical_status"));
@@ -140,13 +142,13 @@ uuid(?), ?, ?, ?, ?,
             // TODO Auto-generated method stub
            AllergyIntolerance intolerance = allergies.get(i);
        
-           ps.setString(1,intolerance.getRecordedDate());
+           ps.setString(1,intolerance.getCreatedAt());
            ps.setString(2,    intolerance.getAllergyIntoleranceType());
            ps.setString(3,     intolerance.getOnsetPeriodEnd());
            ps.setString(4,intolerance.getRecordedDate());
            ps.setString(5,intolerance.getRecordedDate());
 
-           ps.setLong(6,intolerance.getId()+7871);
+           ps.setLong(6,intolerance.getId());
            ps.setString(7,    intolerance.getEncounterId());
            ps.setString(8,     intolerance.getServiceProviderId());
            ps.setString(9,intolerance.getPatientId());
