@@ -247,6 +247,7 @@ from visits v where v."uuid" =visit_id::uuid
             callables.add(() -> {
                 int startIndex = batchNumber * batchSize;
                 logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+              
                 migrateAllergy(allergyRepository.findBatch(startIndex, batchSize));
                 return 1;
             });

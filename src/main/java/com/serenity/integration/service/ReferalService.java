@@ -95,6 +95,7 @@ FROM public.referral_request rr left join patient p on p.id=rr.patient_id left j
                 request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
                 request.setCreatedAt(set.getString("created_at"));
+                request.setUpdatedAt(set.getString("modified_at"));
                 request.setDescription(set.getString("description"));
                 request.setPriority(set.getString("priority"));
                 request.setReason(set.getString("reason"));
@@ -133,7 +134,7 @@ FROM public.referral_request rr left join patient p on p.id=rr.patient_id left j
 (created_at, updated_at, pk, encounter_id, patient_id, 
 requester_id, requesting_organization_id, recipient_id, "uuid", priority, 
 specialty, reason, description, referral_type, status, 
-recipient_extra_detail, recepient_name, replaces_id,  requester_name)
+recipient_extra_detail, recipient_name, replaces_id,  requester_name)
 VALUES(?::timestamp,?::timestamp,?,uuid(?),uuid(?),
 uuid(?),uuid(?),uuid(?),uuid(?),?,
 ?,?,?,?,?,
@@ -147,7 +148,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
      
         Referal referal = referals.get(i);
         ps.setString(1, referal.getCreatedAt());
-        ps.setString(2, referal.getCreatedAt());
+        ps.setString(2, referal.getUpdatedAt());
         ps.setLong(3, referal.getId());
         ps.setString(4, referal.getEncounterId());
         ps.setString(5, referal.getPatientId());

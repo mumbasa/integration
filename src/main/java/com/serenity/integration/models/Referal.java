@@ -67,4 +67,7 @@ public class Referal {
 
     @Column(name = "created_at", updatable = false)
     private String createdAt;
+
+    @Column(name = "updated_at", updatable = false)
+    private String updatedAt;
 }
