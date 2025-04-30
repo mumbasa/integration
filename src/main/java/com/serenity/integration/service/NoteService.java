@@ -772,7 +772,7 @@ FROM encounter e join patient p on e.patient_id =p.id
          SELECT  e.created_at, e.is_deleted, e.modified_at, e.id as uuid, display, encounter_id, p.uuid as patient_id, practitioner_id,
           practitioner_role_id, practitioner_name, note_type, practitioner_role_type,p.birth_date,p.mobile,p.gender,p.first_name,p.last_name
                           
-         FROM encounter_patient_notes e join patient p on p.id=e.patient_id order by p.id offset  where note_type is null offset ? LIMIT ?
+         FROM encounter_patient_notes e join patient p on p.id=e.patient_id where note_type is null order by p.id offset   offset ? LIMIT ?
                           
                           """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
