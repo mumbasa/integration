@@ -115,7 +115,7 @@ InvoiceService invoiceService;
 	//dService.migrationThread();
 	//referalService.migrateReferalThread(1000);
 	//observationService.migrateObservationThread(10000);
-	noteService.getLegacyVisitNotesEncounters(0);
+	noteService.getLegacyVisitNotesEncounters(1000);
 	noteService.note();
 	noteService.moveVisitNote();;
 	//diagnosisService.getLegacyDiagnosticReport(5000);
