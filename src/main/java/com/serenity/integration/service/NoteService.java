@@ -755,7 +755,7 @@ FROM encounter e join patient p on e.patient_id =p.id
                  .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
  */
 
-                String sql = "SELECT count(*) from encounter_patient_notes";
+                String sql = "SELECT count(*) from encounter_patient_notes where note_type is null";
                 long rows = legJdbcTemplate.queryForObject(sql, Long.class);
         
                 long totalSize = rows;
@@ -788,7 +788,7 @@ FROM encounter e join patient p on e.patient_id =p.id
             encounter.setCreatedAt(set.getString("created_at"));
             encounter.setEncounterType("ambulatory");
             encounter.setPatientId(set.getString("patient_id"));
-            encounter.setNoteType(set.getString("note_type"));
+            encounter.setNoteType(set.getString("note_type")==null?"progress-note":set.getString("note_type"));
             encounter.setPatientBirthDate(set.getString("birth_date"));
              encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
              encounter.setPatientMobile(set.getString("mobile"));
