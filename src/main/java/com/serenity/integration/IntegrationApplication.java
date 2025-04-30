@@ -130,7 +130,7 @@ InvoiceService invoiceService;
 
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
-setupService.sethealthcareServicePayload();
+//setupService.sethealthcareServicePayload();
 	
 
 		logger.info("finishi.ng import");
