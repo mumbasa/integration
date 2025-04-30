@@ -69,11 +69,11 @@ public class ReferalService {
 
 
      public void getLegacyReferral(int batchSize) {
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+     //   Map<String, PatientData> mps = patientRepository.findAll().stream()
+       //         .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
-                Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+         //       Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
+          //      .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         
         String sql = "SELECT count(*) from referral_request";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
@@ -86,7 +86,8 @@ public class ReferalService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    select * from referral_request rr  join patient p on p.id=rr.patient_id join encounter e on e.id=rr.encounter_id order by rr.id asc offset ? LIMIT ?
+                    SELECT rr.id, rr."uuid", rr.created_at, rr.is_deleted, rr.modified_at, rr.priority, recipient_extra_detail, rr.specialty, reason, description, referral_type, rr.status, encounter_id, p.uuid as patient_id, recipient_id, replaces_id, requester_id, visit_id,concat(pr.title ,' ',pr.first_name,' ',pr.last_name) as full_name,requesting_organization_id
+FROM public.referral_request rr left join patient p on p.id=rr.patient_id left join encounter e on e.id=rr.encounter_id left join practitioner_role pr on pr.id=requester_id order by rr.id asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -103,17 +104,16 @@ public class ReferalService {
                 request.setSpecialty(set.getString("specialty"));
                 request.setRecipientId(set.getString("recipient_id"));
                 request.setRequesterId(set.getString("requester_id"));
-               // request.setRequesterName(doctorMap.get(request.getRequesterId()).getFullName());
+                request.setRequesterName(set.getString("full_name"));
                 request.setRequestingOrganizationId(set.getString("requesting_organization_id"));
                 request.setReplacesId(set.getString("replaces_id"));
                 String encounterId = set.getString("encounter_id");
                 if (encounterId != null) {
                     request.setEncounterId(encounterId);
                 }
-                String patientMrNumber = set.getString("mr_number");
-                if (patientMrNumber != null) {
-                request.setPatientId(mps.get(patientMrNumber).getUuid());            
-                }
+               
+                request.setPatientId(set.getString("patient_id"));            
+                
                 
             
                               serviceRequests.add(request);
@@ -123,7 +123,6 @@ public class ReferalService {
             logger.info("Saved Allergy");
         }
         logger.info("Cleaning Requests");
-       setRequesterName();
 
     }
     

@@ -107,7 +107,7 @@ FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join e
                             
             String practitionerId =set.getString("chief_complaint_author_id")==null?set.getString("history_of_presenting_illness_author_id"):set.getString("chief_complaint_author_id");
                if(practitionerId !=null){
-                System.err.println(practitionerId+"----------");
+              //  System.err.println(practitionerId+"----------");
                 request.setPractitionerId(practitionerId);
                }
                 request.setVisitId(set.getString("visit_id"));
@@ -128,11 +128,11 @@ FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join e
 (created_at,  "type", onset_period_start, onset_period_end, recorded_date, 
 pk, encounter_id, service_provider_id, patient_id, visit_id, 
 "uuid", clinical_status, verification_status, category, criticality,
- code, display, practitioner_id, practitioner_name)
+ code, display, practitioner_id, practitioner_name,updated_at)
 VALUES( ?::timestamp, ?, ?::timestamp, ?::timestamp, cast (? AS DATE), 
 ?, uuid(?), uuid(?), uuid(?), uuid(?), 
 uuid(?), ?, ?, ?, ?, 
-?, ?, uuid(?), ?);
+?, ?, uuid(?), ?,?::timestamp);
                 """;
 
     serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -164,6 +164,9 @@ uuid(?), ?, ?, ?, ?,
            ps.setString(17,    intolerance.getCode());
            ps.setString(18,     intolerance.getPractitionerId()==null?"4c4db061-1f31-4a7b-b5fc-04b6501fc3cf":intolerance.getPractitionerId());
            ps.setString(19,intolerance.getPractitionerName()==null?"":intolerance.getPractitionerName());
+           ps.setString(20,intolerance.getUpdatedAt());
+
+
     
 
 

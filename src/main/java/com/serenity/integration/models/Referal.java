@@ -66,6 +66,5 @@ public class Referal {
     private String encounterId;
 
     @Column(name = "created_at", updatable = false)
-    @CreationTimestamp
     private String createdAt;
 }
