@@ -111,7 +111,7 @@ InvoiceService invoiceService;
 	//allergyService.getLegacyAllergies(1000);
 	//allergyService.migrateAllergyThread(1);
 	//referalService.getLegacyReferral(1000);
-	referalService.migrateReferalThread(100);
+	referalService.migrateReferalThread(1000);
 	//dService.migrationThread();
 	//referalService.migrateReferalThread(1000);
 	//observationService.migrateObservationThread(10000);
