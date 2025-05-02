@@ -107,36 +107,12 @@ InvoiceService invoiceService;
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//practitionerService.getLegacyPractitioner();
 	visitService.getLegacyVisit(1000);
-	//encounterService.getLegacyEncounters(1000);
-	//allergyService.getLegacyAllergies(1000);
-	//referalService.getLegacyReferral(1000);
-	//patientMigrationService.getPatientsThreads();
-	//practitionerService.migrateDoctors()
-	//visitMigration.getVisitThreads();
-	//encounterService.getLegacyEncounters(1000);
-	//encounterService.encounterLegacythread();
-	//allergyService.getLegacyAllergies(1000);
-	//allergyService.migrateAllergyThread(1);
-	//referalService.getLegacyReferral(1000);
-	//referalService.migrateReferalThread(1000);
-	//dService.migrationThread();
-	//referalService.migrateReferalThread(1000);
-	//observationService.migrateObservationThread(10000);
-	//noteService.getLegacyVisitNotesEncounters(1000);
-	//noteService.note();
-//	noteService.moveVisitNote();;
-	//diagnosisService.getLegacyDiagnosticReport(5000);
-//diagnosisService.migrateDiagReportThread(10000);
-	//medicalRequestService.getLegacyRequest2();
-	
-	
-//chargeItemService.getLegacyChargeItem(10);
-//chargeItemService.chargeThread(5000);
-	//serviceRequestService.getLegacyRequest(1000);
-	//serviceRequestService.migrateThread(1000);
-	//medicalRequestService.saveMedica
-//noteService.noteThread();
-
+	encounterService.getLegacyEncounters(1000);
+	allergyService.getLegacyAllergies(1000);
+	referalService.getLegacyReferral(1000);
+	observationService.getLegacyObservations(1000);
+	diagnosisService.getLegacyDiagnosticReport(1000);
+	dService.getLegacyDiagnosis(1000, 1000);
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
 //setupService.sethealthcareServicePayload();
