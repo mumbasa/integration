@@ -105,11 +105,11 @@ InvoiceService invoiceService;
 		long start = System.currentTimeMillis();
 	
 	//patientService.getLegacyAllPatients2(1000, 1000);
-	//practitionerService.getLegacyPractitioner();
+	practitionerService.getLegacyPractitioner();
 	visitService.getLegacyVisit(1000);
 	encounterService.getLegacyEncounters(1000);
 	allergyService.getLegacyAllergies(1000);
-	referalService.getLegacyReferral(1000);
+	//referalService.getLegacyReferral(1000);
 	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
