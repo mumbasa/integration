@@ -370,7 +370,7 @@ return visits.size();
             int startIndex = i * batchSize;
         List<Visits> visits = new ArrayList<>();
         String sql = """
-                      SELECT DISTINCT
+                      SELECT 
     v.created_at,
     v.is_deleted,
     v.modified_at,
@@ -394,15 +394,12 @@ return visits.size();
     p.mobile,
     p.other_names,
     encounter_history,
-    p.name_prefix AS title,
-    c.user_friendly_id AS user_friendly_id,
-    c.invoiceid
+    p.name_prefix AS title
 FROM 
     visit v
 LEFT JOIN 
     patient p ON p.id = v.patient_id
-LEFT JOIN 
-    "ChargeItem" c ON c.visitid::uuid = v.uuid
+
 ORDER BY 
     v.created_at;
  offset ? limit ?
@@ -419,7 +416,7 @@ ORDER BY
             visit.setPatientId(set.getString("patient_id"));
             visit.setExternalSystem("opd");
             visit.setExternalId(set.getString("uuid"));
-            visit.setInvoiceId(set.getString("invoiceid"));
+           // visit.setInvoiceId(set.getString("invoiceid"));
             visit.setAssignedToId(set.getString("assigned_to_id"));
             
             visit.setPractitionerId(set.getString("assigned_to_id"));
@@ -429,7 +426,7 @@ ORDER BY
             visit.setPatientDob(set.getString("birth_date")==null?"":set.getString("birth_date"));
             visit.setGender(set.getString("gender"));
             visit.setEncounterClass(set.getString("visit_class"));
-            visit.setUserFriendlyId(set.getString("user_friendly_id"));
+            //visit.setUserFriendlyId(set.getString("user_friendly_id"));
         
             visit.setDisplay("opd-"+visit.getUuid());
             visit.setPriority(set.getString("priority")==null?"routine":set.getString("priority"));
