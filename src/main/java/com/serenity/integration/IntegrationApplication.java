@@ -104,7 +104,6 @@ InvoiceService invoiceService;
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
 	
-	
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//practitionerService.getLegacyPractitioner();
 	visitService.getLegacyVisit(1000);
