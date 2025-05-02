@@ -373,7 +373,7 @@ return visits.size();
             int startIndex = i * batchSize;
         List<Visits> visits = new ArrayList<>();
         String sql = """
-                      SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, v.appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names,  encounter_history, p.name_prefix as title,c.user_friendly_id as user_friendly_id
+                      SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, v.appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names,  encounter_history, p.name_prefix as title,c.user_friendly_id as user_friendly_id,invoiceid
 FROM visit  v join patient p  on p.id = v.patient_id  left join  "ChargeItem" c on c.visitid::uuid=v.uuid
                 order by v.created_at offset ? limit ?
                 """;;
