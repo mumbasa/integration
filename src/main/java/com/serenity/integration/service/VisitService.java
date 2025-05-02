@@ -378,7 +378,6 @@ FROM visit  v join patient p  on p.id = v.patient_id  left join  "ChargeItem" c 
                 order by v.created_at offset ? limit ?
                 """;;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
-        Map<String,Doctors> doc = doctorRepository.findAll().stream().collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
         while(set.next()){
             Visits visit = new Visits();
@@ -392,12 +391,7 @@ FROM visit  v join patient p  on p.id = v.patient_id  left join  "ChargeItem" c 
             visit.setExternalId(set.getString("uuid"));
             visit.setInvoiceId(set.getString("invoiceid"));
             visit.setAssignedToId(set.getString("assigned_to_id"));
-            try{
-                visit.setAssignedToName(doc.get(set.getString("assigned_to_id")).getFullName());
-            }catch (Exception e){
-                visit.setAssignedToName("");
-
-            }
+            
             visit.setPractitionerId(set.getString("assigned_to_id"));
             visit.setLocationId(set.getString("primary_location_id"));
             visit.setPatientMobile(set.getString("mobile"));
