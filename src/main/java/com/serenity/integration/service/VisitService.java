@@ -401,7 +401,7 @@ LEFT JOIN
     patient p ON p.id = v.patient_id
 
 ORDER BY 
-    v.created_at;
+    v.created_at 
  offset ? limit ?
                 """;;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
