@@ -373,15 +373,14 @@ return visits.size();
             int startIndex = i * batchSize;
         List<Visits> visits = new ArrayList<>();
         String sql = """
-                      SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, v.appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due,p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names,  encounter_history, p.name_prefix as title,c.user_friendly_id as user_friendly_id,c.invoiceid
-FROM visit  v join patient p  on p.id = v.patient_id  left join  "ChargeItem" c on visit_id::uuid=v.uuid
+                      SELECT  v.created_at, v.is_deleted, v.modified_at, v.id as uuid, v.status, visit_class, priority, arrived_at, ended_at, v.appointment_id, assigned_to_id, p.uuid as patient_id, service_provider_id, primary_location_id, next_encounter_due,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names,  encounter_history, p.name_prefix as title,c.user_friendly_id as user_friendly_id
+FROM visit  v join patient p  on p.id = v.patient_id  left join  "ChargeItem" c on c.visitid::uuid=v.uuid
                 order by v.created_at offset ? limit ?
                 """;;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         Map<String,Doctors> doc = doctorRepository.findAll().stream().collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
         while(set.next()){
-            System.err.println(set.getString(1) +"=========");
             Visits visit = new Visits();
             visit.setUuid(UUID.fromString(set.getString("uuid")));
             visit.setCreatedAt(set.getString("created_at"));
@@ -418,7 +417,7 @@ FROM visit  v join patient p  on p.id = v.patient_id  left join  "ChargeItem" c 
 
     }
     visitRepository.saveAll(visits);
-
+    logger.info("saved visit");
         }
         updateVisits();
 }
