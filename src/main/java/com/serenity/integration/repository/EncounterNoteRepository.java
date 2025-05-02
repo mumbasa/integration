@@ -22,7 +22,7 @@ public interface EncounterNoteRepository extends  JpaRepository<EncounterNote, S
     List<EncounterNote> findByNoteType(String offset);
 
     @Query(value = "select * from encounternote where notetype='progress-note' and visitid is not null",nativeQuery = true)
-    List<EncounterNote> findProgressnote(int offset);
+    List<EncounterNote> findPrressnote();
 
 
     int countByNoteType(String notetype);

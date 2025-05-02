@@ -103,7 +103,10 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
-		//patientMigrationService.getPatientsThreads();
+	
+	
+	patientService.getLegacyAllPatients2(1000, 1000);
+	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
 	//encounterService.getLegacyEncounters(1000);
