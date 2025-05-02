@@ -109,6 +109,8 @@ InvoiceService invoiceService;
 	//practitionerService.getLegacyPractitioner();
 	visitService.getLegacyVisit(1000);
 	encounterService.getLegacyEncounters(1000);
+	allergyService.getLegacyAllergies(1000);
+	referalService.getLegacyReferral(1000);
 	//patientMigrationService.getPatientsThreads();
 	//practitionerService.migrateDoctors()
 	//visitMigration.getVisitThreads();
@@ -123,7 +125,7 @@ InvoiceService invoiceService;
 	//observationService.migrateObservationThread(10000);
 	//noteService.getLegacyVisitNotesEncounters(1000);
 	//noteService.note();
-	noteService.moveVisitNote();;
+//	noteService.moveVisitNote();;
 	//diagnosisService.getLegacyDiagnosticReport(5000);
 //diagnosisService.migrateDiagReportThread(10000);
 	//medicalRequestService.getLegacyRequest2();
