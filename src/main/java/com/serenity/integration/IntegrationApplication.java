@@ -106,13 +106,18 @@ InvoiceService invoiceService;
 	
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//practitionerService.getLegacyPractitioner();
-	visitService.getLegacyVisit(1000);
-	encounterService.getLegacyEncounters(1000);
-	allergyService.getLegacyAllergies(1000);
-	referalService.getLegacyReferral(1000);
-	observationService.getLegacyObservations(1000);
-	diagnosisService.getLegacyDiagnosticReport(1000);
-	dService.getLegacyDiagnosis(1000, 1000);
+	//visitService.getLegacyVisit(1000);
+	//encounterService.getLegacyEncounters(1000);
+	//allergyService.getLegacyAllergies(1000);
+	//referalService.getLegacyReferral(1000);
+	//observationService.getLegacyObservations(1000);
+	//diagnosisService.getLegacyDiagnosticReport(1000);
+	//dService.getLegacyDiagnosis(1000, 1000);
+	
+	serviceRequestService.getLegacyRequest(1000);
+	chargeItemService.getLegacyChargeItem(1000);
+
+
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
 //setupService.sethealthcareServicePayload();
