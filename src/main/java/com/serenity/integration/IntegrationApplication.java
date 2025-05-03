@@ -115,7 +115,7 @@ InvoiceService invoiceService;
 	//dService.getLegacyDiagnosis(1000, 1000);
 	
 	serviceRequestService.getLegacyRequest(1000);
-	chargeItemService.getLegacyChargeItem(1000);
+	//chargeItemService.getLegacyChargeItem(1000);
 
 
 long stop = System.currentTimeMillis();

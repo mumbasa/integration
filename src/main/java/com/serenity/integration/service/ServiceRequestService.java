@@ -74,7 +74,7 @@ public class ServiceRequestService {
             int startIndex = i * batchSize;
             String sqlQuery = """
           SELECT sr.id, sr."uuid", sr.created_at, sr.is_deleted, sr.modified_at, body_site, display, code, sr.category, diagnostic_service_section, due_date, purpose, p.passport_number, sample_received_date_time, priority, sr.status, group_identifier, status_reason, intent, do_not_perform, quantity_value, quantity_unit, occurence, as_needed, authored_on, note, patient_instruction, assigned_to, assigned_to_name, encounter_id, healthcare_service_id, sr.location_id, p.uuid as patient_id, sr.price_tier_id, replaces_id, requesting_patient_id, requesting_practitioner_role_id, requesting_related_contact_id, sr.visit_id, bill_paid_at, canceled_by_name, canceled_by_practitioner_id, canceled_at, encounter_diagnoses, is_mismatched, is_mismatched_comment, service_class,
-ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.id =sr.patient_id left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid" order by sr.id asc
+ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.id =sr.patient_id  join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid" order by sr.id asc
  
                         offset ? LIMIT ?
                      """;
