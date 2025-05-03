@@ -114,8 +114,12 @@ InvoiceService invoiceService;
 	//diagnosisService.getLegacyDiagnosticReport(1000);
 	//dService.getLegacyDiagnosis(1000, 1000);
 	
-	serviceRequestService.getLegacyRequest(1000);
+	//serviceRequestService.getLegacyRequest(1000);
 	//chargeItemService.getLegacyChargeItem(1000);
+	migrationService.getPatientsThreads();
+	visitMigration.getVisitThreads();
+	encounterService.encounterLegacythread();
+
 
 
 long stop = System.currentTimeMillis();

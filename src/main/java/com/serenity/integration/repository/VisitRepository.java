@@ -25,7 +25,7 @@ public interface VisitRepository extends JpaRepository<Visits,Long>{
 
 
 
-    @Query(value = "select * from visits where externalsystem='opd' and patientmrnumber is not null and patientid in (select uuid from patient_information pi2) order by id  offset ?1   LIMIT 1000",nativeQuery = true)
+    @Query(value = "select * from visits  order by id  offset ?1   LIMIT 1000",nativeQuery = true)
     List<Visits> getfirst100k(int offset);
     @Query(value = "select count(*) from visits where externalsystem='opd' and patientmrnumber is not null and patientid in (select uuid from patient_information pi2)",nativeQuery = true)
     int getCounter();

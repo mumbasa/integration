@@ -53,6 +53,9 @@ public class PatientMigrationService {
     }
 
     public void getPatientsThreads() {
+        String truncate ="Truncate patients";
+        serenityJdbcTemplate.update(truncate);
+
         String sql = "SELECT external_id from public.patients";
         Set<String> set = new HashSet<>(serenityJdbcTemplate.queryForList(sql, String.class));
         List<PatientData> patientData = patientRepository.findySystem().stream().filter(e -> !set.contains(e.getExternalId())).toList();
