@@ -654,6 +654,6 @@ where e."uuid" =encounterid
                 where system = 'opd' and
                 encounterid=e.uuid
                         """;
-        legJdbcTemplate.update(sql);
+        vectorJdbcTemplate.update(sql);
     }
 }

@@ -109,16 +109,16 @@ InvoiceService invoiceService;
 	//practitionerService.getLegacyPractitioner();
 	LocalDateTime starts = LocalDateTime.now();
 
-	visitService.getLegacyVisit(2000);
-	encounterService.getLegacyEncounters(2000);
+	//visitService.getLegacyVisit(2000);
+	//encounterService.getLegacyEncounters(2000);
 	LocalDateTime mid =(LocalDateTime.now());
-	allergyService.getLegacyAllergies(2000);
-	referalService.getLegacyReferral(2000);
-	noteService.getLegacyCarePlan(2000);
-	noteService.getLegacyVisitNotesEncounters(2000);
-	noteService.getLegacyEncounters(2000);
-	dService.getLegacyDiagnosis(2000);;
-	diagnosisService.getLegacyDiagnosticReport(1200);
+	//allergyService.getLegacyAllergies(2000);
+	//referalService.getLegacyReferral(2000);
+	//noteService.getLegacyCarePlan(2000);
+	//noteService.getLegacyVisitNotesEncounters(2000);
+	//noteService.getLegacyEncounters(2000);
+	//dService.getLegacyDiagnosis(2000);;
+	diagnosisService.getLegacyDiagnosticReport(5000);
 	observationService.getLegacyObservations(3000);
 	
 	
