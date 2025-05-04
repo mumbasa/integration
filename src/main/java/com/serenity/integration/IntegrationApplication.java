@@ -131,7 +131,7 @@ InvoiceService invoiceService;
 
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
-		System.err.println(starts.toString() +"\t"+ends.toString());
+		System.err.println(starts.toString() +"\t"+mid.toString() +"\t"+ends.toString());
 //setupService.sethealthcareServicePayload();
 	
 
