@@ -2,6 +2,7 @@ package com.serenity.integration;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -106,24 +107,30 @@ InvoiceService invoiceService;
 	
 	//patientService.getLegacyAllPatients2(1000, 1000);
 	//practitionerService.getLegacyPractitioner();
-	//visitService.getLegacyVisit(1000);
-	//encounterService.getLegacyEncounters(1000);
-	//allergyService.getLegacyAllergies(1000);
-	//referalService.getLegacyReferral(1000);
-	//observationService.getLegacyObservations(1000);
-	//diagnosisService.getLegacyDiagnosticReport(1000);
-	//dService.getLegacyDiagnosis(1000, 1000);
-	
-	//serviceRequestService.getLegacyRequest(1000);
-	//chargeItemService.getLegacyChargeItem(1000);
-	migrationService.getPatientsThreads();
-	visitMigration.getVisitThreads();
-	encounterService.encounterLegacythread();
+	LocalDateTime starts = LocalDateTime.now();
 
+	visitService.getLegacyVisit(1000);
+	encounterService.getLegacyEncounters(1000);
+	allergyService.getLegacyAllergies(1000);
+	referalService.getLegacyReferral(1000);
+	noteService.getLegacyCarePlan(1000);
+	noteService.getLegacyVisitNotesEncounters(1000);
+	noteService.getLegacyEncounters(1000);
+	dService.getLegacyDiagnosis(1000);;
+	diagnosisService.getLegacyDiagnosticReport(1000);
+	//observationService.getLegacyObservations(1000);
+	
+	
+	
+
+	
+
+	LocalDateTime ends = LocalDateTime.now();
 
 
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
+		System.err.println(starts.toString() +"\t"+ends.toString());
 //setupService.sethealthcareServicePayload();
 	
 

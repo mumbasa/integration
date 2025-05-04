@@ -739,7 +739,7 @@ FROM encounter e join patient p on e.patient_id =p.id
 
 
     }
-    cleanLegacyData();
+    cleanvisitNOte();
         System.err.println("patiend count is ");
    }
 
@@ -755,7 +755,7 @@ FROM encounter e join patient p on e.patient_id =p.id
                  .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
  */
 
-                String sql = "SELECT count(*) from encounter_patient_notes where note_type is null";
+                String sql = "SELECT count(*) from encounter_patient_notes";
                 long rows = legJdbcTemplate.queryForObject(sql, Long.class);
         
                 long totalSize = rows;
@@ -772,7 +772,7 @@ FROM encounter e join patient p on e.patient_id =p.id
          SELECT  e.created_at, e.is_deleted, e.modified_at, e.id as uuid, display, encounter_id, p.uuid as patient_id, practitioner_id,
           practitioner_role_id, practitioner_name, note_type, practitioner_role_type,p.birth_date,p.mobile,p.gender,p.first_name,p.last_name
                           
-         FROM encounter_patient_notes e join patient p on p.id=e.patient_id where note_type is null order by p.id   offset ? LIMIT ?
+         FROM encounter_patient_notes e left join patient p on p.id=e.patient_id order by p.id   offset ? LIMIT ?
                           
                           """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
@@ -834,7 +834,7 @@ FROM encounter e join patient p on e.patient_id =p.id
                  SELECT c.created_at as created_at, c.modified_at as updated_at, c.id as id, c.title as title, 
                  description, period_start, period_end, encounter_id, p.uuid as patient_id,p.birth_date ,p.gender 
                  ,p.birth_date ,p.mobile ,concat(p.first_name,' ',p.last_name) as fullname,e.visit_id ,e.encounter_class
-FROM care_plan c join encounter e on e.id = c.encounter_id  join patient p on p.id =e.patient_id 
+FROM care_plan c left join encounter e on e.id = c.encounter_id  left join patient p on p.id =e.patient_id 
  order by c.id offset ? LIMIT ?
                  """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
@@ -869,7 +869,7 @@ FROM care_plan c join encounter e on e.id = c.encounter_id  join patient p on p.
             logger.info("adding encounter");
         
         }
-       // cleanvisitNOte();
+        cleanvisitNOte();
 
     }
 
@@ -881,9 +881,17 @@ set practitionerid =e.assigned_to_id,visitid=e.visit_id,practitionername=e.assig
 from encounter  e
 where e.uuid =encounternote.encounterid 
 and encounternote.practitionerid is null
-and encounternote.externalsystem ='opd' and notetype='visit-note'
+and encounternote.externalsystem ='opd' 
             """;
     vectorJdbcTemplate.update(sql);
+
+    sql ="""
+            update encounternote set patientmrnumber =p.mrnumber 
+from patient_information p where 
+patientid =p."uuid" and patientmrnumber is  null
+            """;
+            vectorJdbcTemplate.update(sql);
+
     }
 
     public void cleanLegacyData(){
