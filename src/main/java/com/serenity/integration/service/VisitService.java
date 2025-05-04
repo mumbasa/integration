@@ -408,7 +408,7 @@ ORDER BY
 
         while(set.next()){
             Visits visit = new Visits();
-            visit.setUuid(UUID.fromString(set.getString("uuid")));
+            visit.setUuid(UUID.fromString(set.getString("id")));
             visit.setCreatedAt(set.getString("created_at"));
             visit.setStatus(set.getString("status"));
             visit.setStartedAt(set.getString("arrived_at"));

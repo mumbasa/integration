@@ -111,6 +111,7 @@ InvoiceService invoiceService;
 
 	visitService.getLegacyVisit(1000);
 	encounterService.getLegacyEncounters(1000);
+	LocalDateTime mid =(LocalDateTime.now());
 	allergyService.getLegacyAllergies(1000);
 	referalService.getLegacyReferral(1000);
 	noteService.getLegacyCarePlan(1000);

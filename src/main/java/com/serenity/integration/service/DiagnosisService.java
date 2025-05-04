@@ -549,7 +549,7 @@ where e."uuid" =encounterid
 
     }
 
-    public void getLegacyDiagnosis() {
+    public void getLegacyDiagnosis(int size) {
 
         String sqlCount = """
                                            select count(*) from
@@ -560,12 +560,12 @@ where e."uuid" =encounterid
         int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
         logger.info(rows + " number of rows");
         int totalSize = rows;
-        int batches = (totalSize + 1000 - 1) / 1000; // Ceiling division
+        int batches = (totalSize + size - 1) / size; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
             List<Diagnosis> diagnoses = new ArrayList<>();
 
-            int startIndex = i * 1000;
+            int startIndex = i * size;
 
             String sqlQuery = """
                     SELECT * FROM encounter_diagnosis OFFSET ? LIMIT 1000;
@@ -577,9 +577,15 @@ where e."uuid" =encounterid
                 diagnosis.setRole(set.getString("role"));
                 diagnosis.setCondition(set.getString("condition"));
                 diagnosis.setRank(set.getInt("rank"));
-                
                 diagnosis.setEncounterId(set.getString("encounter_id"));
                 diagnosis.setStatus(set.getString("status"));
+                switch (diagnosis.getStatus()){
+               case "final" -> diagnosis.setStatus("confirmed");
+               case "" ->diagnosis.setStatus("provisional");
+               default -> diagnosis.setStatus(diagnosis.getStatus().toLowerCase());
+            
+            }
+    
                 diagnosis.setNote(set.getString("note"));
                 diagnosis.setUuid(set.getString("id"));
                 diagnosis.setSystem("opd");
