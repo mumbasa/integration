@@ -119,7 +119,7 @@ InvoiceService invoiceService;
 	//noteService.getLegacyEncounters(2000);
 	//dService.getLegacyDiagnosis(2000);;
 	diagnosisService.getLegacyDiagnosticReport(5000);
-	observationService.getLegacyObservations(3000);
+	//observationService.getLegacyObservations(3000);
 	
 	
 	

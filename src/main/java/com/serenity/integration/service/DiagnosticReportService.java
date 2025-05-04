@@ -98,7 +98,7 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setPatientFullName(mps.get(set.getString("patient_id")).getFirstName() +" "+mps.get(set.getString("patient_id")).getLastName());
                 request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
                 request.setPatientMobile(mps.get(set.getString("patient_id")).getMobile());
-                request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber());
+                request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber()); 
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));
