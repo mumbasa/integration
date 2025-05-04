@@ -59,8 +59,8 @@ DiagnosticReportRepository diagnosticReportRepository;
     public void getLegacyDiagnosticReport(int batchSize) {
         Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getUuid(), e -> e)); 
-        Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+        //Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
+         //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         String sql = "SELECT count(*) from diagnostic_report";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
