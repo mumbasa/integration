@@ -298,7 +298,7 @@ public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
 
 public void migrate(int batchSize) {
     long rows = serviceRequestRepository.getParactionerIdCount();
-    long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+    long batches = (2000 + batchSize - 1) / batchSize; // Safe ceiling division
     
     logger.info("Total batches: {}", batches);
     for (int i = 0; i < batches; i++) {
