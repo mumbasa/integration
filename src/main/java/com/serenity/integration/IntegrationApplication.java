@@ -121,7 +121,7 @@ InvoiceService invoiceService;
     dService.migrationThread(5000);
 	diagnosisService.migrateDiagReportThread(5000);
 	serviceRequestService.migrate(1000);
-	medicalRequestService.saveMedicalRequestThread();
+	//medicalRequestService.saveMedicalRequestThread();
 
 	//chargeItemService.chargeThread(1000);;
 

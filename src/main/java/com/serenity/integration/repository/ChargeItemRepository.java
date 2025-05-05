@@ -11,7 +11,7 @@ import com.serenity.integration.models.ChargeItem;
 @Repository
 public interface ChargeItemRepository extends JpaRepository<ChargeItem,Long>{
 
- @Query(value ="SELECT * FROM charge_item where visitid is not null order by id OFFSET ? LIMIT ?",nativeQuery = true)
+ @Query(value ="SELECT * FROM charge_item where visitid is  null order by id OFFSET ? LIMIT ?",nativeQuery = true)
     List<ChargeItem> findBhy(int startIndex, int batchSize);
 
     @Query(value ="SELECT count(*) FROM charge_item",nativeQuery = true)
