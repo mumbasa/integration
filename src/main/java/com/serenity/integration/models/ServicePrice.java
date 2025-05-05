@@ -39,6 +39,15 @@ public class ServicePrice {
     @JsonProperty("display")
     private String display;
 
+    @Column(name = "price_name")
+    @JsonProperty("price_name")
+    private String priceName;
+
+
+    @Column(name = "price_type")
+    @JsonProperty("price_type")
+    private String priceType;
+
     @Column(name = "charge", precision = 10, scale = 2)
     @JsonProperty("charge")
     private BigDecimal charge;
@@ -71,7 +80,13 @@ public class ServicePrice {
     @Column(name = "healthcare_service_pk")
     @JsonProperty("healthcare_service_pk")
     @JsonIgnore
-    private Long healthcareServiceId;
+    private Long healthcareServicePk;
+
+
+    @Column(name = "healthcare_service_id")
+    @JsonProperty("healthcare_service_id")
+    @JsonIgnore
+    private String healthcareServiceId;
 
     @Column(name = "created_at", updatable = false)
     @JsonProperty("created_at")
@@ -85,12 +100,12 @@ public class ServicePrice {
 
     @Column(name = "customer_group")
     @JsonProperty("customer_group")
-    private String customer_group;
+    private String customerGroupName;
 
 
     @Column(name = "customer_group_id")
     @JsonProperty("customer_group_id")
-    private String customer_group_id;
+    private String customerGroupId;
 
 
 

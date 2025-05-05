@@ -1467,19 +1467,53 @@ public void setHealthcareIds(){
 
 public void setPriceGroupIds(){
 
-    Map<String,String> services= getGroupsIndDb();
+   /*  Map<String,String> services= getGroupsIndDb();
     List<ServicePrice> healthcareServicse = servicePriceRepo.findAll();
     healthcareServicse.forEach(e ->{
 
-        if(services.containsKey(e.getCustomer_group().strip())){
-            e.setCustomer_group_id(services.get(e.getCustomer_group().strip()));
+        if(services.containsKey(e.getCustomerGroupName().strip())){
+            e.setCustomerGroupId(services.get(e.getCustomerGroupName().strip()));
          System.err.println("found");
                    
 
         }
     });
 
-    servicePriceRepo.saveAllAndFlush(healthcareServicse);
+    servicePriceRepo.saveAllAndFlush(healthcareServicse); */
+
+    List<ServicePrice> pricing = servicePriceRepo.findByHealthcareServiceId();
+
+    String sql ="""
+            INSERT INTO target_table (unit_price,uuid,name,amount_type,currency,healthcare_service_id,managing_organization,created_by_id,created_by_name,is_active ,created_at,updated_at,customer_group_id,customer_group_name) 
+            VALUES (?,  ?::uuid, ?,  ?,  ?, ?, ?,  '161380e9-22d3-4627-a97f-0f918ce3e4a9',  '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku',true,now(),now(),?,?)
+            """;
+    serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+		@Override
+		public void setValues(PreparedStatement ps, int i) throws SQLException {
+			// TODO Auto-generated method stub
+            ServicePrice price = pricing.get(i);
+            ps.setBigDecimal(1,price.getCharge());
+            ps.setString(2, UUID.randomUUID().toString());
+            ps.setString(3, price.getPriceName());
+            ps.setString(4, price.getPriceType());
+            ps.setString(5, price.getCurrency());
+            ps.setString(6,price.getHealthcareServiceId());
+            ps.setString(7,price.getCustomerGroupId());
+            ps.setString(8,price.getCustomerGroupName());
+
+
+
+        }
+
+		@Override
+		public int getBatchSize() {
+			// TODO Auto-generated method stub
+            return pricing.size();
+
+        }
+        
+    });
 
 
 }

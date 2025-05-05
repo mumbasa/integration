@@ -185,7 +185,7 @@ ps.setString(15, request.getCategory()==null?"Laboratory-procedure":request.getC
 ps.setString(16, request.getCode());
 ps.setString(17, request.getDiagnosticServiceSection());
 ps.setString(18, request.getPurpose());
-ps.setString(19, request.getPriority());
+ps.setString(19, request.getPriority()==null?"routine":request.getPriority());
 ps.setString(20, request.getHealthcareServiceId());
 ps.setString(21, request.getHealthcareServiceName());
 ps.setString(22, request.getChargeItemId());
