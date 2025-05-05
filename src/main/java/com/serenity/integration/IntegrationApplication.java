@@ -110,11 +110,12 @@ InvoiceService invoiceService;
 	LocalDateTime starts = LocalDateTime.now();
 
 	//patientMigrationService.getPatientsThreads();
-	visitMigration.getVisitThreads(3000);
-	encounterService.encounterLegacythread();
-	allergyService.migrateAllergyThread(1000);
-	referalService.migrateReferalThread(2000);
-
+	//visitMigration.getVisitThreads(3000);
+	//encounterService.encounterLegacythread();
+	//allergyService.migrateAllergyThread(1000);
+	//referalService.migrateReferalThread(2000);
+	 noteService.noteThread(5000);
+	 dService.migrationThread();
 	//allergyService.getLegacyAllergies(2000);
 	//referalService.getLegacyReferral(2000);
 	//noteService.getLegacyCarePlan(2000);

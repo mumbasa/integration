@@ -576,12 +576,12 @@ public class NoteService {
 
     }
 
-    public void noteThread() {
+    public void noteThread(int batchSize) {
         logger.info("kooooooooooooooading");
         long dataSize =encounterNoteRepository.count();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(1000, dataSize));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -611,7 +611,7 @@ public class NoteService {
                 int endIndex = Math.min(startIndex + batchSize, totalSize);
                 logger.debug("Processing batch {}/{}, indices [{}]",
                         batchNumber + 1, batches, startIndex);
-                        List<EncounterNote> notes = encounterNoteRepository.findOffset(startIndex);
+                        List<EncounterNote> notes = encounterNoteRepository.findOffsetLimit(startIndex,batchSize);
                         System.err.println(notes.get(0).toString());
 
                 try {
