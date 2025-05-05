@@ -568,9 +568,9 @@ where e."uuid" =encounterid and visitid is null
             int startIndex = i * size;
 
             String sqlQuery = """
-                    SELECT * FROM encounter_diagnosis order by id OFFSET ? LIMIT 2000;
+                    SELECT * FROM encounter_diagnosis order by id OFFSET ? LIMIT ?;
                                         """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex,size);
             while (set.next()) {
                 Diagnosis diagnosis = new Diagnosis();
                 diagnosis.setCode(set.getString("code"));
