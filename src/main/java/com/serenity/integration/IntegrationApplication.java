@@ -115,17 +115,12 @@ InvoiceService invoiceService;
 	//allergyService.migrateAllergyThread(1000);
 	//referalService.migrateReferalThread(2000);
 	//noteService.noteThread(5000);
-
-	 dService.getLegacyDiagnosis(2000);;
-	 dService.migrationThread();
+	
+	dService.getLegacyDiagnosis(2000);;
+    dService.migrationThread();
+	observationService.migrateObservationThread(1000);
 	
 	
-	 //allergyService.getLegacyAllergies(2000);
-	//referalService.getLegacyReferral(2000);
-	//noteService.getLegacyCarePlan(2000);
-	//noteService.getLegacyVisitNotesEncounters(2000);
-	//noteService.getLegacyEncounters(2000);
-
 	//diagnosisService.getLegacyDiagnosticReport(5000);
 	//medicalRequestService.getLegacyRequest2();
 	//observationService.getLegacyObservations(3000);
