@@ -459,9 +459,9 @@ public class DiagnosisService {
     public void migrationThread() {
         String clean ="""
                 update diagnosis 
-set practitionerid =e.assigned_to_id ,practitionername=assigned_to_name 
+set practitionerid =e.assigned_to_id ,practitionername=assigned_to_name ,visitid =e.visit_id 
 from encounter e
-where e."uuid" =encounterid
+where e."uuid" =encounterid and visitid is null
                 """;
                 vectorJdbcTemplate.update(clean);
         logger.info("kooooooooooooooading");
