@@ -200,10 +200,11 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
     public void migrateDiagReportThread(int batchSize) {
         String cleaner ="""
                 update diagnostic_report 
-set patientbirthdate =p.birthdate ,patientmobile =p.mobile ,patientgender =p.gender ,patientfullname=concat(p.firstname,' ',p.lastname) 
+set patientbirthdate =p.birthdate ,patientmobile =p.mobile ,patientgender =p.gender ,patientfullname=concat(p.firstname,' ',p.lastname,' ',p.othernames) 
 from patient_information p
 where p."uuid" =patientid ;
                 """;
+                vectorJdbcTemplate.update(cleaner);
 
         long rows = diagnosticReportRepository.findCleanCount();
         logger.info("Rows size is: {}", rows);

@@ -456,7 +456,7 @@ public class DiagnosisService {
 
     }
 
-    public void migrationThread() {
+    public void migrationThread(int batchSize) {
         String clean ="""
                 update diagnosis 
 set practitionerid =e.assigned_to_id ,practitionername=assigned_to_name ,visitid =e.visit_id 
@@ -469,7 +469,7 @@ where e."uuid" =encounterid and visitid is null
         long dataSize = diagnosisRepository.count();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTasker(1000, dataSize));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTasker(batchSize, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -499,7 +499,7 @@ where e."uuid" =encounterid and visitid is null
                 System.err.println("Batch no " + batchNumber);
 
                 try {
-                    saveDiagnoses(diagnosisRepository.findBySystemLimit(startIndex));
+                    saveDiagnoses(diagnosisRepository.findBySystemLimit(startIndex,batchSize));
                 } catch (Exception e) {
                     // TODO: handle exception
                     e.printStackTrace();

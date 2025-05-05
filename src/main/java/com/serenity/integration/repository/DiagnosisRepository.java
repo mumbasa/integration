@@ -12,8 +12,8 @@ public interface DiagnosisRepository extends JpaRepository<Diagnosis,Long>{
 
        @Query(value = "SELECT * FROM diagnosis where substring(visitid , 1 , 2) != 'LL' order by id OFFSET ?  LIMIT 1000 ",nativeQuery = true)
     List<Diagnosis> getfirst100k(int offset);
-    @Query(value = "SELECT * FROM diagnosis  order by id OFFSET ?  LIMIT 1000 ",nativeQuery = true)
-    List<Diagnosis> findBySystemLimit(int offset);
+    @Query(value = "SELECT * FROM diagnosis where patientid is not null order by id OFFSET ?1  LIMIT ?2 ",nativeQuery = true)
+    List<Diagnosis> findBySystemLimit(int offset, int limit );
 
 
 }
