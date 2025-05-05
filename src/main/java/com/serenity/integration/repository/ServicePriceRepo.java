@@ -11,7 +11,7 @@ import com.serenity.integration.models.ServicePrice;
 @Repository
 public interface ServicePriceRepo extends JpaRepository<ServicePrice,Long> {
     
-    public List<ServicePrice> findByHealthcareServiceId(long id);
+    public List<ServicePrice> findByHealthcareServiceId(String id);
 
     @Query(value = "SELECT * from service_prices  where customer_group_id is not  null and healthcare_service_pk is not null",nativeQuery = true)
     public List<ServicePrice> findByHealthcareServiceId();

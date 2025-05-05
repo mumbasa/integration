@@ -72,9 +72,11 @@ public class SetupService {
 
     @Autowired
     HealthCareRepository repository;
+   
     @Autowired
     ServicePriceRepo servicePriceRepo;
- @Autowired
+ 
+    @Autowired
     @Qualifier(value = "legJdbcTemplate")
     JdbcTemplate legJdbcTemplate;
 
