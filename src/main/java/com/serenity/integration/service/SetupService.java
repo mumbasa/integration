@@ -1424,4 +1424,24 @@ public String convertHealthCareServices(HealthCareServices hCareServices){
 
 }
 
+
+public void setHealthcareIds(){
+
+    Map<String,HealthcareService> services= getHealthcareServiceIndDb();
+    List<HealthCareServices> healthcareServicse = repository.findAll();
+    healthcareServicse.forEach(e ->{
+
+        if(services.containsKey(e.getServiceName().strip())){
+            e.setId(services.get(e.getServiceName().strip()).getId());
+         
+                   
+
+        }
+    });
+
+    repository.saveAllAndFlush(healthcareServicse);
+
+
+}
+
 }
