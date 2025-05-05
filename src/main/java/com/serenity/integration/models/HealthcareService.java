@@ -67,6 +67,8 @@ public class HealthcareService implements Serializable {
     @JsonProperty("uuid")
     private String uuid;
 
+    private String id;
+
     private List<AvailableTime> healthcareServiceAvailableTimes;
    @SerializedName("healthcare_service_categories")
     private List<Category> healthcareServiceCategories;

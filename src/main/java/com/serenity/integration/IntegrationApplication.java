@@ -118,21 +118,19 @@ InvoiceService invoiceService;
 	//noteService.getLegacyVisitNotesEncounters(2000);
 	//noteService.getLegacyEncounters(2000);
 	//dService.getLegacyDiagnosis(2000);;
-	diagnosisService.getLegacyDiagnosticReport(5000);
+	//diagnosisService.getLegacyDiagnosticReport(5000);
+	medicalRequestService.saveMedicalRequestNoThread();
 	//observationService.getLegacyObservations(3000);
-	
-	
-	
+	//setupService.sethealthcareServicePayload();	
 
 	
 
-	LocalDateTime ends = LocalDateTime.now();
+LocalDateTime ends = LocalDateTime.now();
 
 
 long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
 		System.err.println(starts.toString() +"\t"+mid.toString() +"\t"+ends.toString());
-//setupService.sethealthcareServicePayload();
 	
 
 		logger.info("finishi.ng import");

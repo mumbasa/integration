@@ -16,12 +16,15 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
@@ -63,6 +66,9 @@ public class SetupService {
     HealthCareRepository repository;
     @Autowired
     ServicePriceRepo servicePriceRepo;
+ @Autowired
+    @Qualifier(value = "legJdbcTemplate")
+    JdbcTemplate legJdbcTemplate;
 
     @Autowired
     ReportRepo reportRepo;
@@ -283,7 +289,7 @@ public class SetupService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 String.class);
-        System.err.println(response.getBody());
+    //    System.err.println(response.getBody());
         return (response.getBody());
     }
 
@@ -1038,22 +1044,71 @@ public class SetupService {
 
     }
 
-public List<String> sethealthcareServicePayload(){
-   List<String> data = new ArrayList();
-   HealthCareServices s = repository.findByPk(259);
+public List<HealthCareServices> sethealthcareServicePayload(){
+   List<HealthCareServices> updateList = new ArrayList<>();
+   List<HealthCareServices> createList = new ArrayList<>();
+   List<HealthCareServices> failed = new ArrayList<>();
+   Map<String,HealthcareService> dbData = getHealthcareServiceIndDb();
 List<HealthCareServices> services= repository.findAll();
+services.forEach(e ->{
+    if(dbData.keySet().contains(e.getServiceName().strip())){
+        try {
+            e.setId((dbData.get(e.getServiceName().strip()).getId()));
+            e.setUuid(UUID.fromString(dbData.get(e.getServiceName()).getUuid()));
+        } catch (Exception ec) {
+            ec.printStackTrace();
+            // TODO: handle exception
+        } 
+      
+     updateList.add(e);
+    }else{
+        try{
+        addHealthService(convertHealthCareServices(e));
+        }catch(Exception ex){
+ex.printStackTrace();
+failed.add(e);
+        }
+        createList.add(e);
+
+    }
+
+
+});
+
+
+
 //services.stream().forEach(e ->{ data.add(convertHealthCareServices(e));});
 
 
-        addHealthService(convertHealthCareServices(s));
+      //  addHealthService(convertHealthCareServices(s));
 
 
+System.err.println(createList.size()+"---tocreate");
+System.err.println(updateList.size()+"---toupdate");
+System.err.println(failed.size()+"--failed");
 
-
-return data;
+return createList;
 
 }
 
+public Map<String,HealthcareService> getHealthcareServiceIndDb(){
+    List<HealthcareService> healthcareServices = new ArrayList<>();
+String sql="SELECT * from healthcare_service";
+SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+while (set.next()) {
+
+    HealthcareService service = new HealthcareService();
+    service.setUuid(set.getString("uuid")); 
+    service.setId(set.getString("id"));
+    service.setHealthcareServiceName(set.getString("name").strip());
+   // System.err.println(service);
+    healthcareServices.add(service);
+}
+
+return healthcareServices.stream().collect(Collectors.toMap(e -> e.getHealthcareServiceName(), e -> e));
+
+
+}
 
 
 public String convertHealthCareServices(HealthCareServices hCareServices){

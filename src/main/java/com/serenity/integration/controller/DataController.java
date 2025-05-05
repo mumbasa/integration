@@ -44,10 +44,6 @@ return ResponseEntity.ok(setupService.loadToProd());
 
     //return ResponseEntity.ok(setupService.addHealthService("161380e9-22d3-4627-a97f-0f918ce3e4a9", payload));
 }
-@GetMapping("/alls")
-public ResponseEntity<List<String>> all(){
-    return ResponseEntity.ok(setupService.sethealthcareServicePayload());
-}
 
 
 

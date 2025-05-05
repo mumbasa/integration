@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "healthcareservice")
+@Table(name = "healthcare_service")
 @Setter
 @Getter
 public class HealthCareServices {
@@ -36,7 +36,7 @@ public class HealthCareServices {
 
     @Column(name = "id", unique = true, nullable = false)
     @JsonIgnore
-    private UUID id;
+    private String id;
 
     @Column(name = "service_name", nullable = false,columnDefinition = "TEXT")
     private String serviceName;
@@ -74,10 +74,10 @@ public class HealthCareServices {
     @Column(name = "revenue_tag_display")
     private String revenueTagDisplay;
 
-    @Column(name = "Service Specialty")
+    @Column(name = "service_specialty")
     private String serviceSpecialty;
 
-    @Column(name = "Service Type")
+    @Column(name = "service_type")
     private String serviceType;
 
     @Column(name = "maximum_capacity")
