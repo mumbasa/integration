@@ -3,11 +3,14 @@ package com.serenity.integration.service;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
@@ -46,12 +50,14 @@ import com.serenity.integration.models.ServicePriceResponse;
 import com.serenity.integration.models.ServicePricing;
 import com.serenity.integration.models.ServiceType;
 import com.serenity.integration.models.Specialty;
+import com.serenity.integration.models.TestCode;
 import com.serenity.integration.models.User;
 import com.serenity.integration.models.V1Response;
 import com.serenity.integration.repository.HealthCareRepository;
 import com.serenity.integration.repository.ReportRepo;
 import com.serenity.integration.repository.ServiceDataRepo;
 import com.serenity.integration.repository.ServicePriceRepo;
+import com.serenity.integration.repository.TestCodeRepository;
 import com.serenity.integration.setup.Location;
 
 @Service
@@ -69,6 +75,9 @@ public class SetupService {
  @Autowired
     @Qualifier(value = "legJdbcTemplate")
     JdbcTemplate legJdbcTemplate;
+
+  @Autowired
+  TestCodeRepository testCodeRepository;
 
     @Autowired
     ReportRepo reportRepo;
@@ -100,14 +109,231 @@ public class SetupService {
     public ResponseEntity<CustomerGroupResponse> migrate(String organisationId) {
         ResponseEntity<CustomerGroupResponse> response = null;
         String[] paymentTypes = {
-                "Local cash",
-                "Foreign cash",
-                "Local credit",
-                "Foreign credit",
-                "Local insurance",
-                "Foreign insurance",
-                "Foreign Corporate",
-                "Local Corporate"
+              "A.G.C. ANGLOGOLD GHANA FOREIGN",
+            "A.G.C. ANGLOGOLD GHANA LOCAL",
+            "ACACIA ABSA TPA MEDICALS",
+            "ACACIA BARCLAYS TPA (Local)",
+            "Acacia EY (Ernst & Young) TPA (Foreign)",
+            "Acacia EY (Ernst & Young) TPA (Local)",
+            "Acacia Health Insurance foreign",
+            "Acacia Health Insurance guinness Gh Brew Ltd Local",
+            "Acacia Health Insurance local",
+            "ACACIA HEALTH INSURANCE(Foreign)",
+            "ACACIA HEALTH INSURANCE(Guinness Gh. Brew ltd) Local",
+            "ACACIA HEALTH INSURANCE(Local)",
+            "Acacia Nestle (Foreign)",
+            "Acacia Nestle (Local)",
+            "Acacia Nestle Local",
+            "Acacia US Embassy (TPA) (Foreign)",
+            "Acacia US Embassy (TPA) (Local)",
+            "ACE MEDICAL INSURANCE(FOREIGN)",
+            "ACE MEDICAL INSURANCE(LOCAL)",
+            "AETNA INT FOREIGN",
+            "AFRI BAND TELECOMMUNICATION NETWORK LTD.",
+            "African Continental Free Trade Area Secretariat AfCFTA",
+            "AFRICAN UNDERGROUND MINING SERVICE (LOCAL)",
+            "AITEO GHANA LIMITED (FOREIGN)",
+            "AKPO JAMES TORGBUI AFEDE XIV LOCAL",
+            "AKYEA FAMILY",
+            "Alliance International Medical Services Foreign",
+            "Allianz Worldwide Care foreign",
+            "Allianz Worldwide Care local",
+            "Apex Bost Tpa",
+            "Apex Mutual Healthcare local",
+            "APEX MUTUAL HEALTHCARE(FOREIGN)",
+            "APEX MUTUAL HEALTHCARE(Local)",
+            "ARTHUR MATUSEVIC FAMILY",
+            "Asante Gold Bibiani Ltd Foreign",
+            "Asante Gold Bibiani Ltd Local",
+            "Asante Gold Chirano Ltd Foreign",
+            "Axa Assistance Foreign",
+            "Axa Assistance Local",
+            "Aya Engineering Limited",
+            "AZUMAH RESOURCES",
+            "BLUE CROSS BLUE SHIELD FOREIGN",
+            "BLUE CROSS BLUE SHIELD LOCAL",
+            "Bupa Ins Services foreign",
+            "Bupa Ins Services local",
+            "Cal bank Limited",
+            "Chemquest Ghana Ltd",
+            "CHRISTMAN ESTATES",
+            "Cigna International foreign",
+            "Cigna International local",
+            "CISI FOREIGN",
+            "CISI LOCAL",
+            "CMA CGM GHANA LTD FOREIGN",
+            "CMA CGM GHANA LTD LOCAL",
+            "Comfort Berkoh",
+            "Corporate",
+            "Corporate Foreigner",
+            "Cosmopolitan Health Insurance local",
+            "COSMOPOLITAN HEALTH INSURANCE(FOREIGN)",
+            "COSMOPOLITAN HEALTH INSURANCE(Local)",
+            "Dashen Opticians",
+            "Databank Financial Services Ltd local",
+            "DIAGNOSTIC CENTRE LIMITED (Walk-Ins)",
+            "Dosh Health Insurance Ltd",
+            "Dr Victoria Lokko Family And Friends",
+            "Dwamena Family",
+            "E process International foreign",
+            "E process International local",
+            "Early Power Ltd",
+            "Ecobank foreign",
+            "Ecobank local",
+            "ECOBANK(FOREIGN)",
+            "ECOBANK(Local)",
+            "EDC ECOBANK",
+            "ENSIGN COLLEGE OF PUBLIC HEALTH",
+            "Equity Health Insurance (FOREIGN)",
+            "Equity Health Insurance (LOCAL)",
+            "Equity Health Insurance Local",
+            "Euro centre Cape Town foreign",
+            "Euro centre Cape Town local",
+            "European Union ghana local",
+            "Foreign cash",
+            "Foreign Credit",
+            "GAB HEALTH INSURANCE (Local)",
+            "Gab Health Insurance Local",
+            "Geodrill Ghana foreign",
+            "Geodrill Ghana Local",
+            "Getfund Foreign",
+            "Getfund Local",
+            "Ghana Mine Workers Union foreign",
+            "Ghana Mine Workers Union local",
+            "Ghana National Gas Company foreign",
+            "Ghana National Gas Company local",
+            "Ghana Oil Company",
+            "Glico Health Care local",
+            "GLICO HEALTH CARE(Local)",
+            "GLICO TPA (FOREIGN)",
+            "GLICO TPA (LOCAL)",
+            "Glico Tpa Foreign",
+            "Glico Tpa Local",
+            "GLOBAL GOLD COMPANY",
+            "Gmc Services Ltd local",
+            "Gold Fields Ghana Tarkwa local",
+            "GOLDEN STAR LTD WASSA LOCAL",
+            "Goodwill Health Limited",
+            "GPMS (PCR)",
+            "GRID COMPANY LIMITED",
+            "Grid Petroleum Gh Ltd",
+            "Gts Drilling",
+            "HAGAN FAMILY",
+            "Hth Worldwide Ins foreign",
+            "Int Sos Assistance Uk Ltd Foreign",
+            "Int Sos Assistance Uk Ltd Local",
+            "Jfe Engineering Corporation Ltd",
+            "JUDITH AKILAKPA SAWYER LOCAL",
+            "Kek Insurance Brokers Ltd foreign",
+            "Kek Insurance Brokers Ltd local",
+            "LABADI BEACH HOTEL FOREIGN",
+            "LABADI BEACH HOTEL LOCAL",
+            "Lighthouse International Ltd",
+            "Local cash",
+            "Local Credit",
+            "LYCOPODIUM GHANA LIMITED",
+            "M & J Travel And Tours Limited",
+            "MARBEN FAMILY",
+            "Maripoma Mining Services LtD",
+            "MAXAM GHANA LTD FOREIGN",
+            "MAXAM GHANA LTD LOCAL",
+            "MEDILINK INTERNATIONAL LIMITED",
+            "Medisite Newmont Gh FOREIGN",
+            "Medisite Newmont Gh Local",
+            "Metropolitan Health Insurance foreign",
+            "Metropolitan Health Insurance local",
+            "METROPOLITAN HEALTH INSURANCE(FOREIGN)",
+            "METROPOLITAN HEALTH INSURANCE(Local)",
+            "METSO GHANA LTD",
+            "Mimi Attipoe For Delivery Only",
+            "MR. KOJO FYNN",
+            "Mrs Janet Tamaklo Family Friends",
+            "Msh International foreign",
+            "Msh International Local",
+            "Mso bupa Foreign",
+            "Mso bupa Local",
+            "Mso optimum Global Foreign",
+            "Mso optimum Global Local",
+            "National Homeownership Company Limited",
+            "Nationwide cash foreign",
+            "Nationwide cash local",
+            "NATIONWIDE(CASH)foreign",
+            "NATIONWIDE(CASH)local",
+            "NMC BOARD MEMBERS",
+            "Norpalm Ghana Limited local",
+            "NOW HEALTH INT. GULF TPA LLC (FOREIGN)",
+            "NOW HEALTH INT. GULF TPA LLC (Local)",
+            "NYAHO MEDICAL CENTRE STAFF",
+            "NYAHO SPECIALIST CONSULTANTS",
+            "NYAKO P.A. JOHN(Local)",
+            "OKERE FAMILY",
+            "Omaboe E N FOREIGN",
+            "Omaboe E N local",
+            "Oxfam Gb FOREIGN",
+            "Oxfam Gb local",
+            "Oxford Business Group",
+            "Perseus Mining Ltd FOREIGN",
+            "Perseus Mining Ltd Local",
+            "PETROLEUM COMMISSION FOREIGN",
+            "PETROLEUM COMMISSION LOCAL",
+            "PHOENIX HEALTH INSURANCE(FOREIGN)",
+            "PHOENIX HEALTH INSURANCE(LOCAL)",
+            "Premier Health Insurance Co Ltd Local",
+            "PREMIER HEALTH INSURANCE CO. LTD (Local)",
+            "PREMIER HEALTH INSURANCE CO. LTD(Foreign)",
+            "PRIME INSURANCE COMPANY LTD",
+            "Prime Insurance Company Ltd local",
+            "PROMASIDOR GHANA LIMITED(Local)",
+            "Prudential Life Insurance (LOCAL)",
+            "Prudential Life Insurance Ghana Foreign",
+            "Pz Cussons Ghana Ltd FOREIGN",
+            "Pz Cussons Ghana Ltd Local",
+            "Republic Bank FOREIGN",
+            "Republic Bank Local",
+            "Rocksure International FOREIGN",
+            "Rocksure International local",
+            "Sahel Health Gh (Patients)",
+            "Sahel Health Gh Patients",
+            "Sahel Health Gh staff FOREIGN",
+            "Sahel Health Gh staff Local",
+            "SANDVIK MINING & CONSTRUCTION(FOREIGN)",
+            "SANDVIK MINING & CONSTRUCTION(Local)",
+            "Securities And Exchange Commission",
+            "Sgs Inspection Testing Services FOREIGN",
+            "Sgs Inspection Testing Services Local",
+            "Spie Oil Gas Services Gh Ltd FOREIGN",
+            "Spie Oil Gas Services Gh Ltd Local",
+            "Stanbic Bank Ghana Ltd FOREIGN",
+            "Stanbic Bank Ghana Ltd local",
+            "Star Health Insurance Ghana",
+            "STEC",
+            "SWISS EMBASSY(FOREIGN)",
+            "SWISS EMBASSY(Local)",
+            "TEMA TANK FARM LOCAL",
+            "THAMES BUSINESS SOLUTIONS GH LTD. (Local)",
+            "THE AFRICAN REGENT(FOREIGN)",
+            "THE AFRICAN REGENT(Local)",
+            "The Ghana Chamber Of Mines FOREIGN",
+            "The Ghana Chamber Of Mines Local",
+            "TITUS GLOVER FAMILY",
+            "Trustee Services Ltd",
+            "UMB INVESTMENT HOLDINGS LIMITED (FOREIGN)",
+            "UMB INVESTMENT HOLDINGS LIMITED (LOCAL)",
+            "Underground Mining Alliance FOREIGN",
+            "Underground Mining Alliance Local",
+            "UNISURE SES ASSISTANCE PTY LTD",
+            "VISA SERVICE DESK",
+            "Vitality Mutual Health Foreign",
+            "VITALITY MUTUAL HEALTH(Local)",
+            "VOLTA RIVER AUTHORITY(FOREIGN)",
+            "VOLTA RIVER AUTHORITY(Local)",
+            "Wapco Medicals local",
+            "West African Gas Pipeline Co foreign",
+            "West African Gas Pipeline Co Local",
+            "West African Rescue Asso FOREIGN",
+            "West African Rescue Asso locaL",
+            "ZENITH BANK LIMITED(FOREIGN)",
+            "ZENITH BANK LIMITED(Local)"
         };
 
         List<String> keys = getCustomerGroups(organisationId).stream().map(CustomerGroup::getName).toList();
@@ -1054,18 +1280,18 @@ services.forEach(e ->{
     if(dbData.keySet().contains(e.getServiceName().strip())){
         try {
             e.setId((dbData.get(e.getServiceName().strip()).getId()));
-            e.setUuid(UUID.fromString(dbData.get(e.getServiceName()).getUuid()));
+            e.setUuid(UUID.fromString(dbData.get(e.getServiceName().strip()).getUuid()));
         } catch (Exception ec) {
             ec.printStackTrace();
             // TODO: handle exception
         } 
       
-     updateList.add(e);
+    // updateList.add(e);
     }else{
         try{
         addHealthService(convertHealthCareServices(e));
         }catch(Exception ex){
-ex.printStackTrace();
+System.err.println(e.getServiceName() +"\t"+e.getRevenueTagDisplay());
 failed.add(e);
         }
         createList.add(e);
@@ -1091,6 +1317,58 @@ return createList;
 
 }
 
+public Set<String> testCodeInDb(){
+    List<TestCode> healthcareServices = new ArrayList<>();
+String sql="SELECT * from diagnostic_test_code";
+SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+while (set.next()) {
+
+    TestCode service = new TestCode();
+    service.setTestId(set.getString("test_id")); 
+    service.setTestOrderName(set.getString("order_name"));
+  //  System.err.println(service);
+    healthcareServices.add(service);
+
+}
+Set<String> dbCodes =healthcareServices.stream().map(TestCode::getTestId).collect(Collectors.toSet());
+List<TestCode> codes = testCodeRepository.findAll();
+System.err.println(codes.size() +" --------------");
+List<TestCode> data = codes.stream().filter(e ->!dbCodes.contains(e.getTestId())).collect(Collectors.toList());
+
+ sql ="""
+        INSERT INTO public.diagnostic_test_code
+("uuid", created_at,modified_at ,is_deleted,id, test_id, loinc_code, loinc_attributes, order_name, method_name, alias, is_available_at_provider, provider_id)
+VALUES(?::uuid, now(), now(),false, nextval('diagnostic_test_code_id_seq'::regclass), ?, ?, ?, ?, ?, ?, true, '161380e9-22d3-4627-a97f-0f918ce3e4a9');
+        """;
+
+        legJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+               
+                TestCode code = data.get(i);
+                ps.setString(1,UUID.randomUUID().toString());
+                ps.setString(2, code.getTestId());
+                ps.setString(3, code.getOrderLoincCode());
+                ps.setString(4, code.getLoincAttributes());
+                ps.setString(5, code.getTestOrderName());
+                ps.setString(6, code.getMethodName());
+                ps.setString(7, code.getAlias());
+            }
+
+            @Override
+            public int getBatchSize() {
+                // TODO Auto-generated method stub
+                return data.size();
+            }
+            
+        });
+return dbCodes;
+
+
+}
+
+
 public Map<String,HealthcareService> getHealthcareServiceIndDb(){
     List<HealthcareService> healthcareServices = new ArrayList<>();
 String sql="SELECT * from healthcare_service";
@@ -1104,6 +1382,8 @@ while (set.next()) {
    // System.err.println(service);
     healthcareServices.add(service);
 }
+
+
 
 return healthcareServices.stream().collect(Collectors.toMap(e -> e.getHealthcareServiceName(), e -> e));
 

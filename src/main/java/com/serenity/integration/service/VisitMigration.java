@@ -51,14 +51,14 @@ public class VisitMigration {
     @Autowired
     PatientRepository patientRepository;
 
-    public void getVisitThreads() {
+    public void getVisitThreads(int batch) {
         long dataSize = visitRepository.count();
         //.countByEncounterClass("inpatient-encounter");
 
      logger.info("kooooooooooooooading----\t"+dataSize);
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(1000, dataSize));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batch, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -86,7 +86,7 @@ public class VisitMigration {
                 // int endIndex = Math.min(startIndex + batchSize, totalSize);
                 logger.debug("Processing batch {}/{}, indices [{}]",
                         batchNumber + 1, batches, startIndex);
-                List<Visits> vists = visitRepository.getfirst100k(startIndex);
+                List<Visits> vists = visitRepository.getfirst100k(startIndex,batchSize);
 
                 try {
                    // return 1;

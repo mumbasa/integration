@@ -250,7 +250,7 @@ public class EncounterService {
                 }
                 ps.setLong(2, notes.get(i).getId()+10);
                 ps.setString(3, notes.get(i).getUuid());
-                ps.setString(4, "ambulatory");
+                ps.setString(4, notes.get(i).getEncounterClass());
                 ps.setString(5, "finished");
                 ps.setString(6, notes.get(i).getExternalId() + "-" + notes.get(i).getUuid());
                 ps.setString(7, notes.get(i).getExternalSystem());
@@ -262,7 +262,7 @@ public class EncounterService {
                 ps.setString(13, notes.get(i).getPatientBirthDate()== null ? "":notes.get(i).getPatientBirthDate());
                 ps.setString(14, notes.get(i).getPatientGender()==null?"":notes.get(i).getPatientGender());
 
-                ps.setString(15, notes.get(i).getEncounterClass());
+                ps.setString(15, notes.get(i).getEncounterType());
                 ps.setString(16, notes.get(i).getAssignedToName());
                 ps.setString(17, notes.get(i).getAssignedToId());
 

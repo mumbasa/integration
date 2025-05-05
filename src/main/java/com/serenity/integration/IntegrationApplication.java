@@ -105,13 +105,16 @@ InvoiceService invoiceService;
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
 	
-	//patientService.getLegacyAllPatients2(1000, 1000);
-	//practitionerService.getLegacyPractitioner();
+	LocalDateTime mid =(LocalDateTime.now());
+
 	LocalDateTime starts = LocalDateTime.now();
 
-	//visitService.getLegacyVisit(2000);
-	//encounterService.getLegacyEncounters(2000);
-	LocalDateTime mid =(LocalDateTime.now());
+	patientMigrationService.getPatientsThreads();
+	visitMigration.getVisitThreads(1000);
+	encounterService.encounterLegacythread();
+	allergyService.migrateAllergyThread(1000);
+	referalService.migrateReferalThread(2000);
+
 	//allergyService.getLegacyAllergies(2000);
 	//referalService.getLegacyReferral(2000);
 	//noteService.getLegacyCarePlan(2000);
@@ -119,9 +122,10 @@ InvoiceService invoiceService;
 	//noteService.getLegacyEncounters(2000);
 	//dService.getLegacyDiagnosis(2000);;
 	//diagnosisService.getLegacyDiagnosticReport(5000);
-	medicalRequestService.getLegacyRequest2();
+	//medicalRequestService.getLegacyRequest2();
 	//observationService.getLegacyObservations(3000);
-	//setupService.sethealthcareServicePayload();	
+	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+	//setupService.sethealthcareServicePayload();
 
 	
 
@@ -132,7 +136,6 @@ long stop = System.currentTimeMillis();
 		System.err.println((stop-start)/6000+" time taken to finish");
 		System.err.println(starts.toString() +"\t"+mid.toString() +"\t"+ends.toString());
 	
-
 		logger.info("finishi.ng import");
 
 	}
