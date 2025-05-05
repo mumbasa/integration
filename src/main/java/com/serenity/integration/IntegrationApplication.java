@@ -109,8 +109,8 @@ InvoiceService invoiceService;
 
 	LocalDateTime starts = LocalDateTime.now();
 
-	patientMigrationService.getPatientsThreads();
-	visitMigration.getVisitThreads(1000);
+	//patientMigrationService.getPatientsThreads();
+	visitMigration.getVisitThreads(3000);
 	encounterService.encounterLegacythread();
 	allergyService.migrateAllergyThread(1000);
 	referalService.migrateReferalThread(2000);
