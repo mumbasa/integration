@@ -568,7 +568,7 @@ where e."uuid" =encounterid
             int startIndex = i * size;
 
             String sqlQuery = """
-                    SELECT * FROM encounter_diagnosis OFFSET ? LIMIT 1000;
+                    SELECT * FROM encounter_diagnosis order by id OFFSET ? LIMIT 2000;
                                         """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex);
             while (set.next()) {

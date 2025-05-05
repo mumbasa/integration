@@ -114,19 +114,23 @@ InvoiceService invoiceService;
 	//encounterService.encounterLegacythread();
 	//allergyService.migrateAllergyThread(1000);
 	//referalService.migrateReferalThread(2000);
-	 noteService.noteThread(5000);
+	//noteService.noteThread(5000);
+
+	 dService.getLegacyDiagnosis(2000);;
 	 dService.migrationThread();
-	//allergyService.getLegacyAllergies(2000);
+	
+	
+	 //allergyService.getLegacyAllergies(2000);
 	//referalService.getLegacyReferral(2000);
 	//noteService.getLegacyCarePlan(2000);
 	//noteService.getLegacyVisitNotesEncounters(2000);
 	//noteService.getLegacyEncounters(2000);
-	//dService.getLegacyDiagnosis(2000);;
+
 	//diagnosisService.getLegacyDiagnosticReport(5000);
 	//medicalRequestService.getLegacyRequest2();
 	//observationService.getLegacyObservations(3000);
 	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-	//setupService.sethealthcareServicePayload();
+//	setupService.sethealthcareServicePayload();
 
 	
 

@@ -1291,6 +1291,7 @@ services.forEach(e ->{
         try{
         addHealthService(convertHealthCareServices(e));
         }catch(Exception ex){
+            ex.printStackTrace();
 System.err.println(e.getServiceName() +"\t"+e.getRevenueTagDisplay());
 failed.add(e);
         }
