@@ -119,12 +119,12 @@ InvoiceService invoiceService;
 	//dService.getLegacyDiagnosis(2000);;
 	//
 	//diagnosisService.migrateDiagReportThread(5000);
-	medicalRequestService.saveMedicalRequestThread();
-	serviceRequestService.getLegacyRequest(2000);
-	serviceRequestService.migrateThread(3000);
+	//medicalRequestService.saveMedicalRequestThread();
+	//serviceRequestService.getLegacyRequest(2000);
+	//serviceRequestService.migrateThread(3000);
 
-	dService.getLegacyDiagnosis(3000);
-   dService.migrationThread(5000);
+//	dService.getLegacyDiagnosis(3000);
+//   dService.migrationThread(5000);
 	//serviceRequestService.migrate(1000);
 	//medicalRequestService.saveMedicalRequestThread();
 
@@ -138,7 +138,7 @@ InvoiceService invoiceService;
 	//medicalRequestService.getLegacyRequest2();
 	//observationService.getLegacyObservations(3000);
 	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-	//setupService.setHealthcareIds();
+	setupService.setPriceGroupIds();
 
 	
 

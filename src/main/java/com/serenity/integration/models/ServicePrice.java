@@ -83,6 +83,16 @@ public class ServicePrice {
     private String modifiedAt;
 
 
+    @Column(name = "customer_group")
+    @JsonProperty("customer_group")
+    private String customer_group;
+
+
+    @Column(name = "customer_group_id")
+    @JsonProperty("customer_group_id")
+    private String customer_group_id;
+
+
 
 
 }

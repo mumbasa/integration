@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.serenity.integration.models.HealthcareServiceResponse;
 import com.serenity.integration.models.PriceTier;
 import com.serenity.integration.models.Report;
 import com.serenity.integration.models.ServiceData;
+import com.serenity.integration.models.ServicePrice;
 import com.serenity.integration.models.ServicePriceResponse;
 import com.serenity.integration.models.ServicePricing;
 import com.serenity.integration.models.ServiceType;
@@ -78,6 +80,11 @@ public class SetupService {
 
   @Autowired
   TestCodeRepository testCodeRepository;
+
+  @Autowired
+  @Qualifier("serenityJdbcTemplate")
+  JdbcTemplate serenityJdbcTemplate;
+
 
     @Autowired
     ReportRepo reportRepo;
@@ -1383,11 +1390,22 @@ while (set.next()) {
    // System.err.println(service);
     healthcareServices.add(service);
 }
-
-
-
 return healthcareServices.stream().collect(Collectors.toMap(e -> e.getHealthcareServiceName(), e -> e));
 
+}
+
+public Map<String,String> getGroupsIndDb(){
+    Map<String,String>  groups = new HashMap<>();
+String sql="SELECT * from customer_groups";
+SqlRowSet set = serenityJdbcTemplate.queryForRowSet(sql);
+
+while (set.next()) {
+groups.put(set.getString("name"), set.getString("uuid"));
+    
+}
+
+
+return groups;
 
 }
 
@@ -1440,6 +1458,28 @@ public void setHealthcareIds(){
     });
 
     repository.saveAllAndFlush(healthcareServicse);
+
+
+}
+
+
+
+
+public void setPriceGroupIds(){
+
+    Map<String,String> services= getGroupsIndDb();
+    List<ServicePrice> healthcareServicse = servicePriceRepo.findAll();
+    healthcareServicse.forEach(e ->{
+
+        if(services.containsKey(e.getCustomer_group().strip())){
+            e.setCustomer_group_id(services.get(e.getCustomer_group().strip()));
+         System.err.println("found");
+                   
+
+        }
+    });
+
+    servicePriceRepo.saveAllAndFlush(healthcareServicse);
 
 
 }
