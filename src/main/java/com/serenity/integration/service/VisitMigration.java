@@ -178,12 +178,12 @@ return 1;
                 "(created_at,  id,  \"uuid\", encounter_class, status," +
                 "priority,  started_at, ended_at, external_id, external_system," +
                 "service_provider_id, service_provider_name, patient_mr_number, patient_id, patient_full_name," +
-                "patient_mobile, patient_birth_date, patient_gender, patient_status, assigned_to_name, assigned_to_id,display,location_id,location_name)\n"
+                "patient_mobile, patient_birth_date, patient_gender, patient_status, assigned_to_name, assigned_to_id,display,location_id,location_name,updated_at)\n"
                 + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),?,uuid(?),?  ,?," +
                 "?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),?,?," +
                 "uuid(?),?,?,uuid(?),?," +
-                "?,TO_DATE(?, 'YYYY/MM/DD'),?,?,?,uuid(?),?,uuid('23f59485-8518-4f4e-9146-d061dfe58175'),'Airport Primary Care')";
+                "?,TO_DATE(?, 'YYYY/MM/DD'),?,?,?,uuid(?),?,uuid('23f59485-8518-4f4e-9146-d061dfe58175'),'Airport Primary Care',now())";
 
         System.err.println("Settting Insert values ");
 
