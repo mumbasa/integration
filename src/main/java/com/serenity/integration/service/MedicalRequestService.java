@@ -565,7 +565,7 @@ public class MedicalRequestService {
     
     public void saveMedicalRequestThread() {
 
-        long count = medicalRequestRepository.findByCount();
+        long count = medicalRequestRepository.count();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
@@ -622,7 +622,7 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id,quantity_to_dispensed,updated_at,course_of_therapy,dosage_form,authored_on)
+                practitioner_name, practitioner_id,  visit_id,quantity_to_dispense,updated_at,course_of_therapy,dosage_form,authored_on)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,

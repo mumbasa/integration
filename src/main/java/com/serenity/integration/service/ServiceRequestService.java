@@ -174,7 +174,7 @@ ps.setDouble(4, request.getCharge()); // Set charge (assuming it's a numeric typ
 ps.setString(5, request.getOccurence());
 ps.setLong(6, request.getId()); // ID (Generated)
 ps.setString(7, request.getBodySite());
-ps.setString(8, request.getEncounterId().toString());
+ps.setString(8, request.getEncounterId());
 ps.setString(9, request.getPatientId());
 ps.setString(10, request.getPractitionerId());
 ps.setString(11, request.getVisitId());
