@@ -232,7 +232,7 @@ VALUES (
                 ps.setString(2, k.getUuid());
                 ps.setString(3, k.getFirstName());
                 ps.setString(4, k.getLastName());
-                ps.setString(5, k.getFullName() == null ? k.getFirstName() + " " + k.getLastName() : k.getLastName());
+                ps.setString(5, k.getFullName() == null ? k.getFirstName() + " " + k.getLastName() : k.getOtherNames());
                 ps.setString(6, k.getOtherNames() == null ? "" : k.getOtherNames());
                 ps.setString(7, k.getMobile());
                 ps.setString(8, k.getEmail());

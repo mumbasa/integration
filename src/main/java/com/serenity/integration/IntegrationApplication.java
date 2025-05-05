@@ -116,10 +116,13 @@ InvoiceService invoiceService;
 	//referalService.migrateReferalThread(2000);
 	//noteService.noteThread(5000);
 	
-	dService.getLegacyDiagnosis(2000);;
+	//dService.getLegacyDiagnosis(2000);;
     dService.migrationThread();
-	observationService.migrateObservationThread(1000);
+	diagnosisService.migrateDiagReportThread(1000);
+	chargeItemService.chargeThread(1000);;
+	//observationService.migrateObservationThread(1000);
 	
+
 	
 	//diagnosisService.getLegacyDiagnosticReport(5000);
 	//medicalRequestService.getLegacyRequest2();

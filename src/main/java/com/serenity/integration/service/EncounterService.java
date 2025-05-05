@@ -232,7 +232,7 @@ public class EncounterService {
                 "display,  external_id, external_system,  service_provider_id, patient_mr_number," +
                 "patient_id, patient_full_name, patient_mobile, patient_birth_date, patient_gender," +
                 "encounter_type, practitioner_name, practitioner_id, service_provider_name,  visit_id," +
-                "has_prescriptions,has_service_requests,updated_at,slot_id,service_type_id,service_type_name,started_at)" + //
+                "has_prescriptions,has_service_requests,updated_at,slot_id,service_type_id,service_type_name,started_at,location_id,location_name)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "'',?, ?,uuid(?),?,uuid(?), ?," +
@@ -274,6 +274,8 @@ public class EncounterService {
                 ps.setString(23,notes.get(i).getServiceTypeId());
                 ps.setString(24, notes.get(i).getServiceTypeName());
                 ps.setString(25, notes.get(i).getCreatedAt());
+                ps.setString(26,notes.get(i).getLocationId());
+                ps.setString(27,notes.get(i).getLocationName());
 
             }
 
@@ -532,6 +534,8 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
            try{
             encounter.setLocationName(locationMap.get(encounter.getLocationId()));
            }catch(NullPointerException e){
+          //  encounter.setLocationName("Airport Main");
+           // encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
 
            }
             encounter.setVisitId(set.getString("visit_id"));

@@ -780,6 +780,7 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                     pd.setExternalId(record.getString("mr_number"));
                     pd.setLastName(record.getString("last_name"));
                     pd.setFirstName(record.getString("first_name"));
+                    pd.setOtherNames(record.getString("other_names"));
                     pd.setMobile(record.getString("mobile"));
                     pd.setPaymentMethod(record.getString("previous_payment_method"));
                     pd.setPaymentCurrency(record.getString("currency"));
@@ -817,14 +818,14 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                     pd.setNationalMobileNumber(record.getString("national_mobile_number"));
                     pd.setOtherNames(record.getString("other_names"));
                     pd.setTitle(record.getString("name_prefix"));
-                    pd.setOccupation(record.getString("occupation"));
+                    //pd.setOccupation(record.getString("occupation"));
                     pd.setEmployer(record.getString("employer"));
                     pd.setBloodType(record.getString("blood_type"));
                     pd.setPhoto(record.getString("photo"));
                     pd.setMaritalStatus(record.getString("marital_status"));
                     pd.setPassportNumber(record.getString("passport_number"));
                     pd.setBirthTime(record.getString("birth_time"));
-                    pd.setFullName(pd.getFirstName()+pd.getOtherNames()==null?" ":" "+pd.getOtherNames()+" "+pd.getLastName());
+                    pd.setFullName(pd.getFirstName()+" "+pd.getLastName()+(pd.getOtherNames()==null?"":" "+pd.getOtherNames()));
     
                     try{
                         String tags = record.getString("religious_affiliation");

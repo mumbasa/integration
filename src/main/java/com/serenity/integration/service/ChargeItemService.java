@@ -463,7 +463,7 @@ WHERE id IN (
 
 public void mig(int batchSize){
 
-    long totalSize = 77949;
+    long totalSize = chargeItemRepository.count();
     long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
     for (int i = 0; i < batches; i++) {
