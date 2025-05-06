@@ -62,7 +62,13 @@ public class ServiceRequestService {
     public void getLegacyRequest(int batchSize) {
         Map<String, PatientData> mps = patientRepository.findAll().stream()
                 .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-        String sql = "SELECT count(*) from service_request";
+        String sql = """
+        SELECT count(*)  FROM service_request sr left join patient p on p.id =sr.patient_id 
+        left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid"
+        
+                        """;
+                
+                ;
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
@@ -144,7 +150,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
 )
 DELETE FROM service_request
 WHERE id IN (
-  SELECT uuid FROM ranked WHERE rn > 1
+  SELECT id FROM ranked WHERE rn > 1
 );
                 """;
                 vectorJdbcTemplate.update(sql);
