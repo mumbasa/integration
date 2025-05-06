@@ -1483,11 +1483,19 @@ public void setPriceGroupIds(){
 
     servicePriceRepo.saveAllAndFlush(healthcareServicse); */
 
-    List<ServicePrice> pricing = servicePriceRepo.findByHealthcareServiceId();
+    int rows =37822;
+    int totalSize = (int) rows;
+    int batches = (totalSize + 100 - 1) / 100;
+
+    for (int i = 0; i < batches; i++) {
+        final int batchNumber = i; // For use in lambda
+       
+        List<ServicePrice> pricing = servicePriceRepo.findServicePrices((i*100),100);
+
 
     String sql ="""
-            INSERT INTO target_table (unit_price,uuid,name,amount_type,currency,healthcare_service_id,managing_organization,created_by_id,created_by_name,is_active ,created_at,updated_at,customer_group_id,customer_group_name) 
-            VALUES (?,  ?::uuid, ?,  ?,  ?, ?, ?,  '161380e9-22d3-4627-a97f-0f918ce3e4a9',  '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku',true,now(),now(),?,?)
+            INSERT INTO service_prices (unit_price,uuid,name,amount_type,currency,healthcare_service_id,managing_organization,created_by_id,created_by_name,is_active ,created_at,updated_at,customer_group_id,customer_group_name) 
+            VALUES (?,  ?::uuid, ?,  ?,  ?, ?,   '161380e9-22d3-4627-a97f-0f918ce3e4a9',  '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku',true,now(),now(),?,?)
             """;
     serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -1520,4 +1528,5 @@ public void setPriceGroupIds(){
 
 }
 
+}
 }

@@ -565,7 +565,7 @@ public class MedicalRequestService {
     
     public void saveMedicalRequestThread() {
 
-        long count = medicalRequestRepository.count();
+        long count = medicalRequestRepository.findByCount();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {

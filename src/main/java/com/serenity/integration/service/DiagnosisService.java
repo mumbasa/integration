@@ -463,7 +463,7 @@ set practitionerid =e.assigned_to_id ,practitionername=assigned_to_name ,visitid
 from encounter e
 where e."uuid" =encounterid and visitid is null
                 """;
-                vectorJdbcTemplate.update(clean);
+              //  vectorJdbcTemplate.update(clean);
         logger.info("kooooooooooooooading");
 
         long dataSize = diagnosisRepository.count();
