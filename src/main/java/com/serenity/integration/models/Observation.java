@@ -52,6 +52,6 @@ public class Observation {
     private String enconterType;
     private String visitId;
     private String updatedAt;
-    @CreationTimestamp
+
     private String createdAt;
 }
