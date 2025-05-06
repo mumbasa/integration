@@ -134,7 +134,20 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
                 from encounter e
                 where (e."uuid") =sr.encounterid ;
                                 """;
+
         vectorJdbcTemplate.update(sql);
+
+        sql ="""
+                WITH ranked AS (
+  SELECT id, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
+  FROM service_request
+)
+DELETE FROM service_request
+WHERE id IN (
+  SELECT uuid FROM ranked WHERE rn > 1
+);
+                """;
+                vectorJdbcTemplate.update(sql);
     }
 
     public void migrateServiceRequestToSerenity(List<ServiceRequest> requests) {
