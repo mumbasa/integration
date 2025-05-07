@@ -123,8 +123,8 @@ InvoiceService invoiceService;
 //	serviceRequestService.getLegacyRequest(3000);
 	//observationService.getLegacyObservations(5000);
 //serviceRequestService.migrateThread(1000);
-chargeItemService.chargeThread(1000);
-//
+//chargeItemService.chargeThread(1000);
+
 //	dService.getLegacyDiagnosis(3000);
 //   dService.migrationThread(5000);
 	//serviceRequestService.migrate(2000);
@@ -133,7 +133,7 @@ chargeItemService.chargeThread(1000);
 	//chargeItemService.chargeThread(1000);;
 	//diagnosisService.migrateDiagReportThread(1000);
 	//dService.migrationThread(1000);
-	//observationService.migrateObservationThread(1000);
+	observationService.migrateObservationThread(5000);
 	
 
 	
