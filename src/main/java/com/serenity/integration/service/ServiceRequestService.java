@@ -283,8 +283,10 @@ where p."uuid" = service_request.patientid
     } catch (InterruptedException | ExecutionException e) {
         logger.error("Error processing batches", e);
     } finally {
+        
         executorService.shutdown();
         try {
+
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
                 executorService.shutdownNow();
             }
@@ -292,6 +294,7 @@ where p."uuid" = service_request.patientid
             executorService.shutdownNow();
         }
     }
+    fillname();
 }
 
 public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
@@ -333,6 +336,17 @@ public void migrate(int batchSize) {
     
 }
 
+
+public void fillname(){
+    String sql="""
+            UPDATE service_requests sr
+SET patient_full_name = CONCAT(p.last_name, ' ', p.first_name, ' ', COALESCE(p.other_names, ''))
+FROM patients p
+WHERE sr.patient_id = p.uuid AND sr.id > 1;
+            """;
+
+            serenityJdbcTemplate.update(sql);
+}
 
 
 
