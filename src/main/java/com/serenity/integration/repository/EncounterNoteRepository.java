@@ -16,7 +16,7 @@ public interface EncounterNoteRepository extends  JpaRepository<EncounterNote, S
     @Query(value = "SELECT * FROM encounternote  OFFSET ?1 LIMIT ?2",nativeQuery = true)
     List<EncounterNote> findOffsetData(int offset,int limit);
 
-    @Query(value = "select * from encounternote where patient_id is not null order by id OFFSET ?1 LIMIT ?2",nativeQuery = true)
+    @Query(value = "select * from encounternote where patientid is not null order by id OFFSET ?1 LIMIT ?2",nativeQuery = true)
     List<EncounterNote> findOffsetLimit(int offset,int limit);
 
     List<EncounterNote> findByNoteType(String offset);
