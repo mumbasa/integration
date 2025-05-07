@@ -692,7 +692,7 @@ and encounter.visit_id is null
         List<EncounterNote> encounters = new ArrayList<>();
          sql = """
                  SELECT  e.uuid as id ,e.created_at, e.is_deleted, e.modified_at, e.id as uuid, e.status, encounter_class, chief_complaint, history_of_presenting_illness, "type", priority, start_time, end_time, length, dyte_meeting_id, dyte_room_name, appointment_id, charge_item_id, part_of_id,p.uuid as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title, chief_complaint_author_id, chief_complaint_editor_uuids, chief_complaint_editors_display, history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names
-FROM encounter e join patient p on e.patient_id =p.id
+FROM encounter e left join patient p on e.patient_id =p.id
  order by p.id offset ? LIMIT ? 
                  """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex, batchSize);
