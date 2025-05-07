@@ -114,10 +114,10 @@ InvoiceService invoiceService;
 	//encounterService.encounterLegacythread();
 	//allergyService.migrateAllergyThread(1000);
 	//referalService.migrateReferalThread(2000);
-	noteService.noteThread(2000);
+	//noteService.noteThread(2000);
 	//noteService.getLegacyVisitNotesEncounters(3000);
 	//noteService.moveVisitNote();
-	//observationService.migrateObservationThread(10000);
+	observationService.migrateObservationThread(5000);
 	//dService.getLegacyDiagnosis(2000);;
 	//
 	//diagnosisService.migrateDiagReportThread(5000);
