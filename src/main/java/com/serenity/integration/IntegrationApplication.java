@@ -114,8 +114,8 @@ InvoiceService invoiceService;
 	//encounterService.encounterLegacythread();
 	//allergyService.migrateAllergyThread(1000);
 	//referalService.migrateReferalThread(2000);
-	noteService.noteThread(5000);
-	observationService.migrateObservationThread(10000);
+	noteService.noteThread(10000);
+	//observationService.migrateObservationThread(10000);
 	//dService.getLegacyDiagnosis(2000);;
 	//
 	//diagnosisService.migrateDiagReportThread(5000);
@@ -129,7 +129,7 @@ InvoiceService invoiceService;
 //   dService.migrationThread(5000);
 	//serviceRequestService.migrate(2000);
 //chargeItemService.getLegacyChargeItem(5000);
-noteService.moveVisitNote();
+
 	//chargeItemService.chargeThread(1000);;
 	//diagnosisService.migrateDiagReportThread(1000);
 	//dService.migrationThread(1000);
