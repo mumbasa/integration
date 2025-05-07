@@ -120,15 +120,15 @@ InvoiceService invoiceService;
 	//
 	//diagnosisService.migrateDiagReportThread(5000);
 	//medicalRequestService.saveMedicalRequestThread();
-	serviceRequestService.getLegacyRequest(3000);
+//	serviceRequestService.getLegacyRequest(3000);
 	//observationService.getLegacyObservations(5000);
 serviceRequestService.migrateThread(1000);
-
+//
 //	dService.getLegacyDiagnosis(3000);
 //   dService.migrationThread(5000);
 	//serviceRequestService.migrate(2000);
 //chargeItemService.getLegacyChargeItem(5000);
-noteService.moveVisitNote();
+//noteService.moveVisitNote();
 	//chargeItemService.chargeThread(1000);;
 	//diagnosisService.migrateDiagReportThread(1000);
 	//dService.migrationThread(1000);

@@ -21,7 +21,7 @@ public interface EncounterNoteRepository extends  JpaRepository<EncounterNote, S
 
     List<EncounterNote> findByNoteType(String offset);
 
-    @Query(value = "select * from encounternote where notetype='progress-note' and patientid is not null order by id",nativeQuery = true)
+    @Query(value = "select * from encounternote where notetype='progress-note' order by id",nativeQuery = true)
     List<EncounterNote> findPrressnote();
 
 
