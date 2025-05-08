@@ -115,7 +115,7 @@ InvoiceService invoiceService;
 	//allergyService.migrateAllergyThread(1000);
 	//referalService.migrateReferalThread(2000);
 	noteService.noteThread(5000);
-//	noteService.getLegacyVisitNotesEncounters(3000);
+	//noteService.getLegacyVisitNotesEncounters(3000);
 	//noteService.moveVisitNote();
 	//observationService.migrateObservationThread(5000);
 	//dService.getLegacyDiagnosis(2000);;
