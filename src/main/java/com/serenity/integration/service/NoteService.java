@@ -783,7 +783,7 @@ FROM encounter e left join patient p on e.patient_id =p.id
                           
          FROM encounter_patient_notes e left join patient p on p.id=e.patient_id  
                 
-         order by p.id   offset ? LIMIT ?
+         order by uuid   offset ? LIMIT ?
                           
                           """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
