@@ -781,7 +781,9 @@ FROM encounter e left join patient p on e.patient_id =p.id
          SELECT  e.created_at, e.is_deleted, e.modified_at, e.id as uuid, display, encounter_id, p.uuid as patient_id, practitioner_id,
           practitioner_role_id, practitioner_name, note_type, practitioner_role_type,p.birth_date,p.mobile,p.gender,p.first_name,p.last_name
                           
-         FROM encounter_patient_notes e left join patient p on p.id=e.patient_id order by p.id   offset ? LIMIT ?
+         FROM encounter_patient_notes e left join patient p on p.id=e.patient_id  
+                
+         order by p.id   offset ? LIMIT ?
                           
                           """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
@@ -789,7 +791,8 @@ FROM encounter e left join patient p on e.patient_id =p.id
 
            // PatientData patient = patientDataMap.get(set.getString("patient_id"));
            // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
-         
+         System.err.println("Stating---"+set.getString("uuid") );
+
             EncounterNote encounter = new EncounterNote();
             encounter.setUuid(set.getString("uuid"));
             encounter.setEncounterId(set.getString("encounter_id"));
