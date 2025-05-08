@@ -578,11 +578,10 @@ public class NoteService {
 
     public void noteThread(int batchSize) {
         String sql ="""
-                update encounternote 
-set patientbirthdate = p.birthdate ,patientfullname =concat(p.lastname,'',p.firstname,p.othernames),patientgender=p.gender ,patientmrnumber=p.mrnumber ,patientmobile=p.mobile 
+             update encounternote 
+set patientbirthdate = p.birthdate ,patientfullname =concat(p.lastname,'',p.firstname,p.othernames),patientgender=p.gender ,patientmrnumber=p.mrnumber,patientid=p.uuid ,patientmobile=p.mobile 
 from encounter e join patient_information p on e.patient_id =p."uuid" 
-where  encounterid= e.uuid and  patientid is null;
-
+where  encounterid= e.uuid and  patientid is null
                 """;
             vectorJdbcTemplate.update(sql);
 
