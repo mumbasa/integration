@@ -301,7 +301,7 @@ where allergy_intolerance.encounterid =v.uuid ;
 
 String sql ="""
         
-NSERT INTO public.invoices (
+INSERT INTO public.invoices (
   created_at,
   updated_at,
   uuid,
