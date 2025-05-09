@@ -353,7 +353,7 @@ vectorJdbcTemplate.update(sql);
 
     public void migrateObservationThread(int batchSize) {
 
-        long rows = observationRepository.findCleanDatas();
+        long rows = observationRepository.findCleanDaas();
         logger.info("Rows size is: {}", rows);
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);

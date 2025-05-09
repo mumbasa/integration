@@ -296,4 +296,80 @@ where allergy_intolerance.encounterid =v.uuid ;
 
         return callables;
     }
+
+    public void invoiceDump(){
+
+String sql ="""
+        
+NSERT INTO public.invoices (
+  created_at,
+  updated_at,
+  uuid,
+  patient_id,
+  patient_name,
+  patient_mr_number,
+  patient_birth_date,
+  patient_gender,
+  patient_mobile,
+  payer_name,
+  managing_organization_id,
+  payer_id,
+  payer_type,
+  currency,
+  visit_id,
+  payment_method,
+  invoice_date,
+  amount_paid,
+  due_date,
+  external_id,
+  external_system
+)
+SELECT
+  MIN(c.created_at) AS created_at,
+  MAX(c.updated_at) AS updated_at,
+  c.invoice_id AS uuid,
+  c.patient_id,
+  c.patient_name,
+  c.patient_mr_number,
+  c.patient_birth_date,
+  c.patient_gender,
+  c.patient_mobile,
+  c.payer_name,
+  c.account_id AS managing_organization_id,
+  c.payer_id,
+  'organization' AS payer_type,
+  c.currency,
+  c.visit_id,
+  c.payment_method,
+  MIN(c.created_at) AS invoice_date,
+  SUM(c.charge) AS amount_paid,
+  c.paid_at AS due_date,
+c.transaction_id AS external_id,
+  'chargeitem_migration' AS external_system
+FROM
+  public.chargeitem c
+WHERE
+  c.status = 'paid' AND c.invoice_id IS NOT NULL
+GROUP BY
+  c.invoice_id,
+  c.patient_id,
+  c.patient_name,
+  c.patient_mr_number,
+  c.patient_birth_date,
+  c.patient_gender,
+  c.patient_mobile,
+  c.payer_name,
+  c.account_id,
+  c.payer_id,
+  c.relationship,
+  c.currency,
+  c.visit_id,
+  c.payment_method,
+  c.transaction_id;
+        """;
+
+        serenityJdbcTemplate.update(sql);
+    
+    
+    }
 }

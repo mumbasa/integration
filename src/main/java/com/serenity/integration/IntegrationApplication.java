@@ -91,6 +91,8 @@ public class IntegrationApplication {
 	@Autowired
 	ChargeItemService chargeItemService;
 
+
+
 @Autowired
 InvoiceService invoiceService;
 	
@@ -114,7 +116,7 @@ InvoiceService invoiceService;
 	//encounterService.encounterLegacythread();
 	//allergyService.migrateAllergyThread(1000);
 	//referalService.migrateReferalThread(2000);
-	noteService.noteThread(5000);
+	//noteService.noteThread(5000);
 	//noteService.getLegacyVisitNotesEncounters(3000);
 	//noteService.moveVisitNote();
 	//observationService.migrateObservationThread(5000);
@@ -135,8 +137,8 @@ InvoiceService invoiceService;
 	//chargeItemService.chargeThread(1000);;
 	//diagnosisService.migrateDiagReportThread(1000);
 	//dService.migrationThread(1000);
-	//observationService.migrateObservationThread(5000);
-	
+	//observationService.migrateObservationThread(100);
+	invoiceService.invoiceDump();
 
 	
 	//diagnosisService.getLegacyDiagnosticReport(5000);
