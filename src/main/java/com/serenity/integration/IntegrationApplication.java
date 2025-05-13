@@ -138,7 +138,7 @@ InvoiceService invoiceService;
 	//diagnosisService.migrateDiagReportThread(1000);
 	//dService.migrationThread(1000);
 	//observationService.migrateObservationThread(100);
-	invoiceService.invoiceDump();
+	///invoiceService.invoiceDump();
 
 	
 	//diagnosisService.getLegacyDiagnosticReport(5000);
@@ -147,7 +147,7 @@ InvoiceService invoiceService;
 	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
 
 	
-	//setupService.setPriceGroupIds();
+	setupService.sethealthcareServicePayload();
 
 	
 

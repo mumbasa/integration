@@ -1178,9 +1178,17 @@ public class SetupService {
     "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
     "healthcare_service_not_available_times": []
 }
-                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
-                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),(healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getRevenueTagDisplay(),
-                healthcareService.getServiceRequestCategory(),healthcareService.getOrderCode(),healthcareService.getDiagnosticServiceSection(),       
+                        """, 
+                healthcareService.getServiceClass(), 
+                healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), 
+                healthcareService.getServiceType(),
+                healthcareService.getServiceName(),
+                (healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),
+                healthcareService.getRevenueTagDisplay(),
+                healthcareService.getServiceRequestCategory(),
+                healthcareService.getOrderCode(),
+                healthcareService.getDiagnosticServiceSection(),       
                 healthcareService.getServiceName());
 
         return payload;
@@ -1273,6 +1281,58 @@ public class SetupService {
                         """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
                 healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),(healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName(),
                healthcareService.getServiceRequestCategory()
+                );
+
+        return payload;
+
+    }
+
+
+
+
+    public String formulatePayloadAdministrative(HealthCareServices healthcareService) {
+        
+        String payload = String.format(
+                """
+{
+    "healthcare_service_categories": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_specialties": [
+        {
+            "code": "%s"
+        }
+    ],
+    "healthcare_service_types": [
+        {
+            "code": "%s",
+            "display": "%s"
+        }
+    ],
+    "slot_duration": 30,
+    "virtual_service": false,
+    "healthcare_service_appointment_required": false,
+    "comment": "Healthcare service for %s at Nyaho Medical Center",
+    "healthcare_service_service_provision_code": "cost",
+    "price_tiers": [],
+    "extra_details": %s,
+    "revenue_tag_display": "%s",
+    "healthcare_service_name": "%s",
+    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+    "healthcare_service_not_available_times": []
+}    
+
+                        """, 
+                        healthcareService.getServiceClass(), 
+                        healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), 
+                healthcareService.getServiceType(),
+                healthcareService.getServiceName(),
+                (healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),
+                healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName()
+           
                 );
 
         return payload;
@@ -1423,10 +1483,7 @@ public String convertHealthCareServices(HealthCareServices hCareServices){
         case "Procedure": data= formulatePayloadProcedure(hCareServices);
           
             break;
-        
-        case "Administrative": data= formulatePayloadConsultation(hCareServices);
-          
-            break;
+  
 
         case "Hospitalization": data= formulatePayloadHospitalization(hCareServices);
           
@@ -1434,7 +1491,10 @@ public String convertHealthCareServices(HealthCareServices hCareServices){
             case "Consultation": data= formulatePayloadConsultation(hCareServices);
           
             break;
-    
+
+        case "Administrative": data= formulatePayloadAdministrative(hCareServices);
+          
+            break;
     
         default:
         data =formulatePayloadDiagnostics(hCareServices);
@@ -1469,7 +1529,7 @@ public void setHealthcareIds(){
 
 public void setPriceGroupIds(){
 
-   /*  Map<String,String> services= getGroupsIndDb();
+     Map<String,String> services= getGroupsIndDb();
     List<ServicePrice> healthcareServicse = servicePriceRepo.findAll();
     healthcareServicse.forEach(e ->{
 
@@ -1481,9 +1541,9 @@ public void setPriceGroupIds(){
         }
     });
 
-    servicePriceRepo.saveAllAndFlush(healthcareServicse); */
+    servicePriceRepo.saveAllAndFlush(healthcareServicse); 
 
-    int rows =37822;
+   /*  int rows =37822;
     int totalSize = (int) rows;
     int batches = (totalSize + 100 - 1) / 100;
 
@@ -1526,7 +1586,7 @@ public void setPriceGroupIds(){
     });
 
 
-}
+} */
 
 }
 }

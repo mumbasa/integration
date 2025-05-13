@@ -300,8 +300,7 @@ where allergy_intolerance.encounterid =v.uuid ;
     public void invoiceDump(){
 
 String sql ="""
-        
-INSERT INTO public.invoices (
+ INSERT INTO public.invoices (
   created_at,
   updated_at,
   uuid,
@@ -331,7 +330,7 @@ SELECT
   c.patient_id,
   c.patient_name,
   c.patient_mr_number,
-  c.patient_birth_date,
+  CAST(c.patient_birth_date AS DATE) AS patient_birth_date,
   c.patient_gender,
   c.patient_mobile,
   c.payer_name,
@@ -344,7 +343,7 @@ SELECT
   MIN(c.created_at) AS invoice_date,
   SUM(c.charge) AS amount_paid,
   c.paid_at AS due_date,
-c.transaction_id AS external_id,
+  c.transaction_id AS external_id,
   'chargeitem_migration' AS external_system
 FROM
   public.chargeitem c
@@ -355,17 +354,20 @@ GROUP BY
   c.patient_id,
   c.patient_name,
   c.patient_mr_number,
-  c.patient_birth_date,
+  CAST(c.patient_birth_date AS DATE),
   c.patient_gender,
   c.patient_mobile,
   c.payer_name,
   c.account_id,
   c.payer_id,
-  c.relationship,
   c.currency,
   c.visit_id,
   c.payment_method,
-  c.transaction_id;
+  c.transaction_id,
+  c.paid_at;
+
+
+
         """;
 
         serenityJdbcTemplate.update(sql);
