@@ -123,7 +123,7 @@ InvoiceService invoiceService;
 	//dService.getLegacyDiagnosis(2000);;
 	//
 	//diagnosisService.migrateDiagReportThread(5000);
-medicalRequestService.saveMedicalRequestThread();
+	medicalRequestService.saveMedicalRequestThread();
 //	serviceRequestService.getLegacyRequest(3000);
 	//observationService.getLegacyObservations(5000);
 //serviceRequestService.migrateThread(1000);
