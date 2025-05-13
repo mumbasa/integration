@@ -650,7 +650,7 @@ public class MedicalRequestService {
                 ps.setString(12, request.getPatientId());
                 ps.setString(13, request.getMrNumber());
                 ps.setString(14, request.getPatientName());
-                ps.setString(15, request.getPractitionerName());
+                ps.setString(15, request.getPractitionerName()==null?"":request.getPractitionerName());
 
                 ps.setString(16, request.getPractitionerId());
                 ps.setString(17, request.getVisitId());
