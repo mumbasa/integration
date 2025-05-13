@@ -1317,7 +1317,7 @@ public class SetupService {
     "comment": "Healthcare service for %s at Nyaho Medical Center",
     "healthcare_service_service_provision_code": "cost",
     "price_tiers": [],
-    "extra_details": %s,
+    "extra_details": 10,
     "revenue_tag_display": "%s",
     "healthcare_service_name": "%s",
     "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
@@ -1330,7 +1330,7 @@ public class SetupService {
                 healthcareService.getServiceType(), 
                 healthcareService.getServiceType(),
                 healthcareService.getServiceName(),
-                (healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),
+               
                 healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName()
            
                 );

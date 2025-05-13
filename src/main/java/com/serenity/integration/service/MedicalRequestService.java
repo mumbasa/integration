@@ -565,11 +565,11 @@ public class MedicalRequestService {
     
     public void saveMedicalRequestThread() {
 
-        long count = medicalRequestRepository.count();
+        long count = medicalRequestRepository.findByCount();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(10000, count));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(5000, count));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }

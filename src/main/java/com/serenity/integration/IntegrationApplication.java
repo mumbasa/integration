@@ -147,7 +147,7 @@ medicalRequestService.saveMedicalRequestThread();
 	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
 
 	
-setupService.sethealthcareServicePayload();
+//setupService.sethealthcareServicePayload();
 
 	
 
