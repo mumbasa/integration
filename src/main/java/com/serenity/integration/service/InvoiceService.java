@@ -173,13 +173,8 @@ ORDER BY
     }
 
  public void getLegacyChargeItem(int batchSize) {
-        
-       /*    Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-        Map<String, String> doc = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
- */
-        String sql = "select count(*) from \"ChargeItem\" ci";
+        Set<String> ids = new HashSet<>();
+        String sql = "select count(*) from \"ChargeItem\" ci  where payment_method !='cash' and visit_id is not null and invoiceid is not null";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
         long totalSize = rows;
@@ -228,15 +223,17 @@ LEFT JOIN
     "public"."organization_clientaccount" ca ON "ChargeItem".payer_account_id::uuid = ca.uuid
 LEFT JOIN
     "public"."organization" o ON ca.owner_id = o.id
+    where payment_method != 'cash' and "ChargeItem".visit_id is not null and invoiceid is not null 
 order by "ChargeItem".id
             offset ? limit ?
             """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
+                if(!ids.contains((set.getString("invoice_id")))){
+
                 PatientInvoice request = new PatientInvoice();
-           
-         
-                request.setUuid(set.getString("invoiceid"));
+       
+                request.setUuid(set.getString("invoice_id"));
                 request.setCurrency(set.getString("currency"));
                 request.setVisitId(set.getString("visit_id"));
                 request.setPatientId(set.getString("patient_id"));
@@ -253,6 +250,9 @@ order by "ChargeItem".id
                 
                
                 serviceRequests.add(request);
+            ids.add(set.getString("invoice_id"));
+            }
+             
 
             }
            invoiceRepository.saveAll(serviceRequests);
@@ -478,4 +478,13 @@ GROUP BY
     
     
     }
+
+    public void da(){
+
+        String sql = "select count(*) from \"ChargeItem\" ci where payment_method !='cash' and visit_id is not null";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        System.err.println(rows);
+
+    }
+
 }
