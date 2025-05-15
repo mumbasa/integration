@@ -1463,6 +1463,18 @@ SqlRowSet set = serenityJdbcTemplate.queryForRowSet(sql);
 
 while (set.next()) {
 groups.put(set.getString("name"), set.getString("uuid"));
+}
+return groups; 
+}
+
+
+public Map<String,String> getPricesIndDb(){
+    Map<String,String>  groups = new HashMap<>();
+String sql="SELECT * from healthcare_service_price_tiers";
+SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+
+while (set.next()) {
+groups.put(set.getString("display"), set.getString("uuid"));
     
 }
 
@@ -1527,9 +1539,11 @@ public void setHealthcareIds(){
 
 
 
-public void setPriceGroupIds(){
+public void setPriceMigrate(){
 
      Map<String,String> services= getGroupsIndDb();
+     Map<String,String> oldPrices= getPricesIndDb();
+
     List<ServicePrice> healthcareServicse = servicePriceRepo.findAll();
     healthcareServicse.forEach(e ->{
 
@@ -1543,7 +1557,7 @@ public void setPriceGroupIds(){
 
     servicePriceRepo.saveAllAndFlush(healthcareServicse); 
 
-   /*  int rows =37822;
+     int rows =healthcareServicse.size();
     int totalSize = (int) rows;
     int batches = (totalSize + 100 - 1) / 100;
 
@@ -1586,7 +1600,76 @@ public void setPriceGroupIds(){
     });
 
 
-} */
+} 
+
+}
+
+
+
+public void setPriceGroupIdMigrate() {
+    final int BATCH_SIZE = 10;
+
+    Map<String, String> existingPrices = getPricesIndDb();
+    List<ServicePrice> allPrices = servicePriceRepo.findAll();
+
+    // Assign UUIDs
+    for (ServicePrice price : allPrices) {
+        String existingUuid = existingPrices.get(price.getPriceName());
+        if (existingUuid != null) {
+            price.setUuid(existingUuid);
+        } else {
+            price.setUuid(UUID.randomUUID().toString());
+        }
+        System.err.println("UUID set for " + price.getPriceName() + ": " + price.getUuid());
+    }
+
+    int totalSize = allPrices.size();
+    int batches = (totalSize + BATCH_SIZE - 1) / BATCH_SIZE;
+
+    String sql = """
+        INSERT INTO service_prices (
+            unit_price, uuid, name, amount_type, currency, 
+            healthcare_service_id, managing_organization, 
+            created_by_id, created_by_name, is_active, 
+            created_at, updated_at, customer_group_id, customer_group_name
+        ) VALUES (
+            ?, ?::uuid, ?, ?, ?, 
+            ?, '161380e9-22d3-4627-a97f-0f918ce3e4a9', 
+            '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku', true, 
+            now(), now(), ?, ?
+        )
+    """;
+
+    for (int i = 0; i < batches; i++) {
+        int fromIndex = i * BATCH_SIZE;
+        int toIndex = Math.min(fromIndex + BATCH_SIZE, totalSize);
+        List<ServicePrice> batch = allPrices.subList(fromIndex, toIndex);
+try{
+        serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ServicePrice price = batch.get(i);
+                ps.setBigDecimal(1, price.getCharge());
+                ps.setString(2, price.getUuid());
+                ps.setString(3, price.getPriceName());
+                ps.setString(4, price.getPriceType());
+                ps.setString(5, price.getCurrency());
+                ps.setString(6, price.getHealthcareServiceId());
+                ps.setString(7, price.getCustomerGroupId());
+                ps.setString(8, price.getCustomerGroupName());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return batch.size();
+            }
+        });
+    }
+    catch(Exception e ){
+        e.printStackTrace();
+    }
+    System.out.println("Finished inserting " + totalSize + " service prices in " + batches + " batches.");
+}
 
 }
 }

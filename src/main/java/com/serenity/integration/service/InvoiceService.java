@@ -246,7 +246,7 @@ order by "ChargeItem".id
                request.setUpdatedAt(set.getString("updated_at"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setPayerType(set.getString("payer_type"));
-              
+                request.setPayerId(set.getString("payer_id"));
                 
                
                 serviceRequests.add(request);
@@ -256,11 +256,14 @@ order by "ChargeItem".id
 
             }
            invoiceRepository.saveAll(serviceRequests);
+         
            // migrateChargeItems(serviceRequests);
             logger.info("Saved chargeItem");
+            cleanItems();
+            logger.info("Cleaning Requests");
+
         }
-        logger.info("Cleaning Requests");
-      cleanItems();
+     
 
     }
 
@@ -268,7 +271,7 @@ order by "ChargeItem".id
         String sql = """
             update charge_item set patientmrnumber =p.mrnumber ,patientbirthdate=p.birthdate,patientgender=p.gender,patientmobile=p.mobile,patientname=concat(p.firstname,' ',p.lastname)
         from patient_information p
-        where patientid = p.uuid
+        where patientid = p.uuid and  patientmrnumber is null
                 """;
         
                 vectorJdbcTemplate.update(sql);

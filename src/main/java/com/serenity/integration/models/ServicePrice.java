@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,10 +31,10 @@ public class ServicePrice {
     @JsonIgnore
     private Long id;
 
-   // @Column(name = "uuid", unique = true, nullable = false)
     //@JsonProperty("uuid")
     ///@JsonIgnore
-    //private UUID uuid;
+    @Transient
+    private String uuid;
 
     @Column(name = "display")
     @JsonProperty("display")
