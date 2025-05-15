@@ -194,7 +194,7 @@ ORDER BY
 "ChargeItem"."currency" AS "currency",
 "ChargeItem"."invoiceid" AS "invoice_id",
 "ChargeItem"."patientid" AS "patient_id",
-"ChargeItem"."payerid" AS "payer_id",
+o.id AS "payer_id",
 "ChargeItem"."payername" AS "payer_name",
 "ChargeItem"."payment_method" AS "payment_method",
 "ChargeItem"."practitionerid" AS "practitioner_id",
@@ -269,9 +269,9 @@ order by "ChargeItem".id
 
     public void cleanItems(){
         String sql = """
-            update charge_item set patientmrnumber =p.mrnumber ,patientbirthdate=p.birthdate,patientgender=p.gender,patientmobile=p.mobile,patientname=concat(p.firstname,' ',p.lastname)
+             update patient_invoice set patientmrnumber =p.mrnumber ,patientbirthdate=p.birthdate,patientgender=p.gender,patientmobile=p.mobile,patientname=concat(p.firstname,' ',p.lastname)
         from patient_information p
-        where patientid = p.uuid and  patientmrnumber is null
+        where patientid = p.uuid and   patientmrnumber is  null
                 """;
         
                 vectorJdbcTemplate.update(sql);
