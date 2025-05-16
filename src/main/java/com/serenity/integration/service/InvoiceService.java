@@ -283,17 +283,17 @@ order by "ChargeItem".id
     public int migrateInvoice(List<PatientInvoice> invoices){
         String sql ="""
                INSERT INTO invoices
-(created_at,  pk, "uuid", patient_id, patient_name, 
+(created_at,  external_system, "uuid", patient_id, patient_name, 
 patient_mr_number, patient_birth_date, patient_gender, patient_mobile, payer_name, 
 managing_organization_id, payer_id, payer_type, currency, visit_id, 
-payment_method, invoice_date, amount_paid, due_date, external_id,
- external_system,updated_at)
+payment_method, invoice_date,
+ updated_at)
 VALUES( 
 ?::timestamp,?,uuid(?),?,?,
 ?,?::date,?,?,?,
 uuid(?),?,?,?,uuid(?),
-?,?::date,?,?::date,?,
-?,now()
+?,?::date,
+now()
 );
                 """;
 
@@ -305,11 +305,11 @@ uuid(?),?,?,?,uuid(?),
            PatientInvoice intolerance = invoices.get(i);
        
            ps.setString(1,intolerance.getCreatedAt());
-           ps.setLong(2,    intolerance.getId());
-           ps.setString(3,     UUID.randomUUID().toString());
+           ps.setString(2,   "opd");
+           ps.setString(3,     intolerance.getUuid());
            ps.setString(4,intolerance.getPatientId());
            ps.setString(5,intolerance.getPatientName());
-           ps.setLong(6,intolerance.getId());
+           ps.setString(6,intolerance.getPatientMrNumber());
            ps.setString(7,    intolerance.getPatientBirthDate()==null?LocalDate.now().toString():intolerance.getPatientBirthDate());
            ps.setString(8,     intolerance.getPatientGender());
            ps.setString(9,intolerance.getPatientMobile());
@@ -322,11 +322,8 @@ uuid(?),?,?,?,uuid(?),
            ps.setString(15,intolerance.getVisitId());
 
            ps.setString(16,intolerance.getPaymentMethod());
-           ps.setString(17,intolerance.getInvoiceDate());
-           ps.setDouble(18,intolerance.getAmountPaid());
-           ps.setString(19,intolerance.getDueDate());
-           ps.setString(20, intolerance.getExternalId()+UUID.randomUUID().toString());
-           ps.setString(21, intolerance.getExternalSystem());
+           ps.setString(17,intolerance.getCreatedAt());
+        
  
         }
 
@@ -339,25 +336,7 @@ uuid(?),?,?,?,uuid(?),
     })     ;       
 return invoices.size();
     }
-    public void cleanAllergies(){
-
-        String sql ="""
-                update allergy_intolerance 
-set practitioner_name =p.fullname 
-from doctors p
-where allergy_intolerance.practitioner_id =p.serenityuuid ;
-                """;
-                vectorJdbcTemplate.update(sql);
-
-                sql="""
-                        update allergy_intolerance 
-set visit_id =v.visit_id 
-from encounter v
-where allergy_intolerance.encounterid =v.uuid ;
-                        """;
-                        vectorJdbcTemplate.update(sql);
-    }
-    
+   
 
 
      public void migrateinvoiceThread(int batchSize) {
