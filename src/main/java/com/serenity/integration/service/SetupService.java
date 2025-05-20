@@ -1524,7 +1524,7 @@ public void setHealthcareIds(){
     healthcareServicse.forEach(e ->{
 
         if(services.containsKey(e.getServiceName().strip())){
-            e.setId(services.get(e.getServiceName().strip()).getId());
+            e.setId(services.get(e.getServiceName().strip()).getUuid());
          
                    
 
@@ -1607,7 +1607,7 @@ public void setPriceMigrate(){
 
 
 public void setPriceGroupIdMigrate() {
-    final int BATCH_SIZE = 10;
+    final int BATCH_SIZE = 5;
 
     Map<String, String> existingPrices = getPricesIndDb();
     List<ServicePrice> allPrices = servicePriceRepo.findAll();
@@ -1631,7 +1631,7 @@ public void setPriceGroupIdMigrate() {
             unit_price, uuid, name, amount_type, currency, 
             healthcare_service_id, managing_organization, 
             created_by_id, created_by_name, is_active, 
-            created_at, updated_at, customer_group_id, customer_group_name
+            created_at, updated_at, customer_group_id, customer_group_name,health_service_name
         ) VALUES (
             ?, ?::uuid, ?, ?, ?, 
             ?, '161380e9-22d3-4627-a97f-0f918ce3e4a9', 
