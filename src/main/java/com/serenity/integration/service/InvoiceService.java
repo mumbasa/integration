@@ -194,7 +194,7 @@ ORDER BY
 "ChargeItem"."currency" AS "currency",
 "ChargeItem"."invoiceid" AS "invoice_id",
 "ChargeItem"."patientid" AS "patient_id",
-o.id AS "payer_id",
+o.uuid AS "payer_id",
 "ChargeItem"."payername" AS "payer_name",
 "ChargeItem"."payment_method" AS "payment_method",
 "ChargeItem"."practitionerid" AS "practitioner_id",
