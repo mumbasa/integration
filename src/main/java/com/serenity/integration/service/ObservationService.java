@@ -207,6 +207,7 @@ public class ObservationService {
                 request.setReferenceRangeLow(set.getString("reference_range_low"));
                 request.setSpecimen(set.getString("specimen"));
                 request.setVisitId(set.getString("visit_id"));
+                request.setUpdatedAt(set.getString("modified_at"));
                 request.setDiagnosticReportId(set.getString("diagnostic_report_id"));
                 request.setScore("The score associated with this observation");
                 request.setSystem("http://loinc.org");
@@ -229,14 +230,14 @@ public class ObservationService {
                 practitioner_name, status, category, tag, code,
                  display,  value, score, "rank", reference_range_high,
                  reference_range_low, reference_range_text, interpretation, body_site, "method",
-                 specimen, service_request_id, diagnostic_report_id,hex_color_code,system,updated_at,encounter_type
+                 specimen, service_request_id, diagnostic_report_id,hex_color_code,system,encounter_type,visit_id,updated_at
                   )
                 VALUES( ?::timestamp, ?::timestamp, ?, ?::timestamp, ?,
                 uuid(?), uuid(?), uuid(?), uuid(?), uuid(?),
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, uuid(?), uuid(?),?,?,now(),?)
+                ?, uuid(?), uuid(?),?,?,?,?::uuid)
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -296,7 +297,9 @@ public class ObservationService {
                 }
                
 
-                // ps.setString(7, observation.getServiceProviderId());
+                 ps.setString(32, observation.getVisitId());
+                 ps.setString(33, observation.getUpdatedAt());
+
 
             }
 

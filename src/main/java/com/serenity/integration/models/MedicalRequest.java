@@ -29,6 +29,7 @@ public class MedicalRequest {
     private String serviceProviderId;
     private String priority;
     private String status;
+    private String intendedDispenser;
     private String dosageDisplay;
     private String dosageForm;
     private String dosageRoute;
@@ -40,14 +41,16 @@ public class MedicalRequest {
     private String dosageStrength;
     private String dosagePeriod;
     private String courseOfTherapy;
-    private Integer quantityToDispense;
+    private Double quantityToDispense;
     private Integer numberOfRefills;
     private String dosagePeriodUnit;
     private String uuid;
     private String practitionerName;
     private String practitionerId;
     private String createdAt;
+    private String updatedAt;
     private String visitId;
+    private String date;
     private String externalSystem;
     private String externalId;
     private String mrNumber;

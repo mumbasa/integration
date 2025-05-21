@@ -247,6 +247,8 @@ HAVING MIN(ip.StartDate) LIMIT ? ,1000
         while (set.next()) {
             Visits visit = new Visits();
             visit.setUuid(UUID.randomUUID());
+            visit.setStartedAt(set.getString("arrived_at"));
+            visit.setEndedAt(set.getString("ended_at"));
             visit.setCreatedAt(set.getString(2));
             visit.setEncounterClass(set.getString("encounter_class"));
             visit.setStatus(set.getString("status"));
@@ -434,6 +436,7 @@ ORDER BY
             visit.setServiceProviderName("Nyaho Medical Center");
             visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
             visit.setLocationName("Airport Primary Care");
+            visit.setUpdatedAt(set.getString("modified_at"));
             visits.add(visit);
 
     }

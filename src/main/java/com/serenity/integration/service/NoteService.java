@@ -710,7 +710,7 @@ FROM encounter e left join patient p on e.patient_id =p.id
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
             encounter.setPatientMobile(set.getString("mobile"));
-            //encounter.setPatientMrNumber(patient.getMrNumber());
+            encounter.setUpdatedAt("modified_at");
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("chief_complaint"));
             encounter.setLocationId(set.getString("primary_location_id"));
@@ -803,7 +803,7 @@ FROM encounter e left join patient p on e.patient_id =p.id
             encounter.setPatientBirthDate(set.getString("birth_date"));
              encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
              encounter.setPatientMobile(set.getString("mobile"));
-            // encounter.setPatientMrNumber(patient.getMrNumber());
+            encounter.setUpdatedAt(set.getString("modified_at"));
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("display"));
             encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");

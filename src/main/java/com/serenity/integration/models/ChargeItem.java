@@ -39,6 +39,8 @@ public class ChargeItem {
     private String practitionerId;
     private String practitionerName;
     private String productId;
+    private String transactionId;
+
     private String providerId;
     private String providerName;
     private int quantity;
@@ -76,9 +78,9 @@ public class ChargeItem {
     private String paidAt;
     private String policyId;
     private String payerId;
+    private String stockItemId;
     private String paymentMethod;
     private String status;
-    private long transactionId;
     private String serviceId;
     @Column(columnDefinition = "TEXT")
     private String serviceOrProductName;

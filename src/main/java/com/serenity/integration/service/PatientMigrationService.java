@@ -308,7 +308,7 @@ VALUES (
     }
 
     public int task2(List<PatientData> data) {
-        String sql = "INSERT INTO public.patients(created_at, id,  \"uuid\", first_name, last_name, full_name, other_names, mobile, email, birth_date, gender, nationality, mr_number,  blood_type,  managing_organization_id, managing_organization_name,marital_status, name_prefix, occupation,  national_mobile_number, passport_number,  external_id, external_system) VALUES (CAST(? AS TIMESTAMP WITH TIME ZONE),nextval('patients_id_seq'::regclass),uuid(?),?,?,?,?,?,?,CAST(? AS DATE),?,?,?,?,CAST(? AS UUID),?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO public.patients(created_at, id,  \"uuid\", first_name, last_name, full_name, other_names, mobile, email, birth_date, gender, nationality, mr_number,  blood_type,  managing_organization_id, managing_organization_name,marital_status, name_prefix, occupation,  national_mobile_number, passport_number,  external_id, external_system,is_deleted,updated_at) VALUES (CAST(? AS TIMESTAMP WITH TIME ZONE),nextval('patients_id_seq'::regclass),uuid(?),?,?,?,?,?,?,CAST(? AS DATE),?,?,?,?,CAST(? AS UUID),?,?,?,?,?,?,?,?,?,?::timestamp)";
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             @SuppressWarnings("null")
@@ -342,6 +342,8 @@ VALUES (
                 ps.setString(20, k.getPassportNumber());
                 ps.setString(21, k.getExternalId());
                 ps.setString(22, k.getExternalSystem());
+                ps.setBoolean(21, k.isDeleted());
+                ps.setString(22, k.getUpdatedAt());
 
             }
 

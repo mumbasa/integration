@@ -79,8 +79,8 @@ public class ServiceRequestService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-          SELECT sr.id, sr."uuid", sr.created_at, sr.is_deleted, sr.modified_at, body_site, display, code, sr.category, diagnostic_service_section, due_date, purpose, p.passport_number, sample_received_date_time, priority, sr.status, group_identifier, status_reason, intent, do_not_perform, quantity_value, quantity_unit, occurence, as_needed, authored_on, note, patient_instruction, assigned_to, assigned_to_name, encounter_id, healthcare_service_id, sr.location_id, p.uuid as patient_id, sr.price_tier_id, replaces_id, requesting_patient_id, requesting_practitioner_role_id, requesting_related_contact_id, sr.visit_id, bill_paid_at, canceled_by_name, canceled_by_practitioner_id, canceled_at, encounter_diagnoses, is_mismatched, is_mismatched_comment, service_class,
-ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.id =sr.patient_id left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid" order by sr.id asc
+          SELECT sr.id, sr."uuid", sr.created_at, sr.is_deleted, sr.modified_at, body_site, display, code, sr.category, sr.diagnostic_service_section, due_date, purpose, p.passport_number, sample_received_date_time, priority, sr.status, group_identifier, status_reason, intent, do_not_perform, quantity_value, quantity_unit, ci.charge as charge,occurence, as_needed, authored_on, note, patient_instruction, assigned_to, assigned_to_name, encounter_id, healthcare_service_id,hs.name as healthcare_service_name, sr.location_id, p.uuid as patient_id, sr.price_tier_id, replaces_id, requesting_patient_id, requesting_practitioner_role_id, requesting_related_contact_id, sr.visit_id, bill_paid_at, canceled_by_name, canceled_by_practitioner_id, canceled_at, encounter_diagnoses, is_mismatched, is_mismatched_comment, hs.service_class,
+ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.id =sr.patient_id left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid" left join healthcare_service hs on hs.id=healthcare_service_id order by sr.id asc
  
                         offset ? LIMIT ?
                      """;
@@ -89,6 +89,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
                 ServiceRequest request = new ServiceRequest();
                 request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
+                request.setDeleted(set.getBoolean("is_deleted"));
                 request.setOccurence(set.getString("occurence"));
                 request.setCategory(set.getString("category"));
                 String encounterId = set.getString("encounter_id");
@@ -108,6 +109,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
                 request.setCreatedAt(set.getString("created_at"));
                 request.setDisplay(set.getString("display"));
                 request.setDoNotPerform(false);
+                request.setCharge(set.getDouble("charge"));
                 request.setIntent(set.getString("intent"));
                 request.setCode(set.getString("code"));
                 request.setPurpose(set.getString("purpose"));
@@ -120,6 +122,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
                 request.setGroupIdentifier(set.getString("group_identifier"));
                 request.setChargeItemId(set.getString("charge_item_uuid"));
                 request.setHealthcareServiceId(set.getString("healthcare_service_id"));
+                request.setHealthcareServiceName(set.getString("healthcare_service_name"));
                 request.setSampleReceivedDateTime(set.getString("sample_received_date_time"));
                 serviceRequests.add(request);
 
@@ -166,7 +169,7 @@ WHERE id IN (
      healthcare_service_id, healthcare_service_name, charge_item_id, status,
      status_reason, group_identifier, intent, practitioner_name, patient_mr_number,
      patient_mobile, patient_birth_date, patient_gender, patient_full_name,
-     encounter_class, notes,is_paid,updated_at,accession_number,do_not_perform)
+     encounter_class, notes,is_paid,accession_number,do_not_perform,updated_at,charge)
 VALUES (
     ?::timestamp, ?::timestamp, ?::timestamp, ?, ?::timestamp,  
     ?, ARRAY[?], uuid(?), uuid(?), uuid(?),                    
@@ -175,7 +178,7 @@ VALUES (
     uuid(?), ?, uuid(?), ?,                                
     ?, ?, ?, ?, ?,  
     ?,CAST(? AS DATE),?,? ,                                           
-    ? ,? ,true ,now(),?,?                                               
+    ? ,? ,true ,?,?,?::timestamp,?                                               
 );
 
                                 """;
@@ -222,7 +225,9 @@ ps.setString(33, "ambulatory"); // encounter_class
 ps.setString(34, request.getNote());
 ps.setString(35,request.getAccessionNumber());
 ps.setBoolean(36, false);
-                
+ps.setString(37, request.getUpdatedAt());
+ps.setDouble(38, request.getCharge());
+   
 
             }
 

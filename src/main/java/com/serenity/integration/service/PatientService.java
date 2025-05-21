@@ -796,6 +796,8 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                     pd.setEmail(record.getString("email"));
                     pd.setBirthDate(record.getString("birth_date"));
                     pd.setCreatedAt(record.getString("created_at"));
+                    pd.setUpdatedAt(record.getString("modified_at"));
+                    pd.setDeleted(record.getBoolean("is_deleted"));
                     String str = record.getString("created_at");
     
     

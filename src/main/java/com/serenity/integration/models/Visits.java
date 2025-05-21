@@ -30,6 +30,7 @@ public class Visits {
     private String display;
     private String priority;
     private String startedAt;
+    private String updatedAt;
     private String endedAt;
     private String locationId;
     private String invoiceId;

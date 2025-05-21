@@ -423,8 +423,8 @@ public class DiagnosisService {
                         INSERT INTO public.diagnoses
                 (created_at,  id, "uuid", "condition", "role",
                 "system", status, note, practitioner_name, patient_id,
-                practitioner_id, visit_id ,updated_at)
-                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS') ,?, uuid(?), ?, ?, ?, ?, ?, ?, uuid(?), uuid(?), uuid(?),now())
+                practitioner_id, visit_id ,updated_at,rank,code)
+                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS') ,?, uuid(?), ?, ?, ?, ?, ?, ?, uuid(?), uuid(?), uuid(?),?::timestamp,?,?)
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -443,9 +443,11 @@ public class DiagnosisService {
                 ps.setString(10, diagnosis.getPatientId());
                 ps.setString(11, diagnosis.getPractitionerId());
                 ps.setString(12, diagnosis.getVisitId());
-
+                ps.setString(13, diagnosis.getUpdatedAt());
+                ps.setBoolean(14, diagnosis.isDeleted());
+                ps.setInt(15, diagnosis.getRank());
+                ps.setString(16, diagnosis.getCode());
             }
-
             @Override
             public int getBatchSize() {
                 // TODO Auto-generated method stub
@@ -541,6 +543,7 @@ where e."uuid" =encounterid and visitid is null
             diagnosis.setSystem("opd");
             // diagnosis.setExternalId(set.getString("uuid"));
             diagnosis.setCreatedAt(set.getString("created_at"));
+            diagnosis.setUpdatedAt(set.getString("modified_at"));
             diagnoses.add(diagnosis);
 
         }
@@ -589,8 +592,9 @@ where e."uuid" =encounterid and visitid is null
                 diagnosis.setNote(set.getString("note"));
                 diagnosis.setUuid(set.getString("id"));
                 diagnosis.setSystem("opd");
-                // diagnosis.setExternalId(set.getString("uuid"));
+                diagnosis.setDeleted(set.getBoolean("is_deleted"));
                 diagnosis.setCreatedAt(set.getString("created_at"));
+                diagnosis.setUpdatedAt(set.getString("modified_at"));
                 diagnoses.add(diagnosis);
 
             }

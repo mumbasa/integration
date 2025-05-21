@@ -1631,12 +1631,12 @@ public void setPriceGroupIdMigrate() {
             unit_price, uuid, name, amount_type, currency, 
             healthcare_service_id, managing_organization, 
             created_by_id, created_by_name, is_active, 
-            created_at, updated_at, customer_group_id, customer_group_name,health_service_name
+            created_at, updated_at, customer_group_id, customer_group_name,healthcare_service_name
         ) VALUES (
             ?, ?::uuid, ?, ?, ?, 
             ?, '161380e9-22d3-4627-a97f-0f918ce3e4a9', 
             '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku', true, 
-            now(), now(), ?, ?
+            now(), now(), ?, ?,?
         )
     """;
 
@@ -1657,6 +1657,7 @@ try{
                 ps.setString(6, price.getHealthcareServiceId());
                 ps.setString(7, price.getCustomerGroupId());
                 ps.setString(8, price.getCustomerGroupName());
+                ps.setString(9, price.getHealthcareServiceName());
             }
 
             @Override

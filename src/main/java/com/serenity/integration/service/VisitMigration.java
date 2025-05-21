@@ -183,7 +183,7 @@ return 1;
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),?,uuid(?),?  ,?," +
                 "?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),?,?," +
                 "uuid(?),?,?,uuid(?),?," +
-                "?,TO_DATE(?, 'YYYY/MM/DD'),?,?,?,uuid(?),?,uuid('23f59485-8518-4f4e-9146-d061dfe58175'),'Airport Primary Care',now())";
+                "?,TO_DATE(?, 'YYYY/MM/DD'),?,?,?,uuid(?),?,uuid('23f59485-8518-4f4e-9146-d061dfe58175'),'Airport Primary Care',?::timestamp)";
 
         System.err.println("Settting Insert values ");
 
@@ -200,8 +200,8 @@ return 1;
                 ps.setString(5, "finished");
 
                 ps.setString(6, visits.get(i).getPriority());
-                ps.setString(7, visits.get(i).getCreatedAt().replaceAll("T", " ") );
-                ps.setString(8, visits.get(i).getCreatedAt().replaceAll("T", " ") );
+                ps.setString(7, visits.get(i).getStartedAt() );
+                ps.setString(8, visits.get(i).getEndedAt() );
                 ps.setString(9, visits.get(i).getExternalId());
 
                 ps.setString(10, visits.get(i).getExternalSystem());
@@ -220,6 +220,8 @@ return 1;
                 ps.setString(20, visits.get(i).getAssignedToName());
                 ps.setString(21, visits.get(i).getPractitionerId());
                 ps.setString(22, visits.get(i).getPatientMrNumber() + "-" + visits.get(i).getCreatedAt());
+                ps.setString(24, visits.get(i).getUpdatedAt());
+
 
             }
 

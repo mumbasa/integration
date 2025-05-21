@@ -130,10 +130,11 @@ InvoiceService invoiceService;
 //	serviceRequestService.getLegacyRequest(3000);
 	//observationService.getLegacyObservations(5000);
 //serviceRequestService.migrateThread(1000);
-//chargeItemService.chargeThread(1000);
+
+chargeItemService.OpdPullThread(1000);
 
 //	dService.getLegacyDiagnosis(3000);
-//   dService.migrationThread(5000);
+  // dService.migrationThread(5000);
 	//serviceRequestService.migrate(2000);
 //chargeItemService.getLegacyChargeItem(5000);
 
@@ -141,7 +142,7 @@ InvoiceService invoiceService;
 	//diagnosisService.migrateDiagReportThread(1000);
 	//dService.migrationThread(1000);
 	//observationService.migrateObservationThread(100);
-	invoiceService.migrateinvoiceThread(1000);
+	//invoiceService.migrateinvoiceThread(1000);
 
 	
 	//diagnosisService.getLegacyDiagnosticReport(5000);
@@ -150,7 +151,7 @@ InvoiceService invoiceService;
 	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
 
 	
-setupService.setPriceGroupIdMigrate();
+//setupService.setPriceGroupIdMigrate();
 
 	
 

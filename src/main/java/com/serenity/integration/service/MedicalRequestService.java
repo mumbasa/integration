@@ -622,11 +622,11 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id,quantity_to_dispense,updated_at,course_of_therapy,dosage_form,authored_on)
+                practitioner_name, practitioner_id,  visit_id,quantity_to_dispense,updated_at,course_of_therapy,dosage_form,authored_on,date)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), ?, uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,
-                  uuid(?), uuid(?),?,now(),?,?,?::timestamp)
+                  uuid(?), uuid(?),?,now(),?,?,?::timestamp,?::timestamp)
                         """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -658,6 +658,7 @@ public class MedicalRequestService {
                 ps.setString(19,request.getCourseOfTherapy());
                 ps.setString(20,request.getDosageForm());
                 ps.setString(21,request.getCreatedAt());
+                ps.setString(22,request.getDate());
 
             }
 
@@ -689,11 +690,11 @@ public class MedicalRequestService {
                 (created_at, pk, service_provider_id, "uuid", "name",
                 category, code, notes, priority, status,
                 encounter_id,patient_id, patient_mr_number, patient_full_name,
-                practitioner_name, practitioner_id,  visit_id)
+                practitioner_name, practitioner_id,  visit_id,intended_dispenser,quantity_dispensed,quantity_to_dispense,updated_at)
                  VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('medication_requests_pk_seq'::regclass), uuid(?), uuid(?),  ?,
                  ?, ?, ?,?, ?,
                  uuid(?), uuid(?), ?, ?, ?,
-                  uuid(?), uuid(?))
+                  uuid(?), uuid(?),?,?,?,?::timestamp)
                         """;
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -721,6 +722,10 @@ public class MedicalRequestService {
 
                 ps.setString(15, request.getPractitionerId());
                 ps.setString(16, request.getVisitId());
+                ps.setString(17,request.getIntendedDispenser());
+                ps.setDouble(18, request.getQuantityToDispense());
+                ps.setDouble(19, request.getQuantityToDispense());
+                ps.setString(20, request.getUpdatedAt());
 
             }
 
@@ -822,6 +827,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setCode(set.getString("code"));
             request.setCategory(set.getString("category"));
             request.setDose(set.getDouble("quantity"));
+            request.setQuantityToDispense(set.getDouble("quantity"));
             request.setDosageForm(set.getString("dosage_form"));
             request.setAuthoredOn(set.getString("authored_on"));
             request.setCreatedAt(set.getString("created_at"));
@@ -832,9 +838,11 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setExternalSystem("opd");
             request.setPatientId(patient.getUuid());
             request.setMrNumber(patient.getMrNumber());
+            request.setDate(set.getString("date"));
+            request.setIntendedDispenser(set.getString("intended_dispenser"));
             request.setCourseOfTherapy(set.getString("course_of_therapy_type"));
             request.setStatus(set.getString("status"));
-                request.setPractitionerId(set.getString("requester_practitioner_id"));
+                request.setPractitionerId(set.getString("requester_practitioner_role_id"));
             try{
             request.setPractitionerName(docs.get(request.getPractitionerId()).getFullName());
             }catch(Exception e){
@@ -844,6 +852,8 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setVisitId(set.getString("visit_id"));
             request.setPriority(set.getString("priority"));
             request.setStatus(set.getString("status"));
+            request.setUpdatedAt(set.getString("modified_at"));
+            
             medicalRequests.add(request);
             
         }

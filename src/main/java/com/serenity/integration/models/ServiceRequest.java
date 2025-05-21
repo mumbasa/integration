@@ -30,6 +30,12 @@ public class ServiceRequest {
     private String patientId;
     private String encounterId;
     private String accessionNumber;
+    @Column(nullable = true)
+
+    private String updatedAt;
+    @Column(nullable = true)
+
+    private boolean isDeleted;
     @Column(columnDefinition = "TEXT")
     private String display;
     @Column(columnDefinition = "TEXT")
