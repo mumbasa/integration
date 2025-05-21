@@ -483,11 +483,9 @@ locationMap.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care")
 locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
 locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
-     Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
+    Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-               .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
-
+     
                 String sqlRow = "SELECT count(*) from encounter";
                 long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
         
@@ -521,8 +519,9 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
             encounter.setPatientMobile(set.getString("mobile"));
             encounter.setPatientGender(set.getString("gender")==null?"":set.getString("gender"));
-            encounter.setPatientMrNumber(patient.getMrNumber());
+           encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
+            encounter.setDeleted(set.getBoolean("is_deleted"));
             encounter.setEncounterType("outpatient-consultation");
             encounter.setPrescription(false);
             encounter.setSlotId(set.getString("slot_id"));

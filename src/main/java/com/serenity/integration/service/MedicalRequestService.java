@@ -774,7 +774,7 @@ public void getLegacyRequest2() {
     // Step 1: Get the total number of rows
     String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id";
     int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
-    int batchSize = 1000;
+    int batchSize = 10;
     long batches = ((rows + batchSize - 1) / batchSize); // Ceiling division
     
     for (int i = 0; i < batches; i++) {
@@ -822,8 +822,16 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
         """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,offset,limit);
         while (set.next()) {
-            PatientData patient = mps.get(set.getString("patient_id"));
             MedicalRequest request = new MedicalRequest();
+
+            try{
+            PatientData patient = mps.get(set.getString("patient_id"));
+            request.setPatientId(patient.getUuid());
+            request.setMrNumber(patient.getMrNumber());
+            }catch(Exception e){
+
+            }
+
             request.setCode(set.getString("code"));
             request.setCategory(set.getString("category"));
             request.setDose(set.getDouble("quantity"));
@@ -836,8 +844,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setName(set.getString("name"));
             request.setExternalId(set.getString("id"));
             request.setExternalSystem("opd");
-            request.setPatientId(patient.getUuid());
-            request.setMrNumber(patient.getMrNumber());
+            
             request.setDate(set.getString("date"));
             request.setIntendedDispenser(set.getString("intended_dispenser"));
             request.setCourseOfTherapy(set.getString("course_of_therapy_type"));

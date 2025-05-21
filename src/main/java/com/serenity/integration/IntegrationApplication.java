@@ -110,48 +110,14 @@ InvoiceService invoiceService;
 	LocalDateTime mid =(LocalDateTime.now());
 
 	LocalDateTime starts = LocalDateTime.now();
-
-	//patientMigrationService.getPatientsThreads();
-	//visitMigration.getVisitThreads(3000);
-	//encounterService.encounterLegacythread();
-	//allergyService.migrateAllergyThread(1000);
-	//referalService.migrateReferalThread(2000);
-	//noteService.noteThread(5000);
-	//noteService.getLegacyVisitNotesEncounters(3000);
-	//noteService.moveVisitNote();
-	//observationService.migrateObservationThread(5000);
-	//dService.getLegacyDiagnosis(2000);;
-	//
-	//diagnosisService.migrateDiagReportThread(5000);
-	//medicalRequestService.saveMedicalRequestThread();
-	//invoiceService.da();
-	//invoiceService.getLegacyChargeItem(20000);
-	//invoiceService.migrateinvoiceThread(1000);
-//	serviceRequestService.getLegacyRequest(3000);
-	//observationService.getLegacyObservations(5000);
-//serviceRequestService.migrateThread(1000);
-
-chargeItemService.OpdPullThread(1000);
-
-//	dService.getLegacyDiagnosis(3000);
-  // dService.migrationThread(5000);
-	//serviceRequestService.migrate(2000);
-//chargeItemService.getLegacyChargeItem(5000);
-
-	//chargeItemService.chargeThread(1000);;
-	//diagnosisService.migrateDiagReportThread(1000);
-	//dService.migrationThread(1000);
-	//observationService.migrateObservationThread(100);
-	//invoiceService.migrateinvoiceThread(1000);
-
-	
-	//diagnosisService.getLegacyDiagnosticReport(5000);
-//medicalRequestService.getLegacyRequest2();
-	//observationService.getLegacyObservations(3000);
-	//setupService.migrate("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-
-	
-//setupService.setPriceGroupIdMigrate();
+patientService.getLegacyAllPatients2(5000, 5000);
+practitionerService.getLegacyPractitioner();
+visitService.getLegacyVisit(10000);
+encounterService.getLegacyEncounters(10000);
+allergyService.getLegacyAllergies(2000);
+referalService.getLegacyReferral(5000);
+dService.getLegacyDiagnosis(5000);
+serviceRequestService.getLegacyRequest(10000);
 
 	
 

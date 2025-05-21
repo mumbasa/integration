@@ -124,6 +124,7 @@ FROM public.referral_request rr left join patient p on p.id=rr.patient_id left j
             logger.info("Saved Allergy");
         }
         logger.info("Cleaning Requests");
+        setRequesterName();
 
     }
     

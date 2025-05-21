@@ -34,8 +34,7 @@ public class ServiceRequest {
 
     private String updatedAt;
     @Column(nullable = true)
-
-    private boolean isDeleted;
+    private boolean deleted;
     @Column(columnDefinition = "TEXT")
     private String display;
     @Column(columnDefinition = "TEXT")

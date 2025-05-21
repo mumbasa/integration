@@ -60,8 +60,8 @@ public class ServiceRequestService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     public void getLegacyRequest(int batchSize) {
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
+      Map<String, PatientData> mps = patientRepository.findAll().stream()
+              .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
         String sql = """
         SELECT count(*)  FROM service_request sr left join patient p on p.id =sr.patient_id 
         left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid"
@@ -104,7 +104,7 @@ ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.i
                     request.setPatientMrNumber(mps.get(patientMrNumber).getMrNumber());
                     request.setPatientId(mps.get(patientMrNumber).getUuid());
                     request.setPatientBirthDate((mps.get(patientMrNumber).getBirthDate()));
-
+ 
                 }
                 request.setCreatedAt(set.getString("created_at"));
                 request.setDisplay(set.getString("display"));

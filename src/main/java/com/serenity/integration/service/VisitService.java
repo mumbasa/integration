@@ -437,6 +437,7 @@ ORDER BY
             visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
             visit.setLocationName("Airport Primary Care");
             visit.setUpdatedAt(set.getString("modified_at"));
+            
             visits.add(visit);
 
     }

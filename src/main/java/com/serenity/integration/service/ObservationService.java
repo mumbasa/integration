@@ -237,7 +237,7 @@ public class ObservationService {
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, uuid(?), uuid(?),?,?,?,?::uuid)
+                ?, uuid(?), uuid(?),?,?,?,?::uuid,?::timestamp)
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 

@@ -65,8 +65,9 @@ public class PatientData {
   private String nationalMobileNumber;
   @SerializedName("first_name")
   private String firstName;
-  @Column(nullable = true)
-private boolean deleted;
+ 
+@Column(nullable = true)
+private boolean isDeleted;
 @Column(nullable = true)
 
 private String updatedAt;

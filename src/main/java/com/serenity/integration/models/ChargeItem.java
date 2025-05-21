@@ -18,12 +18,12 @@ import lombok.Setter;
 public class ChargeItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+   // @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private long id;
     @Column(name = "uuid")
     private String uuid;
-
+    @Column(nullable = true)
     private String appointmentId;
     private String batchNumber;
     private String category;
@@ -36,9 +36,12 @@ public class ChargeItem {
     private String medicationRequestId;
     private double patientContribution;
     private double payerContribution;
+    @Column(nullable = true)
     private String practitionerId;
+    @Column(nullable = true)
     private String practitionerName;
     private String productId;
+    @Column(nullable = true)
     private String transactionId;
 
     private String providerId;
@@ -78,6 +81,7 @@ public class ChargeItem {
     private String paidAt;
     private String policyId;
     private String payerId;
+    @Column(nullable = true)
     private String stockItemId;
     private String paymentMethod;
     private String status;

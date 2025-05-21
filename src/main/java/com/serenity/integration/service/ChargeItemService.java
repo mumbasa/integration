@@ -75,7 +75,7 @@ public class ChargeItemService {
         String sql = "select count(*) from \"ChargeItem\" ci";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
-        long totalSize = 1000;
+        long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
@@ -150,22 +150,6 @@ LEFT JOIN
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
 
-             /*    try{
-
-               Optional <PatientData> d = Optional.of(mps.get(set.getString("patient_id")));
-               if(d.isPresent()){
-                request.setPatientMrNumber(d.get().getMrNumber());
-                request.setPatientName(d.get().getFirstName()+" "+d.get().getLastName());
-                request.setPatientGender(d.get().getGender());
-                request.setPatientBirthDate(d.get().getBirthDate());
-                request.setPatientMobile(d.get().getMobile());
-                request.setPatientNationalMobile(d.get().getNationalMobileNumber());
-
-            }   
-            
-            }catch(Exception e){
-                    e.printStackTrace();
-                } */
                request.setAppointmentId(set.getString("appointment_id"));
                 request.setId(set.getLong("id"));
                 request.setUuid(set.getString("uuid"));
@@ -234,6 +218,7 @@ request.setCreatedByName(set.getString("created_by_name"));
 
 
     public long dumpFutureCallable(long offset,long limit) {
+        System.err.println("starting.............."+offset);
     List<ChargeItem> serviceRequests = new ArrayList<ChargeItem>();
     String sqlQuery = """
           SELECT
@@ -303,7 +288,7 @@ request.setCreatedByName(set.getString("created_by_name"));
              while (set.next()) {
                  ChargeItem request = new ChargeItem();
           
-                request.setAppointmentId(set.getString("appointment_id"));
+                 request.setAppointmentId(set.getString("appointment_id"));
                  request.setId(set.getLong("id"));
                  request.setUuid(set.getString("uuid"));
                  request.setCharge(set.getDouble("charge"));
@@ -355,7 +340,6 @@ request.setCreatedByName(set.getString("created_by_name"));
                  
                 
                  serviceRequests.add(request);
- 
              }
             chargeItemRepository.saveAll(serviceRequests);
             cleanItems();
@@ -450,9 +434,9 @@ public void OpdPullThread(int batchSize) {
     long rows = legJdbcTemplate.queryForObject(sql, Long.class);
     logger.info("Rows size is: {}", rows);
 
-    ExecutorService executorService = Executors.newFixedThreadPool(10);
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
     try {
-        List<Future<Integer>> futures = executorService.invokeAll(cleanTask2(batchSize, rows));
+        List<Future<Integer>> futures = executorService.invokeAll(cleanTask2(batchSize, 1000));
         for (Future<Integer> future : futures) {
             logger.info("Future result: {}", future.get());
         }

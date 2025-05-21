@@ -139,6 +139,7 @@ public class Encounter {
     private boolean serviceRequest;
     private boolean prescription;
     private String slotId;
+    private boolean isDeleted;
    
 
 

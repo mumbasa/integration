@@ -18,7 +18,7 @@ import lombok.Setter;
 @Getter
 public class Diagnosis {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+ 
     private long id;
     @Column(columnDefinition="TEXT")
 
