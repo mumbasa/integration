@@ -197,7 +197,7 @@ public class ObservationService {
                     request.setCategory("outpatient-consultation");
                     request.setRank(set.getInt("rank"));
                 }
-                request.setUpdatedAt(set.getString("created_at"));
+                request.setUpdatedAt(set.getString("modified_at"));
                 request.setIssued(set.getString("issued"));
                 request.setValue(set.getString("value"));
                 request.setBodySite(set.getString("body_site"));
