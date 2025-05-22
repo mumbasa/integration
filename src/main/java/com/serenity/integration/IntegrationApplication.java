@@ -140,8 +140,8 @@ observationService.getLegacyObservations(10000);  */
 //allergyService.migrateAllergyThread(1000);
 //referalService.migrateReferalThread(1000);
 //diagnosisService.migrateDiagReportThread(5000);
-//observationService.migrateObservationThread(10);
-medicalRequestService.saveMedicalRequestThread();
+observationService.migrateObservationThread(5000);
+//medicalRequestService.saveMedicalRequestThread();
 //dService.migrationThread(100);
 //chargeItemService.chargeThread(10000);
 //invoiceService.migrateinvoiceThread(10000);
