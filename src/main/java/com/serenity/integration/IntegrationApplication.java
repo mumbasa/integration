@@ -131,10 +131,10 @@ invoiceService.getLegacyChargeItem(10000);
 observationService.getLegacyObservations(10000);  */
 
 
-patientMigrationService.migratePatientThread(1000);
-//practitionerService.migrateDoctors();
-//visitMigration.getVisitThreads(1000);
-
+//patientMigrationService.migratePatientThread(1000);
+practitionerService.migrateDoctors();
+visitMigration.getVisitThreads(1000);
+//encounterService.////
 
 
 LocalDateTime ends = LocalDateTime.now();
