@@ -774,7 +774,7 @@ public void getLegacyRequest2() {
     // Step 1: Get the total number of rows
     String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id";
     int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
-    int batchSize = 10;
+    int batchSize = rows;
     long batches = ((rows + batchSize - 1) / batchSize); // Ceiling division
     
     for (int i = 0; i < batches; i++) {
