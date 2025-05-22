@@ -657,7 +657,7 @@ public class MedicalRequestService {
                 ps.setDouble(18, request.getDose());
                 ps.setString(19,request.getCourseOfTherapy());
                 ps.setString(20,request.getDosageForm());
-                ps.setString(21,request.getCreatedAt());
+                ps.setString(21,request.getAuthoredOn());
                 ps.setString(22,request.getDate());
 
             }

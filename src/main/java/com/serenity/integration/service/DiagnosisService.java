@@ -423,8 +423,10 @@ public class DiagnosisService {
                         INSERT INTO public.diagnoses
                 (created_at,  id, "uuid", "condition", "role",
                 "system", status, note, practitioner_name, patient_id,
-                practitioner_id, visit_id ,updated_at,rank,code)
-                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS') ,?, uuid(?), ?, ?, ?, ?, ?, ?, uuid(?), uuid(?), uuid(?),?::timestamp,?,?)
+                practitioner_id, visit_id ,updated_at,is_deleted,rank,code,encounter_id)
+                VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS') ,?, uuid(?), ?, ?, 
+                ?, ?, ?, ?, uuid(?), 
+                uuid(?), uuid(?),?::timestamp,?,?,?,?::uuid)
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -432,7 +434,7 @@ public class DiagnosisService {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 Diagnosis diagnosis = diagnoses.get(i);
                 ps.setString(1, diagnosis.getCreatedAt().replaceAll("T|Z", " "));
-                ps.setLong(2, diagnosis.getId()+300);
+                ps.setLong(2, diagnosis.getId());
                 ps.setString(3, diagnosis.getUuid());
                 ps.setString(4, diagnosis.getCondition());
                 ps.setString(5, diagnosis.getRole());
@@ -441,12 +443,14 @@ public class DiagnosisService {
                 ps.setString(8, diagnosis.getNote());
                 ps.setString(9, diagnosis.getPractitionerName());
                 ps.setString(10, diagnosis.getPatientId());
+
                 ps.setString(11, diagnosis.getPractitionerId());
                 ps.setString(12, diagnosis.getVisitId());
                 ps.setString(13, diagnosis.getUpdatedAt());
                 ps.setBoolean(14, diagnosis.isDeleted());
                 ps.setInt(15, diagnosis.getRank());
                 ps.setString(16, diagnosis.getCode());
+                ps.setString(17, diagnosis.getEncounterId());
             }
             @Override
             public int getBatchSize() {
@@ -465,7 +469,7 @@ set practitionerid =e.assigned_to_id ,practitionername=assigned_to_name ,visitid
 from encounter e
 where e."uuid" =encounterid and visitid is null
                 """;
-              //  vectorJdbcTemplate.update(clean);
+               vectorJdbcTemplate.update(clean);
         logger.info("kooooooooooooooading");
 
         long dataSize = diagnosisRepository.count();

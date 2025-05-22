@@ -532,7 +532,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             cancellation_requested_at, cancellation_requested_by_name, cancellation_requested_by_id, 
             cancellation_approved_at, cancellation_approved_name, cancellation_approved_by_id, 
             canceled_at, canceled_by_name, canceled_by_id,cancellation_reason,cancellation_request_uuid,cashier_name,
-            patient_birth_date,patient_gender,patient_mobile,patient_mr_number,patient_name,transaction_id,product_id
+            patient_birth_date,patient_gender,patient_mobile,patient_mr_number,patient_name,transaction_id
         ) VALUES (
             ?::timestamp, ?, ?, ?, ?, 
             ?, uuid(?), ?, ?, ?, 
@@ -543,7 +543,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ?, ?, ?, ?, now(), ?, 
             ?::timestamp, ?, ?::uuid, ?::timestamp, ?, ?::uuid, 
             ?::timestamp, ?, ?::uuid,?,?::uuid,?,
-             ?::date, ?, ?, ?, ?,?,?
+             ?::date, ?, ?, ?, ?,?
         )
     """;
 
