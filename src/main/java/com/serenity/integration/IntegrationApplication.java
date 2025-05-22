@@ -116,8 +116,8 @@ visitService.getLegacyVisit(10000);
 encounterService.getLegacyEncounters(10000);
 allergyService.getLegacyAllergies(2000);
 referalService.getLegacyReferral(5000); */
-serviceRequestService.getLegacyRequest(10000);
-dService.getLegacyDiagnosis(5000);
+//serviceRequestService.getLegacyRequest(10000);
+dService.getLegacyDiagnosis(10000);
 
 /* 
 diagnosisService.getLegacyDiagnosticReport(5000);
