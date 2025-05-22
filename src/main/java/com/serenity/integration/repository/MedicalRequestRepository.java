@@ -14,7 +14,7 @@ public interface MedicalRequestRepository extends JpaRepository<MedicalRequest,L
     @Query(value = "select * from medicalrequest where externalsystem='his' and practitionerid is not null and visitid is not null and patientid  is not null and encounterid is not  null order by id  OFFSET ?1 LIMIT 1000",nativeQuery = true)
     List<MedicalRequest> findOffset(int offset);
 
-    @Query(value = "select * from medicalrequest  where  practitionerid is not null and patientid is not null ORDER BY id OFFSET ?1 LIMIT 5000",nativeQuery = true)
+    @Query(value = "select * from medicalrequest  where  patientid is not null and encounterid !='a725b8e7-4549-46ac-8e28-71e8f022bfdf' ORDER BY id OFFSET ?1 LIMIT 5000",nativeQuery = true)
     List<MedicalRequest> findByExternalSystem(int offset);
     
     @Query(value = "select count(*) from medicalrequest where externalsystem=?1  and practitionerid is not null and visitid is not null and patientid  is not null and encounterid is not  null",nativeQuery = true)
