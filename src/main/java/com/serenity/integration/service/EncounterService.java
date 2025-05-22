@@ -236,16 +236,16 @@ public class EncounterService {
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "'',?, ?,uuid(?),?,uuid(?), ?," +
-                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now(),uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp)";
+                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now(),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'))";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 try {
-                    ps.setString(1, notes.get(i).getStartedAt().replaceAll("T|Z", " ").strip());
+                    ps.setString(1, notes.get(i).getStartedAt());
                 } catch (Exception e) {
-                    ps.setString(1, notes.get(i).getCreatedAt() + " 14:55:37");
+                    ps.setString(1, notes.get(i).getCreatedAt());
 
                 }
                 ps.setLong(2, notes.get(i).getId()+10);
@@ -265,7 +265,6 @@ public class EncounterService {
                 ps.setString(15, notes.get(i).getEncounterType());
                 ps.setString(16, notes.get(i).getAssignedToName());
                 ps.setString(17, notes.get(i).getAssignedToId());
-
                 ps.setString(18, "Nyaho Medical Centre");
                 ps.setString(19, notes.get(i).getVisitId());
                 ps.setBoolean(20, false);
@@ -512,7 +511,8 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setEncounterType(set.getString("type"));
             encounter.setExternalId(set.getString("uuid"));
             encounter.setCreatedAt(set.getString("created_at"));
-            encounter.setStartedAt(set.getString("created_at"));
+            encounter.setStartedAt(set.getString("start_time"));
+            encounter.setEndedAt(set.getString("end_time"));
             encounter.setUpdatedAt(set.getString("modified_at"));
             encounter.setEncounterClass(set.getString("encounter_class"));
             encounter.setPriority(set.getString("priority"));
@@ -529,7 +529,6 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setSlotId(set.getString("slot_id"));
             encounter.setServiceTypeId(set.getString("service_type_id"));
             encounter.setServiceTypeName(set.getString("service_type_name"));
-            encounter.setStartedAt(set.getString("created_at"));
             encounter.setDisplay(set.getString("uuid"));
             encounter.setLocationId(set.getString("primary_location_id")==null?"23f59485-8518-4f4e-9146-d061dfe58175":set.getString("primary_location_id"));
            try{

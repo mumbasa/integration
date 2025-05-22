@@ -133,8 +133,12 @@ observationService.getLegacyObservations(10000);  */
 
 //patientMigrationService.migratePatientThread(1000);
 //practitionerService.migrateDoctors();
-visitMigration.getVisitThreads(1000);
+//visitMigration.getVisitThreads(1000);
+
+encounterService.getLegacyEncounters(10000);
 encounterService.encounterLegacythread();
+allergyService.migrateAllergyThread(1000);
+referalService.migrateReferalThread(1000);
 
 
 LocalDateTime ends = LocalDateTime.now();
