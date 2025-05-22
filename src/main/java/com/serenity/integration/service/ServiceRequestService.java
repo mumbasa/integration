@@ -274,7 +274,18 @@ where p."uuid" = service_request.patientid
 
       public void migrateThread(int batchSize) {
   
-    
+    String sqlDupes ="""
+            WITH ranked AS (
+  SELECT id, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
+  FROM encounternote
+)
+DELETE FROM encounternote e 
+WHERE id IN (
+  SELECT id FROM ranked WHERE rn > 1
+);
+
+            """;
+            vectorJdbcTemplate.update(sqlDupes);
     long rows = serviceRequestRepository.count();
     logger.info("Rows size is: {}", rows);
 
