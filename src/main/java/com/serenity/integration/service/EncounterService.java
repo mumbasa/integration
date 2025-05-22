@@ -270,9 +270,9 @@ public class EncounterService {
                 ps.setString(22, notes.get(i).getSlotId());
                 ps.setString(23,notes.get(i).getServiceTypeId());
                 ps.setString(24, notes.get(i).getServiceTypeName());
-                ps.setString(25, notes.get(i).getCreatedAt());
+                ps.setString(25, notes.get(i).getStartedAt());
                 ps.setString(26,notes.get(i).getLocationId());
-                ps.setString(27,notes.get(i).getStartedAt());
+                ps.setString(27,notes.get(i).getLocationName());
                 ps.setString(28,notes.get(i).getUpdatedAt());
                 ps.setString(29,notes.get(i).getEndedAt());
 
