@@ -564,6 +564,18 @@ public class MedicalRequestService {
 
     
     public void saveMedicalRequestThread() {
+        String removeDupessql ="""
+        WITH ranked AS (
+  SELECT id, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
+  FROM medicalrequest
+)
+DELETE FROM medicalrequest
+WHERE id IN (
+  SELECT id FROM ranked WHERE rn > 1
+);
+                
+                """;
+                vectorJdbcTemplate.update(removeDupessql);
 
         long count = medicalRequestRepository.findByCount();
 
