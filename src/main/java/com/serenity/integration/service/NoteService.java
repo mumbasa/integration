@@ -807,7 +807,6 @@ FROM encounter e left join patient p on e.patient_id =p.id
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("display"));
             encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
-           // encounter.setVisitId(set.getString("visit_id"));
             encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
             encounter.setServiceProviderName("Nyaho Medical Centre");
             encounters.add(encounter);
@@ -824,13 +823,8 @@ FROM encounter e left join patient p on e.patient_id =p.id
 
 
     public void getLegacyCarePlan(int batchSize) {
-/* 
-        Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
- */
 
+     
                 String sql = "SELECT count(*) from care_plan";
                 long rows = legJdbcTemplate.queryForObject(sql, Long.class);
         
@@ -851,8 +845,7 @@ FROM care_plan c left join encounter e on e.id = c.encounter_id  left join patie
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
 
-           // PatientData patient = patientDataMap.get(set.getString("mr_number"));
-           // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
+        
          
             EncounterNote encounter = new EncounterNote();
             encounter.setUuid(set.getString("id"));
@@ -866,7 +859,6 @@ FROM care_plan c left join encounter e on e.id = c.encounter_id  left join patie
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("fullname"));
             encounter.setPatientMobile(set.getString("mobile"));
-            //encounter.setPatientMrNumber(patient.getMrNumber());
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("description"));
             encounter.setVisitId(set.getString("visit_id"));
