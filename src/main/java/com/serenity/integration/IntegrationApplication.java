@@ -144,7 +144,7 @@ observationService.getLegacyObservations(10000);  */
 //noteService.noteThread(4000);
 //medicalRequestService.saveMedicalRequestThread();
 //dService.migrationThread(100);
-chargeItemService.chargeThread(100);
+chargeItemService.chargeThread(5000);
 //invoiceService.migrateinvoiceThread(10000);
 //serviceRequestService.migrateThread(2000);
 LocalDateTime ends = LocalDateTime.now();
