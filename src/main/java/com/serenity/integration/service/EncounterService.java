@@ -229,16 +229,16 @@ public class EncounterService {
     public void saveEncounters(List<Encounter> notes) {
         String sql = "INSERT INTO public.encounters " + //
                 "(created_at,  id,  uuid, encounter_class, status, " +
-                "display,  external_id, external_system,  service_provider_id, patient_mr_number," +
+                "external_id, external_system,  service_provider_id, patient_mr_number," +
                 "patient_id, patient_full_name, patient_mobile, patient_birth_date, patient_gender," +
                 "encounter_type, practitioner_name, practitioner_id, service_provider_name,  visit_id," +
-                "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at,ended_at)" + //
+                "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at,ended_at,display)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "'',?, ?,uuid(?),?,"+
                 "uuid(?), ?,?,to_date(?, 'YYYY-MM-DD'),?," +
                 "?,?,uuid(?),?, uuid(?),"+
-                "?,?,uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp,?::timestamp)";
+                "?,?,uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp,?::timestamp,?)";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -250,7 +250,7 @@ public class EncounterService {
                 ps.setString(3, notes.get(i).getUuid());
                 ps.setString(4, notes.get(i).getEncounterClass());
                 ps.setString(5, "finished");
-                ps.setString(6, notes.get(i).getExternalId() + "-" + notes.get(i).getUuid());
+                ps.setString(6, notes.get(i).getExternalId());
                 ps.setString(7, notes.get(i).getExternalSystem());
                 ps.setString(8, "161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 ps.setString(9, notes.get(i).getPatientMrNumber());
@@ -275,6 +275,8 @@ public class EncounterService {
                 ps.setString(27,notes.get(i).getLocationName());
                 ps.setString(28,notes.get(i).getUpdatedAt());
                 ps.setString(29,notes.get(i).getEndedAt());
+                ps.setString(30,notes.get(i).getDisplay());
+
 
             }
 
@@ -519,7 +521,7 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setSlotId(set.getString("slot_id"));
             encounter.setServiceTypeId(set.getString("service_type_id"));
             encounter.setServiceTypeName(set.getString("service_type_name"));
-            encounter.setDisplay(set.getString("uuid"));
+            encounter.setDisplay(set.getString("title"));
             encounter.setLocationId(set.getString("primary_location_id")==null?"23f59485-8518-4f4e-9146-d061dfe58175":set.getString("primary_location_id"));
            try{
             encounter.setLocationName(locationMap.get(encounter.getLocationId()));
