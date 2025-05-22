@@ -169,7 +169,7 @@ WHERE id IN (
      healthcare_service_id, healthcare_service_name, charge_item_id, status,
      status_reason, group_identifier, intent, practitioner_name, patient_mr_number,
      patient_mobile, patient_birth_date, patient_gender, patient_full_name,
-     encounter_class, notes,is_paid,accession_number,do_not_perform,updated_at,charge)
+     encounter_class, notes,is_paid,accession_number,do_not_perform,updated_at)
 VALUES (
     ?::timestamp, ?::timestamp, ?::timestamp, ?, ?::timestamp,  
     ?, ARRAY[?], uuid(?), uuid(?), uuid(?),                    
@@ -178,7 +178,7 @@ VALUES (
     uuid(?), ?, uuid(?), ?,                                
     ?, ?, ?, ?, ?,  
     ?,CAST(? AS DATE),?,? ,                                           
-    ? ,? ,true ,?,?,?::timestamp,?                                               
+    ? ,? ,true ,?,?,?::timestamp                                         
 );
 
                                 """;
@@ -226,7 +226,6 @@ ps.setString(34, request.getNote());
 ps.setString(35,request.getAccessionNumber());
 ps.setBoolean(36, false);
 ps.setString(37, request.getUpdatedAt());
-ps.setDouble(38, request.getCharge());
    
 
             }
