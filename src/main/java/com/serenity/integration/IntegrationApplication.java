@@ -141,12 +141,12 @@ observationService.getLegacyObservations(10000);  */
 //referalService.migrateReferalThread(1000);
 //diagnosisService.migrateDiagReportThread(5000);
 //observationService.migrateObservationThread(5000);
-//noteService.noteThread(10000);
+noteService.noteThread(4000);
 //medicalRequestService.saveMedicalRequestThread();
 //dService.migrationThread(100);
 //chargeItemService.chargeThread(10000);
 //invoiceService.migrateinvoiceThread(10000);
-serviceRequestService.migrateThread(2000);
+//serviceRequestService.migrateThread(2000);
 LocalDateTime ends = LocalDateTime.now();
 
 
