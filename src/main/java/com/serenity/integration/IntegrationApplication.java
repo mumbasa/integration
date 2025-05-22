@@ -136,9 +136,9 @@ observationService.getLegacyObservations(10000);  */
 //visitMigration.getVisitThreads(1000);
 
 //encounterService.getLegacyEncounters(10000);
-//encounterService.encounterLegacythread();
-//allergyService.migrateAllergyThread(1000);
-//referalService.migrateReferalThread(1000);
+encounterService.encounterLegacythread();
+allergyService.migrateAllergyThread(1000);
+referalService.migrateReferalThread(1000);
 
 diagnosisService.migrateDiagReportThread(5000);
 invoiceService.migrateinvoiceThread(10000);
