@@ -137,8 +137,8 @@ observationService.getLegacyObservations(10000);  */
 
 //encounterService.getLegacyEncounters(10000);
 encounterService.encounterLegacythread();
-allergyService.migrateAllergyThread(1000);
-referalService.migrateReferalThread(1000);
+//allergyService.migrateAllergyThread(1000);
+//referalService.migrateReferalThread(1000);
 
 
 LocalDateTime ends = LocalDateTime.now();
