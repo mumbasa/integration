@@ -134,7 +134,7 @@ observationService.getLegacyObservations(10000);  */
 //patientMigrationService.migratePatientThread(1000);
 practitionerService.migrateDoctors();
 visitMigration.getVisitThreads(1000);
-//encounterService.////
+encounterService.encounterLegacythread();
 
 
 LocalDateTime ends = LocalDateTime.now();

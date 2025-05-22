@@ -232,11 +232,11 @@ public class EncounterService {
                 "display,  external_id, external_system,  service_provider_id, patient_mr_number," +
                 "patient_id, patient_full_name, patient_mobile, patient_birth_date, patient_gender," +
                 "encounter_type, practitioner_name, practitioner_id, service_provider_name,  visit_id," +
-                "has_prescriptions,has_service_requests,updated_at,slot_id,service_type_id,service_type_name,started_at,location_id,location_name)" + //
+                "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "'',?, ?,uuid(?),?,uuid(?), ?," +
-                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now(),uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'))";
+                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now(),uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp)";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -275,7 +275,9 @@ public class EncounterService {
                 ps.setString(24, notes.get(i).getServiceTypeName());
                 ps.setString(25, notes.get(i).getCreatedAt());
                 ps.setString(26,notes.get(i).getLocationId());
-                ps.setString(27,notes.get(i).getLocationName());
+                ps.setString(27,notes.get(i).getStartedAt());
+                ps.setString(28,notes.get(i).getUpdatedAt());
+
 
             }
 
