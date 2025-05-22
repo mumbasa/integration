@@ -122,7 +122,7 @@ dService.getLegacyDiagnosis(10000);
 diagnosisService.getLegacyDiagnosticReport(10000);
 medicalRequestService.getLegacyRequest2();
 noteService.getLegacyVisitNotesEncounters(10000);
-noteService.getLegacyCarePlan(10);
+noteService.getLegacyCarePlan(10000);
 noteService.getLegacyEncounters(5000); 
 
 /* 	
