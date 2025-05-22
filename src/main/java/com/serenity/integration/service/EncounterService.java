@@ -235,8 +235,10 @@ public class EncounterService {
                 "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
-                "'',?, ?,uuid(?),?,uuid(?), ?," +
-                "?,to_date(?, 'YYYY-MM-DD'),?,?,?,uuid(?),?, uuid(?),?,?,now(),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'))";
+                "'',?, ?,uuid(?),?,"+
+                "uuid(?), ?,?,to_date(?, 'YYYY-MM-DD'),?," +
+                "?,?,uuid(?),?, uuid(?),"+
+                "?,?,uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp)";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
