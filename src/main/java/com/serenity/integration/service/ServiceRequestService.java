@@ -225,7 +225,7 @@ ps.setString(33, "ambulatory"); // encounter_class
 ps.setString(34, request.getNote());
 ps.setString(35,request.getAccessionNumber());
 ps.setBoolean(36, false);
-ps.setString(37, request.getUpdatedAt());
+ps.setString(37, request.getModifiedAt());
    
 
             }
