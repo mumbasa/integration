@@ -577,11 +577,11 @@ WHERE id IN (
                 """;
                 vectorJdbcTemplate.update(removeDupessql);
 
-        long count = medicalRequestRepository.findByCount();
+        long count = medicalRequestRepository.count();
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(3000, count));
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(4000, count));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -606,10 +606,9 @@ WHERE id IN (
 
             callables.add(() -> {
                 int startIndex = batchNumber * batchSize;
-                int endIndex = Math.min(startIndex + batchSize, totalSize);
                 logger.debug("Processing batch {}/{}, indices [{}]",
                         batchNumber + 1, batches, startIndex);
-                List<MedicalRequest> notes = medicalRequestRepository.findByExternalSystem(startIndex);
+                List<MedicalRequest> notes = medicalRequestRepository.findByExternalSystem(startIndex,batchSize);
 
                 try {
                     saveMedicalRequest(notes);
@@ -681,21 +680,21 @@ WHERE id IN (
             }
 
         });
-
+System.out.println("Saved Medications");
     }
 
 
     public void saveMedicalRequestNoThread() {
         String sqls ="select count(*) from medicalrequest where  practitionerid is not null and visitid is not null and patientid  is not null and encounterid is not  null";
-        int totalSize = vectorJdbcTemplate.queryForObject(sqls, Integer.class);
+        long totalSize = medicalRequestRepository.count();
         logger.info("Total dump size "+totalSize);
-        int batchSize = 1000;
-        int batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+        int batchSize = 20000;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
 
         for (int i = 0; i < batches; i++) {
             logger.info("Starting medicalResult dump");
             int startIndex = i * batchSize;
-            List<MedicalRequest> requests = medicalRequestRepository.findByExternalSystem(startIndex);
+            List<MedicalRequest> requests = medicalRequestRepository.findByExternalSystem(startIndex,batchSize);
 
         String sql = """
                         INSERT INTO public.medication_requests
