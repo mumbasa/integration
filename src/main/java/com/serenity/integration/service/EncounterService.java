@@ -235,7 +235,7 @@ public class EncounterService {
                 "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at,ended_at,display)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
-                "'',?, ?,uuid(?),?,"+
+                "?, ?,uuid(?),?,"+
                 "uuid(?), ?,?,to_date(?, 'YYYY-MM-DD'),?," +
                 "?,?,uuid(?),?, uuid(?),"+
                 "?,?,uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp,?::timestamp,?)";
@@ -275,7 +275,7 @@ public class EncounterService {
                 ps.setString(27,notes.get(i).getLocationName());
                 ps.setString(28,notes.get(i).getUpdatedAt());
                 ps.setString(29,notes.get(i).getEndedAt());
-                ps.setString(30,notes.get(i).getDisplay());
+                ps.setString(30,notes.get(i).getDisplay()==null?"":notes.get(i).getDisplay());
 
 
             }
