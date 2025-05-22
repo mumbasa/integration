@@ -115,20 +115,20 @@ practitionerService.getLegacyPractitioner();
 visitService.getLegacyVisit(10000);
 encounterService.getLegacyEncounters(10000);
 allergyService.getLegacyAllergies(2000);
-referalService.getLegacyReferral(5000);
-dService.getLegacyDiagnosis(5000);
-serviceRequestService.getLegacyRequest(10000); */
-
+referalService.getLegacyReferral(5000); */
+//dService.getLegacyDiagnosis(5000);
+//serviceRequestService.getLegacyRequest(10000);
+/* 
 diagnosisService.getLegacyDiagnosticReport(5000);
 medicalRequestService.getLegacyRequest2();
 noteService.getLegacyVisitNotesEncounters(5000);
 noteService.getLegacyCarePlan(3000);
-noteService.getLegacyEncounters(5000);
+noteService.getLegacyEncounters(5000); */
 
 	
-/* chargeItemService.getLegacyChargeItem(5000);
+chargeItemService.getLegacyChargeItem(5000);
 invoiceService.getLegacyChargeItem(10000);
-observationService.getLegacyObservations(10000); */
+observationService.getLegacyObservations(10000); 
 
 
 
