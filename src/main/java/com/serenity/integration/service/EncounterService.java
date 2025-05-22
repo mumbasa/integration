@@ -486,10 +486,9 @@ locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
     Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-     
-                String sqlRow = "SELECT count(*) from encounter";
+                     String sqlRow = "SELECT count(*) from encounter";
                 long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
-        
+       
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
         
