@@ -18,5 +18,8 @@ public interface PatientRepository extends JpaRepository<PatientData,Long>{
     @Query(value = "select * from patient_information pi2 order by id ",nativeQuery = true)
     public List<PatientData> findySystem ();
 
+    @Query(value = "select * from patient_information pi2 order by id offset ?1 limit ?2 ",nativeQuery = true)
+    public List<PatientData> findySystem (int offset,int limit);
+
     public Optional<PatientData> findByExternalId(String hisNumber);
 }

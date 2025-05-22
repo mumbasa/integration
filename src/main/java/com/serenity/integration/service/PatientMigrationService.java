@@ -4,6 +4,7 @@ import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -42,6 +47,8 @@ public class PatientMigrationService {
     @Autowired
     PatientService patientService;
 
+        Logger logger = LoggerFactory.getLogger(getClass());
+
     public void getPatients() {
         String sql = "SELECT external_id from public.patients";
         List<String> set = serenityJdbcTemplate.queryForList(sql, String.class);
@@ -61,7 +68,7 @@ public class PatientMigrationService {
         List<PatientData> patientData = patientRepository.findySystem().stream().filter(e -> !set.contains(e.getExternalId())).toList();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(sumitTask(patientData,  1000));
+            List<Future<Integer>> futures = executorService.invokeAll(sumitTask(patientData,  10000));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -74,6 +81,53 @@ public class PatientMigrationService {
         System.err.println("patiend count is " + patientData.size() + set.size());
 
     }
+
+
+   public void migratePatientThread(int batchSize) {
+
+        long rows = patientRepository.count();
+        logger.info("Rows size is: {}", rows);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try {
+            List<Future<Integer>> futures = executorService.invokeAll(submitTask2(batchSize, rows));
+            for (Future<Integer> future : futures) {
+                logger.info("Future result: {}", future.get());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error processing batches", e);
+        } finally {
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+            }
+        }
+    }
+
+    public List<Callable<Integer>> submitTask2(int batchSize, long rows) {
+        List<Callable<Integer>> callables = new ArrayList<>();
+        long batches = (rows + batchSize - 1) / batchSize; // Safe ceiling division
+
+        logger.info("Total batches: {}", batches);
+        for (int i = 0; i < batches; i++) {
+            final int batchNumber = i;
+
+            callables.add(() -> {
+                int startIndex = batchNumber * batchSize;
+                logger.info("Processing batch {}/{} indices [{}]", batchNumber + 1, batches, startIndex);
+                task2(patientRepository.findySystem(startIndex, batchSize));
+                return 1;
+            });
+        }
+
+        return callables;
+    }
+
+
 
     public Set<Callable<Integer>> sumitTask(List<PatientData> data, int size) {
         Set<Callable<Integer>> callables = new HashSet<Callable<Integer>>();
@@ -316,9 +370,9 @@ VALUES (
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 PatientData k = data.get(i);
                 try {
-                    ps.setString(1, k.getCreatedAt().split("T")[0] + " 00:00:00.000 +0000");
+                    ps.setString(1, k.getCreatedAt());
                 } catch (Exception e) {
-                    ps.setString(1, LocalDate.now().toString() + " 00:00:00.000 +0000");
+                    ps.setString(1, LocalDateTime.now().toString());
 
                 }
                 ps.setString(2, k.getUuid());
@@ -342,8 +396,8 @@ VALUES (
                 ps.setString(20, k.getPassportNumber());
                 ps.setString(21, k.getExternalId());
                 ps.setString(22, k.getExternalSystem());
-                ps.setBoolean(21, k.isDeleted());
-                ps.setString(22, k.getUpdatedAt());
+                ps.setBoolean(23, k.isDeleted());
+                ps.setString(24, k.getUpdatedAt());
 
             }
 

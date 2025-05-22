@@ -119,16 +119,21 @@ referalService.getLegacyReferral(5000);
 //serviceRequestService.getLegacyRequest(10000);
 dService.getLegacyDiagnosis(10000);
 */
-diagnosisService.getLegacyDiagnosticReport(10000);
+/* diagnosisService.getLegacyDiagnosticReport(10000);
 medicalRequestService.getLegacyRequest2();
 noteService.getLegacyVisitNotesEncounters(10000);
 noteService.getLegacyCarePlan(10000);
-noteService.getLegacyEncounters(5000); 
+noteService.getLegacyEncounters(5000) */; 
 
 /* 	
 chargeItemService.getLegacyChargeItem(5000);
 invoiceService.getLegacyChargeItem(10000);
 observationService.getLegacyObservations(10000);  */
+
+
+patientMigrationService.migratePatientThread(1000);
+//practitionerService.migrateDoctors();
+//visitMigration.getVisitThreads(1000);
 
 
 
