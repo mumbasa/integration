@@ -484,8 +484,6 @@ locationMap.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care")
 locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
 locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
-    Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-               .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
                      String sqlRow = "SELECT count(*) from encounter";
                 long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
        
@@ -504,7 +502,7 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
         while (set.next()) {
             //System.err.println(set.getString("mr_number")+"-----------------");
-            PatientData patient = patientDataMap.get(set.getString("patient_id"));
+         ;
             Encounter encounter = new Encounter();
             encounter.setUuid(set.getString("uuid"));
             encounter.setEncounterType(set.getString("type"));
@@ -516,12 +514,7 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setEncounterClass(set.getString("encounter_class"));
             encounter.setPriority(set.getString("priority"));
             encounter.setPatientId(set.getString("patient_id"));
-            encounter.setPatientBirthDate(set.getString("birth_date")==null?"":set.getString("birth_date"));
-            encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
-            encounter.setPatientMobile(set.getString("mobile"));
-            encounter.setPatientGender(set.getString("gender")==null?"":set.getString("gender"));
-           encounter.setPatientMrNumber(patient.getMrNumber());
-            encounter.setExternalSystem("opd");
+             encounter.setExternalSystem("opd");
             encounter.setDeleted(set.getBoolean("is_deleted"));
             encounter.setEncounterType("outpatient-consultation");
             encounter.setPrescription(false);
@@ -550,6 +543,7 @@ encounterRepository.saveAll(encounters);
                 }
 
        cleanEncounter();
+       populateWithVisits();
     }
 
     public Set<Callable<Integer>> submitNote(List<Encounter> notes, int batchSize) {
@@ -601,6 +595,14 @@ encounterRepository.saveAll(encounters);
                 where e.uuid = m.patient_id and m.external_system ='opd'
                 """;
                 vectorJdbcTemplate.update(sql);
+        sql="""
+                update encounter 
+set patient_birth_date =p.birthdate ,patient_full_name=concat(firstname,' ',p.lastname) ,patient_gender =p.gender ,patient_mobile =p.mobile ,patient_mr_number = p.mrnumber 
+from patient_information p
+where p."uuid" = encounter.patient_id 
+                """;
+                vectorJdbcTemplate.update(sql);
+
 
     }
 
@@ -636,6 +638,14 @@ from visits v  where v."uuid" =visit_id::uuid
 
                     """;
                     vectorJdbcTemplate.update(sql);
+
+                    sql="""
+                        update encounter 
+        set patient_birth_date =p.birthdate ,patient_full_name=concat(firstname,' ',p.lastname) ,patient_gender =p.gender ,patient_mobile =p.mobile ,patient_mr_number = p.mrnumber 
+        from patient_information p
+        where p."uuid" = encounter.patient_id and patient_mr_number is null
+                        """;
+                        vectorJdbcTemplate.update(sql);
     }
 
 }
