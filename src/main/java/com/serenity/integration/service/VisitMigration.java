@@ -220,7 +220,7 @@ return 1;
                 ps.setString(20, visits.get(i).getAssignedToName());
                 ps.setString(21, visits.get(i).getPractitionerId());
                 ps.setString(22, visits.get(i).getPatientMrNumber() + "-" + visits.get(i).getCreatedAt());
-                ps.setString(24, visits.get(i).getUpdatedAt());
+                ps.setString(23, visits.get(i).getUpdatedAt());
 
 
             }

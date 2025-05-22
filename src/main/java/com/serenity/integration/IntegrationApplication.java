@@ -132,7 +132,7 @@ observationService.getLegacyObservations(10000);  */
 
 
 //patientMigrationService.migratePatientThread(1000);
-practitionerService.migrateDoctors();
+//practitionerService.migrateDoctors();
 visitMigration.getVisitThreads(1000);
 encounterService.encounterLegacythread();
 
