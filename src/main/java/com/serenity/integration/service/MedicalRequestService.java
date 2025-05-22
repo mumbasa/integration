@@ -765,8 +765,7 @@ where encounterid= e.uuid and visit_id is not null
   
 public void getLegacyRequest2() {
     logger.info("Starting importing Medical Requests");
-    Map<String, PatientData> mps = patientRepository.findAll().stream()
-    .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
+  
 
     Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
     .collect(Collectors.toMap(e -> e.getSerenityUUid(), e->e ));
@@ -774,15 +773,15 @@ public void getLegacyRequest2() {
     // Step 1: Get the total number of rows
     String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id";
     int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
-    int batchSize = rows;
+    int batchSize = 10000;
     long batches = ((rows + batchSize - 1) / batchSize); // Ceiling division
     
     for (int i = 0; i < batches; i++) {
         int startIndex = i * batchSize;
 
-movetoHub(startIndex, batchSize,mps,doctorMap);
+movetoHub(startIndex, batchSize,doctorMap);
     }
-    cleanLegacyRequest();
+//    cleanLegacyRequest();
             // Step 6: Clean up resources
 }
     public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc) {
@@ -799,7 +798,7 @@ movetoHub(startIndex, batchSize,mps,doctorMap);
                         batchNumber + 1, batches, startIndex);
     
                 try {
-                    movetoHub(startIndex, batchSize,mps,doc);
+                    movetoHub(startIndex, batchSize,doc);
                     // Return the number of rows processed or a status code
                     return batchSize;
                 } catch (Exception e) {
@@ -813,7 +812,7 @@ movetoHub(startIndex, batchSize,mps,doctorMap);
         return callables;
     }
 
-    public int movetoHub(int offset,int limit,Map<String, PatientData> mps,Map<String,Doctors> docs){
+    public int movetoHub(int offset,int limit,Map<String,Doctors> docs){
         List<MedicalRequest> medicalRequests = new ArrayList<>();
         String sql ="""
         
@@ -823,15 +822,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,offset,limit);
         while (set.next()) {
             MedicalRequest request = new MedicalRequest();
-
-            try{
-            PatientData patient = mps.get(set.getString("patient_id"));
-            request.setPatientId(patient.getUuid());
-            request.setMrNumber(patient.getMrNumber());
-            }catch(Exception e){
-
-            }
-
+          request.setPatientId(set.getString("patient_id"));
             request.setCode(set.getString("code"));
             request.setCategory(set.getString("category"));
             request.setDose(set.getDouble("quantity"));
@@ -849,7 +840,7 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setIntendedDispenser(set.getString("intended_dispenser"));
             request.setCourseOfTherapy(set.getString("course_of_therapy_type"));
             request.setStatus(set.getString("status"));
-                request.setPractitionerId(set.getString("requester_practitioner_role_id"));
+            request.setPractitionerId(set.getString("requester_practitioner_role_id"));
             try{
             request.setPractitionerName(docs.get(request.getPractitionerId()).getFullName());
             }catch(Exception e){
@@ -860,11 +851,13 @@ FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
             request.setPriority(set.getString("priority"));
             request.setStatus(set.getString("status"));
             request.setUpdatedAt(set.getString("modified_at"));
+            request.setDeleted(set.getBoolean("is_deleted"));
             
             medicalRequests.add(request);
             
         }
         medicalRequestRepository.saveAll(medicalRequests);
+        cleanLegacyRequest();
         return 1;
 
     }
@@ -887,6 +880,15 @@ vectorJdbcTemplate.update(sql);
 sql ="""
     update medicalrequest set category = 'outpatient' where category  is null; 
 
+        """;
+vectorJdbcTemplate.update(sql);
+
+
+sql ="""
+update medicalrequest 
+set patientname=concat(p.firstname,' ',p.lastname,' ',p.othernames) ,mrnumber=p.mrnumber
+from patient_information p
+where p."uuid" =patientid and medicalrequest.mrnumber is null
         """;
 vectorJdbcTemplate.update(sql);
 

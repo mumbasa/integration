@@ -676,10 +676,7 @@ and encounter.visit_id is null
 
     public void getLegacyEncounters(int batchSize) {
 
-        // Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-        //         .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-        // Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-        //         .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
+  
   String sql = "SELECT count(*) from encounter";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
 
@@ -710,7 +707,7 @@ FROM encounter e left join patient p on e.patient_id =p.id
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
             encounter.setPatientMobile(set.getString("mobile"));
-            encounter.setUpdatedAt("modified_at");
+            encounter.setUpdatedAt(set.getString("modified_at"));
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("chief_complaint"));
             encounter.setLocationId(set.getString("primary_location_id"));
@@ -732,7 +729,7 @@ FROM encounter e left join patient p on e.patient_id =p.id
                 encounter.setPatientBirthDate(set.getString("birth_date"));
                 encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
                 encounter.setPatientMobile(set.getString("mobile"));
-               // encounter.setPatientMrNumber(patient.getMrNumber());
+                encounter.setUpdatedAt(set.getString("modified_at"));
                 encounter.setExternalSystem("opd");
                 encounter.setNote(set.getString("history_of_presenting_illness"));
                 encounter.setLocationId(set.getString("primary_location_id"));
@@ -797,10 +794,12 @@ FROM encounter e left join patient p on e.patient_id =p.id
             encounter.setEncounterId(set.getString("encounter_id"));
             encounter.setExternalId(set.getString("uuid"));
             encounter.setCreatedAt(set.getString("created_at"));
+            encounter.setUpdatedAt(set.getString("modified_at"));
             encounter.setEncounterType("ambulatory");
             encounter.setPatientId(set.getString("patient_id"));
             encounter.setNoteType(set.getString("note_type")==null?"progress-note":set.getString("note_type"));
             encounter.setPatientBirthDate(set.getString("birth_date"));
+            encounter.setPatientGender(set.getString("gender"));
              encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
              encounter.setPatientMobile(set.getString("mobile"));
             encounter.setUpdatedAt(set.getString("modified_at"));
@@ -859,6 +858,7 @@ FROM care_plan c left join encounter e on e.id = c.encounter_id  left join patie
             encounter.setPatientBirthDate(set.getString("birth_date"));
             encounter.setPatientFullName(set.getString("fullname"));
             encounter.setPatientMobile(set.getString("mobile"));
+            encounter.setPatientGender(set.getString("gender"));
             encounter.setExternalSystem("opd");
             encounter.setNote(set.getString("description"));
             encounter.setVisitId(set.getString("visit_id"));

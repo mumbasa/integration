@@ -27,6 +27,10 @@ public class DiagnosticReport {
     private long id ;
     private String createdAt;
     private String issuedDate;
+    @Column(nullable = true)
+    private String updatedAt;
+    @Column(nullable = true)
+    private boolean isDeleted;
     private String sampleReceivedDateTime;
     private String approvedDateTime;
     private String reviewedDateTime;

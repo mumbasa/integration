@@ -2,6 +2,7 @@ package com.serenity.integration.models;
 
 import java.time.ZonedDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -55,4 +56,7 @@ public class MedicalRequest {
     private String externalId;
     private String mrNumber;
     private String patientName;
+
+    @Column(nullable = true)
+    private boolean isDeleted;
 }

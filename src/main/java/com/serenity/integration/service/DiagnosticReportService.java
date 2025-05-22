@@ -57,8 +57,7 @@ DiagnosticReportRepository diagnosticReportRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
     public void getLegacyDiagnosticReport(int batchSize) {
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getUuid(), e -> e)); 
+     
         //Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
          //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         String sql = "SELECT count(*) from diagnostic_report";
@@ -94,11 +93,6 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                 request.setReviewedDateTime(set.getString("review_request_date_time"));
                 request.setApprovedDateTime(set.getString("approved_date_time"));
                 request.setEffectiveDateTime(set.getString("effective_date_time"));
-                request.setPatientBirthDate(mps.get(set.getString("patient_id")).getBirthDate());
-                request.setPatientFullName(mps.get(set.getString("patient_id")).getFirstName() +" "+mps.get(set.getString("patient_id")).getLastName());
-                request.setPatientGender(mps.get(set.getString("patient_id")).getGender());
-                request.setPatientMobile(mps.get(set.getString("patient_id")).getMobile());
-                request.setPatientMrNumber(mps.get(set.getString("patient_id")).getMrNumber()); 
                 request.setEncounterId(set.getString("encounter_id"));
                 request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
                 request.setServiceRequestCategory(set.getString("category"));
@@ -114,6 +108,8 @@ from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join
                
                 }
                 request.setCreatedAt(set.getString(3));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setDeleted(set.getBoolean("is_deleted"));
                 request.setVisitId(set.getString("visit_id"));
                 serviceRequests.add(request);
 
@@ -194,6 +190,14 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                         from encounter e
                         where diagnostic_report.encounterid =e."uuid"  ;
                             """;
+                            vectorJdbcTemplate.update(sql);
+
+        sql ="""
+                    update diagnostic_report 
+set patientbirthdate =p.birthdate ,patientmobile =p.mobile ,patientgender =p.gender ,patientfullname=concat(p.firstname,' ',p.lastname,' ',p.othernames) ,patientmrnumber=p.mrnumber
+from patient_information p
+where p."uuid" =patientid and patientmrnumber is null
+                """;
         vectorJdbcTemplate.update(sql);
     }
 
