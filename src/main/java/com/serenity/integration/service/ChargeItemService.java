@@ -572,7 +572,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ps.setString(15, item.getPractitionerId());
 
             ps.setString(16, item.getPractitionerName());
-            ps.setString(17, item.getProductId());
+            ps.setString(17, item.getStockItemId());
             ps.setString(18, item.getProviderId() == null ? "" : item.getProviderId());
             ps.setString(19, item.getProviderName() == null ? "" : item.getProviderName());
             ps.setInt(20, item.getQuantity());
@@ -615,7 +615,6 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ps.setString(51, item.getPatientMrNumber());
             ps.setString(52, item.getPatientName());
             ps.setString(53, item.getTransactionId());
-            ps.setString(54, item.getStockItemId());
 
         }
 
