@@ -143,7 +143,7 @@ observationService.getLegacyObservations(10000);  */
 //diagnosisService.migrateDiagReportThread(5000);
 
 observationService.getLegacyObservations(100); 
-observationService.migrateObservationThread(8000);
+observationService.migrateObservationThread(100);
 //invoiceService.migrateinvoiceThread(10);
 //noteService.noteThread(4000);
 //medicalRequestService.saveMedicalRequestThread();
