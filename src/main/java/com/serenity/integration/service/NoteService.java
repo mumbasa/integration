@@ -674,11 +674,11 @@ and encounter.visit_id is null
 
     }
 
-    public void getLegacyEncounters(int batchSize) {
+    public void getLegacyEncounters(int batchSize,String date) {
 
   
-  String sql = "SELECT count(*) from encounter";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+  String sql = "SELECT count(*) from encounter where created_at::date <= ?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -689,9 +689,10 @@ and encounter.visit_id is null
          sql = """
                  SELECT  e.uuid as id ,e.created_at, e.is_deleted, e.modified_at, e.id as uuid, e.status, encounter_class, chief_complaint, history_of_presenting_illness, "type", priority, start_time, end_time, length, dyte_meeting_id, dyte_room_name, appointment_id, charge_item_id, part_of_id,p.uuid as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title, chief_complaint_author_id, chief_complaint_editor_uuids, chief_complaint_editors_display, history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names
 FROM encounter e left join patient p on e.patient_id =p.id
+where e.created_at::date <= ?
  order by p.id offset ? LIMIT ? 
                  """;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex, batchSize);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex, batchSize);
         while (set.next()) {
            // PatientData patient = patientDataMap.get(set.getString("patient_id"));
            // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
@@ -752,16 +753,11 @@ FROM encounter e left join patient p on e.patient_id =p.id
 
 
 
-    public void getLegacyVisitNotesEncounters(int batchSize) {
-/* 
-        Map<String, PatientData> patientDataMap = patientRepository.findAll().stream()
-                 .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-         Map<String, String> doctorMap = doctorRepository.findHisPractitioners().stream()
-                 .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
- */
+    public void getLegacyVisitNotesEncounters(int batchSize,String date) {
 
-                String sql = "SELECT count(*) from encounter_patient_notes";
-                long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+
+                String sql = "SELECT count(*) from encounter_patient_notes where created_at::date<=?";
+                long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
         
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -778,11 +774,11 @@ FROM encounter e left join patient p on e.patient_id =p.id
           practitioner_role_id, practitioner_name, note_type, practitioner_role_type,p.birth_date,p.mobile,p.gender,p.first_name,p.last_name
                           
          FROM encounter_patient_notes e left join patient p on p.id=e.patient_id  
-                
+        where e.created_at::date <=?
          order by uuid   offset ? LIMIT ?
                           
                           """;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex,batchSize);
         while (set.next()) {
 
            // PatientData patient = patientDataMap.get(set.getString("patient_id"));
@@ -821,11 +817,11 @@ FROM encounter e left join patient p on e.patient_id =p.id
 
 
 
-    public void getLegacyCarePlan(int batchSize) {
+    public void getLegacyCarePlan(int batchSize,String date) {
 
      
-                String sql = "SELECT count(*) from care_plan";
-                long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+                String sql = "SELECT count(*) from care_plan where created_at::date <= ?";
+                long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
         
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling divisionddd
@@ -839,9 +835,10 @@ FROM encounter e left join patient p on e.patient_id =p.id
                  description, period_start, period_end, encounter_id, p.uuid as patient_id,p.birth_date ,p.gender 
                  ,p.birth_date ,p.mobile ,concat(p.first_name,' ',p.last_name) as fullname,e.visit_id ,e.encounter_class
 FROM care_plan c left join encounter e on e.id = c.encounter_id  left join patient p on p.id =e.patient_id 
+where c.created_at::date <= ?
  order by c.id offset ? LIMIT ?
                  """;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex,batchSize);
         while (set.next()) {
 
         

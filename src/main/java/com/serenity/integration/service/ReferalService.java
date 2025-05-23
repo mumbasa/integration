@@ -68,15 +68,11 @@ public class ReferalService {
     DoctorRepository doctorRepository;
 
 
-     public void getLegacyReferral(int batchSize) {
-     //   Map<String, PatientData> mps = patientRepository.findAll().stream()
-       //         .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
+     public void getLegacyReferral(int batchSize,String date) {
 
-         //       Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
-          //      .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
         
-        String sql = "SELECT count(*) from referral_request";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        String sql = "SELECT count(*) from referral_request where created_at::date <=?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -87,9 +83,11 @@ public class ReferalService {
             int startIndex = i * batchSize;
             String sqlQuery = """
                     SELECT rr.id, rr."uuid", rr.created_at, rr.is_deleted, rr.modified_at, rr.priority, recipient_extra_detail, rr.specialty, reason, description, referral_type, rr.status, encounter_id, p.uuid as patient_id, recipient_id,concat(pd.first_name,' ',pd.last_name) as recipient_name,replaces_id, requester_id, visit_id,concat(pr.title ,' ',pr.first_name,' ',pr.last_name) as full_name,requesting_organization_id
-FROM public.referral_request rr left join patient p on p.id=rr.patient_id left join encounter e on e.id=rr.encounter_id left join practitioner_role pr on pr.id=requester_id left join practitioner_role pd on pd.id=recipient_id   order by rr.id  asc offset ? LIMIT ?
+FROM public.referral_request rr left join patient p on p.id=rr.patient_id left join encounter e on e.id=rr.encounter_id left join practitioner_role pr on pr.id=requester_id left join practitioner_role pd on pd.id=recipient_id  
+where rr.created_at::date <=?
+order by rr.id  asc offset ? LIMIT ?
                      """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,date, startIndex, batchSize);
             while (set.next()) {
                 Referal request = new Referal();
                 request.setId(set.getLong("id"));

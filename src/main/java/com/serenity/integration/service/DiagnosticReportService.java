@@ -56,12 +56,10 @@ DiagnosticReportRepository diagnosticReportRepository;
     DoctorRepository doctorRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void getLegacyDiagnosticReport(int batchSize) {
+    public void getLegacyDiagnosticReport(int batchSize,String date) {
      
-        //Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
-         //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-        String sql = "SELECT count(*) from diagnostic_report";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        String sql = "SELECT count(*) from diagnostic_report  where created_at::date <=?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -72,9 +70,11 @@ DiagnosticReportRepository diagnosticReportRepository;
             int startIndex = i * batchSize;
             String sqlQuery = """
                     SELECT dr.id, dr."uuid", dr.created_at, dr.is_deleted, dr.modified_at, dr.category, dr.code, dr.display, conclusion, dr.status, issued_date, effective_date_time, effective_period_start, effective_period_end, approved_date_time, approved_by_uuid, approved_by_name, rejected_by_uuid, rejected_by_name, rejected_date_time, review_request_by_uuid, review_request_by_name, review_request_date_time, based_on_id,sr."uuid" as service_request_id, sr.encounter_id, p.uuid as patient_id, dr.visit_id, service_request_category, billing_turnaround_time, intra_laboratory_turnaround_time, total_turnaround_time
-from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join service_request sr on dr.based_on_id =sr.id order by dr.id asc offset ? LIMIT ?
+from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join service_request sr on dr.based_on_id =sr.id
+where dr.created_at::date <= ?
+order by dr.id asc offset ? LIMIT ?
                      """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, date,startIndex, batchSize);
             while (set.next()) {
                 DiagnosticReport request = new DiagnosticReport();
                 

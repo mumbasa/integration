@@ -65,15 +65,10 @@ public class ChargeItemService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    public void getLegacyChargeItem(int batchSize) {
-        
-       /*    Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-        Map<String, String> doc = doctorRepository.findHisPractitioners().stream()
-                .collect(Collectors.toMap(e -> e.getExternalId(), e -> e.getSerenityUUid()));
- */
-        String sql = "select count(*) from \"ChargeItem\" ci";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+    public void getLegacyChargeItem(int batchSize,String date) {
+  
+        String sql = "select count(*) from \"ChargeItem\" ci where created_at::date <= ?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -143,10 +138,10 @@ LEFT JOIN
     "public"."organization_clientaccount" ca ON "ChargeItem".payer_account_id::uuid = ca.uuid
 LEFT JOIN
     "public"."organization" o ON ca.owner_id = o.id
-
+where "ChargeItem".created_on::date <= ?
             order by "ChargeItem".id offset ? limit ?
             """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, date,startIndex, batchSize);
             while (set.next()) {
                 ChargeItem request = new ChargeItem();
 

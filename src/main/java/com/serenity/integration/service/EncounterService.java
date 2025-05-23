@@ -474,7 +474,7 @@ System.err.println(encountersD.size() +" ------------------");
 
     }
 
-    public void getLegacyEncounters(int batchSize) {
+    public void getLegacyEncounters(int batchSize,String date) {
 
 Map<String, String> locationMap = new HashMap<>();
 locationMap.put("6b46da79-5613-4827-91ae-f46aaf65d4da", "Accra Central (Octagon)");
@@ -484,8 +484,8 @@ locationMap.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care")
 locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
 locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
-                     String sqlRow = "SELECT count(*) from encounter";
-                long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
+                     String sqlRow = "SELECT count(*) from encounter where created_at::date <= ?";
+                long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class,date);
        
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -496,10 +496,10 @@ locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
         List<Encounter> encounters = new ArrayList<>();
         String sql = """
         SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, hs.name  as service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
-FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id  order by  E.created_at offset ? limit ? ;        
+FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id   where e.created_at::date <= ? order by  E.created_at offset ? limit ? ;        
 
                 """;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex,batchSize);
         while (set.next()) {
             //System.err.println(set.getString("mr_number")+"-----------------");
          ;

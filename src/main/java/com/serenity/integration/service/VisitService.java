@@ -359,10 +359,10 @@ return visits.size();
 
     
 
-    public  void  getLegacyVisit(int batchSize){
+    public  void  getLegacyVisit(int batchSize,String date){
 
-    String sqlRow = "SELECT count(*) from visit";
-        long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class);
+    String sqlRow = "SELECT count(*) from visit WHERE date(created_at) <= ?";
+        long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -401,12 +401,12 @@ FROM
     visit v
 LEFT JOIN 
     patient p ON p.id = v.patient_id
-
+WHERE date(v.created_at) <= ?
 ORDER BY 
     v.created_at 
  offset ? limit ?
                 """;;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,startIndex,batchSize);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex,batchSize);
 
         while(set.next()){
             Visits visit = new Visits();

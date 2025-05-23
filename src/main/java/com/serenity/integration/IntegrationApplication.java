@@ -110,22 +110,24 @@ InvoiceService invoiceService;
 	LocalDateTime mid =(LocalDateTime.now());
 
 	LocalDateTime starts = LocalDateTime.now();
-patientService.getLegacyAllPatients2(50000, 50000);
-practitionerService.getLegacyPractitioner();
-visitService.getLegacyVisit(50000);
-encounterService.getLegacyEncounters(50000);
-allergyService.getLegacyAllergies(2000);
-referalService.getLegacyReferral(5000);
-serviceRequestService.getLegacyRequest(5000);
-dService.getLegacyDiagnosis(30000);
-diagnosisService.getLegacyDiagnosticReport(30000);
-medicalRequestService.getLegacyRequest2();
-noteService.getLegacyVisitNotesEncounters(30000);
-noteService.getLegacyCarePlan(30000);
-noteService.getLegacyEncounters(20000) ;	
-chargeItemService.getLegacyChargeItem(30000);
-invoiceService.getLegacyChargeItem(10000);
-observationService.getLegacyObservations(50000);  
+	String date= LocalDate.now().minusDays(1).toString();
+	System.err.println(date +" is ...");
+patientService.getLegacyAllPatients2(50000, 50000,date);
+practitionerService.getLegacyPractitioner(date);
+visitService.getLegacyVisit(50000,date);
+encounterService.getLegacyEncounters(50000,date);
+allergyService.getLegacyAllergies(2000,date);
+referalService.getLegacyReferral(5000,date);
+serviceRequestService.getLegacyRequest(5000,date);
+dService.getLegacyDiagnosis(30000,date);
+diagnosisService.getLegacyDiagnosticReport(30000,date);
+medicalRequestService.getLegacyRequest2(date);
+noteService.getLegacyVisitNotesEncounters(30000,date);
+noteService.getLegacyCarePlan(30000,date);
+noteService.getLegacyEncounters(20000,date) ;	
+chargeItemService.getLegacyChargeItem(30000,date);
+invoiceService.getLegacyChargeItem(10000,date);
+observationService.getLegacyObservations(50000,date);  
 
 
 patientMigrationService.migratePatientThread(1000);
@@ -145,7 +147,7 @@ dService.migrationThread(5000);
 chargeItemService.chargeThread(5000);
 invoiceService.migrateinvoiceThread(3000);
 serviceRequestService.migrateThread(3000);
-observationService.migrateObservationThread(5000);
+observationService.migrateObservationThread(5000); 
 LocalDateTime ends = LocalDateTime.now();
 
 

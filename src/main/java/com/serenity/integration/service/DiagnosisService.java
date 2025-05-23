@@ -556,15 +556,16 @@ where e."uuid" =encounterid and visitid is null
 
     }
 
-    public void getLegacyDiagnosis(int size) {
+    public void getLegacyDiagnosis(int size,String date) {
 
         String sqlCount = """
                                            select count(*) from
                 encounter_diagnosis
+                        where created_at::date <=?
 
                                                                """;
         @SuppressWarnings("null")
-        int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
+        int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class,date);
         logger.info(rows + " number of rows");
         int totalSize = rows;
         int batches = (totalSize + size - 1) / size; // Ceiling division
@@ -575,9 +576,10 @@ where e."uuid" =encounterid and visitid is null
             int startIndex = i * size;
 
             String sqlQuery = """
-                    SELECT * FROM encounter_diagnosis order by id OFFSET ? LIMIT ?;
+                    SELECT * FROM encounter_diagnosis   where created_at::date <=? order by id OFFSET ? LIMIT ?;
+
                                         """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex,size);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, date,startIndex,size);
             while (set.next()) {
                 Diagnosis diagnosis = new Diagnosis();
                 diagnosis.setCode(set.getString("code"));

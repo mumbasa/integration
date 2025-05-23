@@ -172,10 +172,10 @@ ORDER BY
 
     }
 
- public void getLegacyChargeItem(int batchSize) {
+ public void getLegacyChargeItem(int batchSize,String date) {
         Set<String> ids = new HashSet<>();
-        String sql = "select count(*) from \"ChargeItem\" ci  where payment_method !='cash' and visit_id is not null and invoiceid is not null";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        String sql = "select count(*) from \"ChargeItem\" ci  where payment_method !='cash' and visit_id is not null and invoiceid is not null and ci.created_on=?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -224,10 +224,12 @@ LEFT JOIN
 LEFT JOIN
     "public"."organization" o ON ca.owner_id = o.id
     where payment_method != 'cash' and "ChargeItem".visit_id is not null and invoiceid is not null 
+    where "ChargeItem".created_on::date <= ?
+
 order by "ChargeItem".id
             offset ? limit ?
             """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, date,startIndex, batchSize);
             while (set.next()) {
                 if(!ids.contains((set.getString("invoice_id")))){
 

@@ -117,11 +117,11 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
     }
 
 
-    public void getLegacyPractitioner() {
+    public void getLegacyPractitioner(String date) {
         List<Doctors> doctors = new ArrayList<>();
-       String sql ="SELECT  * FROM public.practitioner_role";
+       String sql ="SELECT  * FROM public.practitioner_role WHERE date(created_at) <=? ";
 
-       SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+       SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date);
        while (set.next()) {
         Doctors doctor = new Doctors();
         doctor.setManagingOrganisation("Nyaho Medical Center");

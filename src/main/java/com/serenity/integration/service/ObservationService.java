@@ -58,7 +58,7 @@ public class ObservationService {
     ObservationRepository observationRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void getLegacyObservations(int batchSize) {
+    public void getLegacyObservations(int batchSize,String date) {
 
         Map<String, String> codeDisplayMap = new HashMap<>();
 
@@ -127,14 +127,8 @@ public class ObservationService {
         displayMap.put("HEART_RATE", "Heart rate");
         displayMap.put("AVPU", "Level of responsiveness (AVPU)");
 
-        /*
-         * Map<String, PatientData> mps = patientRepository.findAll().stream()
-         * .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-         * Map<String, Doctors> doc = doctorRepository.findOPDPractitioners().stream()
-         * .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
-         */
-        String sql = "SELECT count(*) from observation";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        String sql = "SELECT count(*) from observation where created_at::date <=?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -149,9 +143,10 @@ public class ObservationService {
                                  dr."uuid" as diagnostic_report_id, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
                                    reference_range_high, reference_range_low, "rank", performer_id, performer_name
                     FROM observation o left join patient p on p.id=o.patient_id left join encounter e  on e.id =o.encounter_id  left join diagnostic_report dr on o.diagnostic_report_id=dr.id
-                                order by o.id asc offset ? LIMIT ?
+                    where o.created_at::date <= ?           
+                    order by o.id asc offset ? LIMIT ?
                                          """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,date, startIndex, batchSize);
             while (set.next()) {
                 Observation request = new Observation();
                 request.setUuid(set.getString(2));

@@ -65,12 +65,12 @@ public class AllergyService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    public void getLegacyAllergies(int batchSize) {
+    public void getLegacyAllergies(int batchSize,String date ) {
        // Map<String, PatientData> mps = patientRepository.findAll().stream()
          //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
-        String sql = "Select count(*) from allergy_intolerance ";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        String sql = "Select count(*) from allergy_intolerance where created_at::date <=?";
+        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -82,9 +82,10 @@ public class AllergyService {
             String sqlQuery = """
 SELECT a."uuid", a.created_at, a.is_deleted, a.modified_at, a.id, a."type", a.category, clinical_status, verification_status, code, last_occurrence, e.id as encounter_id,e.visit_id,p.uuid as  patient_id, e.chief_complaint_author_id,e.history_of_presenting_illness_author_id 
 FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join encounter e  on e.id=a.encounter_id  
+where a.created_at::date <=?
             order by a.id asc offset ? LIMIT ?
                      """;
-            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, date,startIndex, batchSize);
             while (set.next()) {
                 AllergyIntolerance request = new AllergyIntolerance();
               //  request.setId(set.getLong("id"));

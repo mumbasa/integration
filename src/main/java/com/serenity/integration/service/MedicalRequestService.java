@@ -774,7 +774,7 @@ where encounterid= e.uuid and visit_id is not null
 
 
   
-public void getLegacyRequest2() {
+public void getLegacyRequest2(String date) {
     logger.info("Starting importing Medical Requests");
   
 
@@ -782,20 +782,20 @@ public void getLegacyRequest2() {
     .collect(Collectors.toMap(e -> e.getSerenityUUid(), e->e ));
 
     // Step 1: Get the total number of rows
-    String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id";
-    int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class);
+    String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id where m.created_at::date<=?";
+    int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class,date);
     int batchSize = 40000;
     long batches = ((rows + batchSize - 1) / batchSize); // Ceiling division
     
     for (int i = 0; i < batches; i++) {
         int startIndex = i * batchSize;
 
-movetoHub(startIndex, batchSize,doctorMap);
+movetoHub(startIndex, batchSize,doctorMap,date);
     }
 //    cleanLegacyRequest();
             // Step 6: Clean up resources
 }
-    public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc) {
+    public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc,String date) {
         Set<Callable<Integer>> callables = new HashSet<>();
         long totalSize = rows; // Use long to avoid potential overflow
         long batches = ((totalSize + batchSize - 1) / batchSize); // Ceiling division
@@ -809,7 +809,7 @@ movetoHub(startIndex, batchSize,doctorMap);
                         batchNumber + 1, batches, startIndex);
     
                 try {
-                    movetoHub(startIndex, batchSize,doc);
+                    movetoHub(startIndex, batchSize,doc,date);
                     // Return the number of rows processed or a status code
                     return batchSize;
                 } catch (Exception e) {
@@ -823,14 +823,16 @@ movetoHub(startIndex, batchSize,doctorMap);
         return callables;
     }
 
-    public int movetoHub(int offset,int limit,Map<String,Doctors> docs){
+    public int movetoHub(int offset,int limit,Map<String,Doctors> docs,String date){
         List<MedicalRequest> medicalRequests = new ArrayList<>();
         String sql ="""
         
         SELECT mr."uuid", mr.created_at, mr.is_deleted, mr.modified_at, mr.id, authored_on, "name", category, code, "date", form, intended_dispenser, priority, careplan, mr.status, status_reason, intent, do_not_perform, performer_type, course_of_therapy_type, quantity, past_refills, next_refill, dispense_interval_in_days, number_of_repeats_allowed, encounter_id, p.uuid as patient_id, concat(p.first_name,' ',p.last_name) as patient_name,performer_practitioner_id, performer_practitioner_role_id, prior_prescription_id, recorder_practitioner_id, recorder_practitioner_role_id, requester_patient_id, requester_practitioner_id, requester_practitioner_role_id, visit_id, dosage_form, is_mismatched, is_mismatched_comment
-FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  order by mr.patient_id OFFSET ? LIMIT ?
+FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
+where mr.created_at::date <=?
+order by mr.patient_id OFFSET ? LIMIT ?
         """;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,offset,limit);
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,offset,limit);
         while (set.next()) {
             MedicalRequest request = new MedicalRequest();
           request.setPatientId(set.getString("patient_id"));
