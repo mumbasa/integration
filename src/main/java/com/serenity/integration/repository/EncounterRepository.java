@@ -32,6 +32,6 @@ public interface EncounterRepository extends JpaRepository<Encounter,Long>{
     Encounter findByUuid(String uuid);
 
     
-    @Query(value = "select count(*) from encounter e  where external_system='opd' and assigned_to_id is not null;",nativeQuery = true)
+    @Query(value = "select count(*) from encounter e  where external_system='opd'",nativeQuery = true)
     int getOOPCount();
 }
