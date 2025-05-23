@@ -407,7 +407,7 @@ public class EncounterService {
 
      
         logger.info("kooooooooooooooading");
-        int dataSize = encounterRepository.getOOPCount();
+        long dataSize = encounterRepository.count();
        
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
