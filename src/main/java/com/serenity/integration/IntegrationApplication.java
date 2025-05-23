@@ -113,12 +113,12 @@ InvoiceService invoiceService;
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 
-encounterService.getLegacyEncounters(20000,date);
-allergyService.getLegacyAllergies(2000,date);
-referalService.getLegacyReferral(5000,date);
+//encounterService.getLegacyEncounters(20000,date);
+//allergyService.getLegacyAllergies(2000,date);
+//referalService.getLegacyReferral(5000,date);
 
 
-serviceRequestService.getLegacyRequest(000,date);
+serviceRequestService.getLegacyRequest(3000,date);
 dService.getLegacyDiagnosis(30000,date);
 diagnosisService.getLegacyDiagnosticReport(30000,date);
 medicalRequestService.getLegacyRequest2(date);

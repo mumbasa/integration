@@ -538,8 +538,9 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
             encounter.setPrescription(set.getBoolean("has_prescriptions"));
             encounters.add(encounter);
 
-            logger.info("adding encounter");
+          
         }
+        logger.info("adding encounter");
 encounterRepository.saveAll(encounters);
                 }
 
