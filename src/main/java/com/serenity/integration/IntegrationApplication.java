@@ -112,14 +112,14 @@ InvoiceService invoiceService;
 	LocalDateTime starts = LocalDateTime.now();
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
-patientService.getLegacyAllPatients2(10000, 10000,date);
+/* patientService.getLegacyAllPatients2(10000, 10000,date);
 practitionerService.getLegacyPractitioner(date);
 visitService.getLegacyVisit(10000,date);
 encounterService.getLegacyEncounters(10000,date);
 allergyService.getLegacyAllergies(2000,date);
 referalService.getLegacyReferral(5000,date);
 serviceRequestService.getLegacyRequest(5000,date);
-/* dService.getLegacyDiagnosis(30000,date);
+dService.getLegacyDiagnosis(30000,date);
 diagnosisService.getLegacyDiagnosticReport(30000,date);
 medicalRequestService.getLegacyRequest2(date);
 noteService.getLegacyVisitNotesEncounters(30000,date);
@@ -127,17 +127,17 @@ noteService.getLegacyCarePlan(30000,date);
 noteService.getLegacyEncounters(20000,date) ;	
 chargeItemService.getLegacyChargeItem(30000,date);
 invoiceService.getLegacyChargeItem(10000,date);
-observationService.getLegacyObservations(50000,date); */  
+observationService.getLegacyObservations(50000,date);  */
 
 
 patientMigrationService.migratePatientThread(1000);
 practitionerService.migrateDoctors();
 visitMigration.getVisitThreads(5000);
-
 encounterService.encounterLegacythread();
 allergyService.migrateAllergyThread(1000);
-
 referalService.migrateReferalThread(1000);
+
+/* 
 diagnosisService.migrateDiagReportThread(5000);
 
 
@@ -147,7 +147,7 @@ dService.migrationThread(5000);
 chargeItemService.chargeThread(5000);
 invoiceService.migrateinvoiceThread(3000);
 serviceRequestService.migrateThread(3000);
-observationService.migrateObservationThread(5000); 
+observationService.migrateObservationThread(5000);  */
 LocalDateTime ends = LocalDateTime.now();
 
 
