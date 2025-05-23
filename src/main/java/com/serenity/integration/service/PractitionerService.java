@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,9 +118,9 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
     }
 
 
-    public void getLegacyPractitioner(String date) {
+    public void getLegacyPractitioner(LocalDate date) {
         List<Doctors> doctors = new ArrayList<>();
-       String sql ="SELECT  * FROM public.practitioner_role WHERE date(created_at) <=? ";
+       String sql ="SELECT  * FROM public.practitioner_role WHERE created_at::date <=? ";
 
        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date);
        while (set.next()) {

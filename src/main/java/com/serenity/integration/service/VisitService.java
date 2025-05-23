@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -359,10 +360,10 @@ return visits.size();
 
     
 
-    public  void  getLegacyVisit(int batchSize,String date){
+    public  void  getLegacyVisit(int batchSize,LocalDate date){
 
     String sqlRow = "SELECT count(*) from visit WHERE date(created_at) <= ?";
-        long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class,date);
+    long rows = legJdbcTemplate.queryForObject (sqlRow,new Object[]{date}, Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division

@@ -755,14 +755,14 @@ ORDER BY p.id asc  offset ? LIMIT ?
  
     }
 
-    public void getLegacyAllPatients2(int batchSize,int sized,String date) {
+    public void getLegacyAllPatients2(int batchSize,int sized,LocalDate date) {
         Map<String,Address> address = getLegacyAddress(batchSize);
      Map<String,List<RelatedPerson>> persons = getLegacyRelated(batchSize);
     
             Set<String> mrs = new HashSet<>();
     
-            String sql = "SELECT count(*) from patient where date(created_at) <=?";
-            long rows = legJdbcTemplate.queryForObject (sql, Long.class,date);
+            String sql = "SELECT count(*) from patient where created_at::date <=?";
+            long rows = legJdbcTemplate.queryForObject (sql,new Object[]{date}, Long.class);
     
             long totalSize = rows;
             long batches = (totalSize + sized - 1) / sized; // Ceiling division

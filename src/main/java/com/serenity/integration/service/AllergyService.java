@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,12 +66,12 @@ public class AllergyService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    public void getLegacyAllergies(int batchSize,String date ) {
+    public void getLegacyAllergies(int batchSize,LocalDate date ) {
        // Map<String, PatientData> mps = patientRepository.findAll().stream()
          //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
 
         String sql = "Select count(*) from allergy_intolerance where created_at::date <=?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+        long rows = legJdbcTemplate.queryForObject(sql, new Object[]{date},Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division

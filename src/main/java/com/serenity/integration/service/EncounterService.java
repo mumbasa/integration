@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -474,7 +475,7 @@ System.err.println(encountersD.size() +" ------------------");
 
     }
 
-    public void getLegacyEncounters(int batchSize,String date) {
+    public void getLegacyEncounters(int batchSize,LocalDate date) {
 
 Map<String, String> locationMap = new HashMap<>();
 locationMap.put("6b46da79-5613-4827-91ae-f46aaf65d4da", "Accra Central (Octagon)");
@@ -485,7 +486,7 @@ locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
 locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
 
                      String sqlRow = "SELECT count(*) from encounter where created_at::date <= ?";
-                long rows = legJdbcTemplate.queryForObject(sqlRow, Long.class,date);
+                long rows = legJdbcTemplate.queryForObject(sqlRow, new Object[]{date}, Long.class);
        
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division

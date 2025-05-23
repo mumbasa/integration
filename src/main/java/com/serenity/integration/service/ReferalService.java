@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +69,11 @@ public class ReferalService {
     DoctorRepository doctorRepository;
 
 
-     public void getLegacyReferral(int batchSize,String date) {
+     public void getLegacyReferral(int batchSize,LocalDate date) {
 
         
         String sql = "SELECT count(*) from referral_request where created_at::date <=?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date} ,Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
