@@ -187,7 +187,7 @@ public class ObservationService {
                     request.setEnconterType("outpatient-consultation");
                     request.setRank(set.getInt("rank"));
                 } else {
-                    request.setCode(set.getString("unit"));
+                    request.setCode(set.getString("code"));
                     request.setDisplay(set.getString("display"));
                     request.setUnit(set.getString("unit"));
                     request.setCategory(set.getString("category"));
