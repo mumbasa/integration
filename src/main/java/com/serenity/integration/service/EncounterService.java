@@ -141,7 +141,7 @@ public class EncounterService {
                 int endIndex = Math.min(startIndex + batchSize, totalSize);
                 logger.debug("Processing batch {}/{}, indices [{}]",
                         batchNumber + 1, batches, startIndex);
-                List<Encounter> notes = encounterRepository.getfirstOPD100k(startIndex);
+                List<Encounter> notes = encounterRepository.getfirstOPD100k(startIndex,batchSize);
 
                 try {
                     saveEncounters(notes);

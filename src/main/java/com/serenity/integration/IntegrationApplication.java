@@ -114,10 +114,11 @@ InvoiceService invoiceService;
 	System.err.println(date +" is ...");
 /* patientService.getLegacyAllPatients2(10000, 10000,date);
 practitionerService.getLegacyPractitioner(date);
-visitService.getLegacyVisit(10000,date);
+visitService.getLegacyVisit(10000,date);*/
 encounterService.getLegacyEncounters(10000,date);
 allergyService.getLegacyAllergies(2000,date);
 referalService.getLegacyReferral(5000,date);
+/*
 serviceRequestService.getLegacyRequest(5000,date);
 dService.getLegacyDiagnosis(30000,date);
 diagnosisService.getLegacyDiagnosticReport(30000,date);
@@ -127,12 +128,12 @@ noteService.getLegacyCarePlan(30000,date);
 noteService.getLegacyEncounters(20000,date) ;	
 chargeItemService.getLegacyChargeItem(30000,date);
 invoiceService.getLegacyChargeItem(10000,date);
-observationService.getLegacyObservations(50000,date);  */
+observationService.getLegacyObservations(50000,date);  
 
 
-patientMigrationService.migratePatientThread(1000);
+/* patientMigrationService.migratePatientThread(1000);
 practitionerService.migrateDoctors();
-visitMigration.getVisitThreads(5000);
+visitMigration.getVisitThreads(5000); */
 encounterService.encounterLegacythread();
 allergyService.migrateAllergyThread(1000);
 referalService.migrateReferalThread(1000);

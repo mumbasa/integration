@@ -20,8 +20,8 @@ public interface EncounterRepository extends JpaRepository<Encounter,Long>{
     @Query(value = "select * from encounter e where patient_id in (select \"uuid\" from patient_information )  and visit_id::uuid IN (SELECT \"uuid\" from visits) order by id asc",nativeQuery = true)
     List<Encounter> getfirst100();
 
-    @Query(value = "select * from encounter e  where assigned_to_id !='' order by id OFFSET ?  LIMIT 2000 ",nativeQuery = true)
-    List<Encounter> getfirstOPD100k(int offset);
+    @Query(value = "select * from encounter e  where assigned_to_id !='' order by id OFFSET ?  LIMIT ?2 ",nativeQuery = true)
+    List<Encounter> getfirstOPD100k(int offset,int limit);
 
     @Query(value = "select * from encounter e   OFFSET 0  LIMIT 100000",nativeQuery = true)
     List<Encounter> getfirst100k();
