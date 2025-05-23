@@ -3,6 +3,7 @@ package com.serenity.integration.service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -774,7 +775,7 @@ where encounterid= e.uuid and visit_id is not null
 
 
   
-public void getLegacyRequest2(String date) {
+public void getLegacyRequest2(LocalDate date) {
     logger.info("Starting importing Medical Requests");
   
 
@@ -783,7 +784,7 @@ public void getLegacyRequest2(String date) {
 
     // Step 1: Get the total number of rows
     String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id where m.created_at::date<=?";
-    int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class,date);
+    long rows = legJdbcTemplate.queryForObject(sqlCount,new Object[]{date}, Long.class);
     int batchSize = 40000;
     long batches = ((rows + batchSize - 1) / batchSize); // Ceiling division
     
@@ -795,7 +796,7 @@ movetoHub(startIndex, batchSize,doctorMap,date);
 //    cleanLegacyRequest();
             // Step 6: Clean up resources
 }
-    public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc,String date) {
+    public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc,LocalDate date) {
         Set<Callable<Integer>> callables = new HashSet<>();
         long totalSize = rows; // Use long to avoid potential overflow
         long batches = ((totalSize + batchSize - 1) / batchSize); // Ceiling division
@@ -823,7 +824,7 @@ movetoHub(startIndex, batchSize,doctorMap,date);
         return callables;
     }
 
-    public int movetoHub(int offset,int limit,Map<String,Doctors> docs,String date){
+    public int movetoHub(int offset,int limit,Map<String,Doctors> docs,LocalDate date){
         List<MedicalRequest> medicalRequests = new ArrayList<>();
         String sql ="""
         

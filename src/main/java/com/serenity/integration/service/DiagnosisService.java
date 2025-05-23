@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -556,7 +557,7 @@ where e."uuid" =encounterid and visitid is null
 
     }
 
-    public void getLegacyDiagnosis(int size,String date) {
+    public void getLegacyDiagnosis(int size,LocalDate date) {
 
         String sqlCount = """
                                            select count(*) from
@@ -565,7 +566,7 @@ where e."uuid" =encounterid and visitid is null
 
                                                                """;
         @SuppressWarnings("null")
-        int rows = legJdbcTemplate.queryForObject(sqlCount, Integer.class,date);
+        int rows = legJdbcTemplate.queryForObject(sqlCount,new Object[]{date}, Integer.class);
         logger.info(rows + " number of rows");
         int totalSize = rows;
         int batches = (totalSize + size - 1) / size; // Ceiling division

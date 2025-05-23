@@ -172,10 +172,10 @@ ORDER BY
 
     }
 
- public void getLegacyChargeItem(int batchSize,String date) {
+ public void getLegacyChargeItem(int batchSize,LocalDate date) {
         Set<String> ids = new HashSet<>();
         String sql = "select count(*) from \"ChargeItem\" ci  where payment_method !='cash' and visit_id is not null and invoiceid is not null and ci.created_on=?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division

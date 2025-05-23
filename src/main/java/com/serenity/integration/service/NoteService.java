@@ -3,6 +3,7 @@ package com.serenity.integration.service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -674,11 +675,11 @@ and encounter.visit_id is null
 
     }
 
-    public void getLegacyEncounters(int batchSize,String date) {
+    public void getLegacyEncounters(int batchSize,LocalDate date) {
 
   
   String sql = "SELECT count(*) from encounter where created_at::date <= ?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+  long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -753,11 +754,11 @@ where e.created_at::date <= ?
 
 
 
-    public void getLegacyVisitNotesEncounters(int batchSize,String date) {
+    public void getLegacyVisitNotesEncounters(int batchSize,LocalDate date) {
 
 
                 String sql = "SELECT count(*) from encounter_patient_notes where created_at::date<=?";
-                long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+                long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
         
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -817,11 +818,11 @@ where e.created_at::date <= ?
 
 
 
-    public void getLegacyCarePlan(int batchSize,String date) {
+    public void getLegacyCarePlan(int batchSize,LocalDate date) {
 
      
                 String sql = "SELECT count(*) from care_plan where created_at::date <= ?";
-                long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+                long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
         
                 long totalSize = rows;
                 long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling divisionddd

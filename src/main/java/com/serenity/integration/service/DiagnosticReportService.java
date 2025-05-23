@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,10 +57,10 @@ DiagnosticReportRepository diagnosticReportRepository;
     DoctorRepository doctorRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void getLegacyDiagnosticReport(int batchSize,String date) {
+    public void getLegacyDiagnosticReport(int batchSize,LocalDate date) {
      
         String sql = "SELECT count(*) from diagnostic_report  where created_at::date <=?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+        int rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Integer.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division

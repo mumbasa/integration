@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ObservationService {
     ObservationRepository observationRepository;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void getLegacyObservations(int batchSize,String date) {
+    public void getLegacyObservations(int batchSize,LocalDate date) {
 
         Map<String, String> codeDisplayMap = new HashMap<>();
 
@@ -128,7 +129,7 @@ public class ObservationService {
         displayMap.put("AVPU", "Level of responsiveness (AVPU)");
 
         String sql = "SELECT count(*) from observation where created_at::date <=?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division

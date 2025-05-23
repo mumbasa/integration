@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,10 +66,10 @@ public class ChargeItemService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    public void getLegacyChargeItem(int batchSize,String date) {
+    public void getLegacyChargeItem(int batchSize,LocalDate date) {
   
         String sql = "select count(*) from \"ChargeItem\" ci where created_at::date <= ?";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class,date);
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
