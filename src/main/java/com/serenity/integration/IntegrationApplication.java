@@ -110,47 +110,42 @@ InvoiceService invoiceService;
 	LocalDateTime mid =(LocalDateTime.now());
 
 	LocalDateTime starts = LocalDateTime.now();
-/* patientService.getLegacyAllPatients2(5000, 5000);
+patientService.getLegacyAllPatients2(50000, 50000);
 practitionerService.getLegacyPractitioner();
-visitService.getLegacyVisit(10000);
-encounterService.getLegacyEncounters(10000);
+visitService.getLegacyVisit(50000);
+encounterService.getLegacyEncounters(50000);
 allergyService.getLegacyAllergies(2000);
 referalService.getLegacyReferral(5000);
-//serviceRequestService.getLegacyRequest(10000);
-dService.getLegacyDiagnosis(10000);
-*/
-/* diagnosisService.getLegacyDiagnosticReport(10000);
+serviceRequestService.getLegacyRequest(5000);
+dService.getLegacyDiagnosis(30000);
+diagnosisService.getLegacyDiagnosticReport(30000);
 medicalRequestService.getLegacyRequest2();
-noteService.getLegacyVisitNotesEncounters(10000);
-noteService.getLegacyCarePlan(10000);
-noteService.getLegacyEncounters(5000) */; 
-
-/* 	
-chargeItemService.getLegacyChargeItem(5000);
+noteService.getLegacyVisitNotesEncounters(30000);
+noteService.getLegacyCarePlan(30000);
+noteService.getLegacyEncounters(20000) ;	
+chargeItemService.getLegacyChargeItem(30000);
 invoiceService.getLegacyChargeItem(10000);
-observationService.getLegacyObservations(10000);  */
+observationService.getLegacyObservations(50000);  
 
 
-//patientMigrationService.migratePatientThread(1000);
-//practitionerService.migrateDoctors();
-//visitMigration.getVisitThreads(1000);
+patientMigrationService.migratePatientThread(1000);
+practitionerService.migrateDoctors();
+visitMigration.getVisitThreads(5000);
 
-//encounterService.getLegacyEncounters(10000);
-//encounterService.encounterLegacythread();
-//allergyService.migrateAllergyThread(1000);
-//referalService.getLegacyReferral(1000);
-//referalService.migrateReferalThread(1000);
-//diagnosisService.migrateDiagReportThread(5000);
+encounterService.encounterLegacythread();
+allergyService.migrateAllergyThread(1000);
 
-observationService.getLegacyObservations(50000); 
+referalService.migrateReferalThread(1000);
+diagnosisService.migrateDiagReportThread(5000);
+
+
+noteService.noteThread(4000);
+medicalRequestService.saveMedicalRequestThread();
+dService.migrationThread(5000);
+chargeItemService.chargeThread(5000);
+invoiceService.migrateinvoiceThread(3000);
+serviceRequestService.migrateThread(3000);
 observationService.migrateObservationThread(5000);
-//invoiceService.migrateinvoiceThread(10);
-//noteService.noteThread(4000);
-//medicalRequestService.saveMedicalRequestThread();
-//dService.migrationThread(5000);
-//chargeItemService.chargeThread(5000);
-//invoiceService.migrateinvoiceThread(10000);
-//serviceRequestService.migrateThread(2000);
 LocalDateTime ends = LocalDateTime.now();
 
 
