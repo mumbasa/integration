@@ -142,7 +142,7 @@ observationService.getLegacyObservations(10000);  */
 //referalService.migrateReferalThread(1000);
 //diagnosisService.migrateDiagReportThread(5000);
 
-observationService.getLegacyObservations(30000); 
+observationService.getLegacyObservations(100); 
 observationService.migrateObservationThread(8000);
 //invoiceService.migrateinvoiceThread(10);
 //noteService.noteThread(4000);
