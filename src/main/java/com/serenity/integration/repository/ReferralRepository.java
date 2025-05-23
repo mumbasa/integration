@@ -10,7 +10,7 @@ import com.serenity.integration.models.Referal;
 @Repository
 public interface ReferralRepository extends JpaRepository<Referal,Long> {
 
-    @Query(value ="SELECT * FROM referrals OFFSET ? LIMIT ?",nativeQuery = true)
+    @Query(value ="SELECT * FROM referrals order by id OFFSET ? LIMIT ?",nativeQuery = true)
     List<Referal> findBhy(int startIndex, int batchSize);
 
 }

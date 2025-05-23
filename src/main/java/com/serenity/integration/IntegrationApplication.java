@@ -133,7 +133,7 @@ observationService.getLegacyObservations(50000,date);   */
 /* patientMigrationService.migratePatientThread(1000);
 practitionerService.migrateDoctors();
 visitMigration.getVisitThreads(5000); */
-encounterService.encounterLegacythread();
+//encounterService.encounterLegacythread();
 //allergyService.migrateAllergyThread(1000);
 //referalService.migrateReferalThread(1000);
 
@@ -146,8 +146,9 @@ medicalRequestService.saveMedicalRequestThread();
 dService.migrationThread(5000);
 chargeItemService.chargeThread(5000);
 invoiceService.migrateinvoiceThread(3000);
-serviceRequestService.migrateThread(3000);
 observationService.migrateObservationThread(5000);  */
+serviceRequestService.migrateThread(3000);
+
 LocalDateTime ends = LocalDateTime.now();
 
 
