@@ -86,8 +86,8 @@ public class ReferalService {
 
             int startIndex = i * batchSize;
             String sqlQuery = """
-                    SELECT rr.id, rr."uuid", rr.created_at, rr.is_deleted, rr.modified_at, rr.priority, recipient_extra_detail, rr.specialty, reason, description, referral_type, rr.status, encounter_id, p.uuid as patient_id, recipient_id, replaces_id, requester_id, visit_id,concat(pr.title ,' ',pr.first_name,' ',pr.last_name) as full_name,requesting_organization_id
-FROM public.referral_request rr left join patient p on p.id=rr.patient_id left join encounter e on e.id=rr.encounter_id left join practitioner_role pr on pr.id=requester_id order by rr.id asc offset ? LIMIT ?
+                    SELECT rr.id, rr."uuid", rr.created_at, rr.is_deleted, rr.modified_at, rr.priority, recipient_extra_detail, rr.specialty, reason, description, referral_type, rr.status, encounter_id, p.uuid as patient_id, recipient_id,concat(pd.first_name,' ',pd.last_name) as recipient_name,replaces_id, requester_id, visit_id,concat(pr.title ,' ',pr.first_name,' ',pr.last_name) as full_name,requesting_organization_id
+FROM public.referral_request rr left join patient p on p.id=rr.patient_id left join encounter e on e.id=rr.encounter_id left join practitioner_role pr on pr.id=requester_id left join practitioner_role pd on pd.id=recipient_id   order by rr.id  asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -104,6 +104,7 @@ FROM public.referral_request rr left join patient p on p.id=rr.patient_id left j
                 request.setStatus(set.getString("status"));
                 request.setSpecialty(set.getString("specialty"));
                 request.setRecipientId(set.getString("recipient_id"));
+                request.setRecipientName(set.getString("recipient_name"));
                 request.setRequesterId(set.getString("requester_id"));
                 request.setRequesterName(set.getString("full_name"));
                 request.setRequestingOrganizationId(set.getString("requesting_organization_id"));
@@ -165,7 +166,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(15, referal.getStatus());
 
         ps.setString(16, referal.getRecipientExtraDetail());
-        ps.setString(17, referal.getRecipientExtraDetail());
+        ps.setString(17, referal.getRecipientExtraDetail()==null?referal.getRecipientName():referal.getRecipientExtraDetail());
         ps.setString(18, referal.getReplacesId());
         ps.setString(19, referal.getRequesterName());
 
