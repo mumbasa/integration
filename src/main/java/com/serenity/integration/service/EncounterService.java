@@ -404,7 +404,7 @@ public class EncounterService {
 
 
 
-    public void encounterLegacythread() {
+    public void encounterLegacythread(int batchSize) {
 
      
         logger.info("kooooooooooooooading");
@@ -412,7 +412,7 @@ public class EncounterService {
        
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(1, 2));
+            List<Future<Integer>> futures = executorService.invokeAll(submitLegacyTask2(batchSize, dataSize));
             for (Future<Integer> future : futures) {
                 System.out.println("future.get = " + future.get());
             }
@@ -540,7 +540,7 @@ FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_
 
           
         }
-        logger.info("adding encounter");
+          logger.info("adding encounter");
 encounterRepository.saveAll(encounters);
                 }
 
