@@ -68,7 +68,7 @@ public class ChargeItemService {
 
     public void getLegacyChargeItem(int batchSize,LocalDate date) {
   
-        String sql = "select count(*) from \"ChargeItem\" ci where created_at::date <= ?";
+        String sql = "select count(*) from \"ChargeItem\" ci where created_on::date <= ?";
         long rows = legJdbcTemplate.queryForObject(sql,new Object[]{date}, Long.class);
 
         long totalSize = rows;
