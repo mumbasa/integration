@@ -146,10 +146,10 @@ visitMigration.getVisitThreads(5000); */
 medicalRequestService.saveMedicalRequestThread();
 //dService.migrationThread(5000);
 
-//chargeItemService.chargeThread(5000);
-//invoiceService.migrateinvoiceThread(3000);
+chargeItemService.chargeThread(5000);
+invoiceService.migrateinvoiceThread(3000);
 //observationService.migrateObservationThread(5000);  */
-serviceRequestService.migrateThread(3000);
+//serviceRequestService.migrateThread(3000);
 
 LocalDateTime ends = LocalDateTime.now();
 
