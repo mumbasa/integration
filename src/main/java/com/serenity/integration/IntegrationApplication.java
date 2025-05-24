@@ -126,7 +126,7 @@ noteService.getLegacyVisitNotesEncounters(30000,date);
 noteService.getLegacyCarePlan(30000,date);
 noteService.getLegacyEncounters(20000,date) ;	 */
 //chargeItemService.getLegacyChargeItem(30000,date);
-//invoiceService.getLegacyChargeItem(10000,date);
+//
 //observationService.getLegacyObservations(50000,date);  
 //encounterService.encounterLegacythread(1000);
 
@@ -146,7 +146,8 @@ visitMigration.getVisitThreads(5000); */
 //medicalRequestService.saveMedicalRequestThread();
 //dService.migrationThread(5000);
 
-chargeItemService.chargeThread(5000);
+//chargeItemService.chargeThread(5000);
+invoiceService.getLegacyChargeItem(10000,date);
 invoiceService.migrateinvoiceThread(3000);
 //observationService.migrateObservationThread(5000);  */
 //serviceRequestService.migrateThread(3000);
