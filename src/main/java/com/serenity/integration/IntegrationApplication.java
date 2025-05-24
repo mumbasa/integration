@@ -139,12 +139,12 @@ visitMigration.getVisitThreads(5000); */
 //referalService.migrateReferalThread(1000);
 
 
-diagnosisService.migrateDiagReportThread(5000);
+//diagnosisService.migrateDiagReportThread(5000);
 
 
 //noteService.noteThread(4000);
 //medicalRequestService.saveMedicalRequestThread();
-//dService.migrationThread(5000);
+dService.migrationThread(5000);
 
 //chargeItemService.chargeThread(5000);
 //invoiceService.migrateinvoiceThread(3000);
