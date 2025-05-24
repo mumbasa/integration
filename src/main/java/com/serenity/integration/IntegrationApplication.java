@@ -135,8 +135,8 @@ practitionerService.migrateDoctors();
 visitMigration.getVisitThreads(5000); */
 //
 //allergyService.migrateAllergyThread(1000);
-referalService.getLegacyReferral(1000,date);
-referalService.migrateReferalThread(1000);
+//referalService.getLegacyReferral(1000,date);
+//referalService.migrateReferalThread(1000);
 
 
 //diagnosisService.migrateDiagReportThread(5000);
@@ -149,7 +149,7 @@ medicalRequestService.saveMedicalRequestThread();
 //chargeItemService.chargeThread(5000);
 //invoiceService.migrateinvoiceThread(3000);
 //observationService.migrateObservationThread(5000);  */
-//serviceRequestService.migrateThread(3000);
+serviceRequestService.migrateThread(3000);
 
 LocalDateTime ends = LocalDateTime.now();
 
