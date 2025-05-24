@@ -143,7 +143,7 @@ visitMigration.getVisitThreads(5000); */
 
 
 //noteService.noteThread(4000);
-medicalRequestService.saveMedicalRequestThread();
+//medicalRequestService.saveMedicalRequestThread();
 //dService.migrationThread(5000);
 
 chargeItemService.chargeThread(5000);
