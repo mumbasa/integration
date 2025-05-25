@@ -72,21 +72,20 @@ public class SetupService {
 
     @Autowired
     HealthCareRepository repository;
-   
+
     @Autowired
     ServicePriceRepo servicePriceRepo;
- 
+
     @Autowired
     @Qualifier(value = "legJdbcTemplate")
     JdbcTemplate legJdbcTemplate;
 
-  @Autowired
-  TestCodeRepository testCodeRepository;
+    @Autowired
+    TestCodeRepository testCodeRepository;
 
-  @Autowired
-  @Qualifier("serenityJdbcTemplate")
-  JdbcTemplate serenityJdbcTemplate;
-
+    @Autowired
+    @Qualifier("serenityJdbcTemplate")
+    JdbcTemplate serenityJdbcTemplate;
 
     @Autowired
     ReportRepo reportRepo;
@@ -118,231 +117,231 @@ public class SetupService {
     public ResponseEntity<CustomerGroupResponse> migrate(String organisationId) {
         ResponseEntity<CustomerGroupResponse> response = null;
         String[] paymentTypes = {
-              "A.G.C. ANGLOGOLD GHANA FOREIGN",
-            "A.G.C. ANGLOGOLD GHANA LOCAL",
-            "ACACIA ABSA TPA MEDICALS",
-            "ACACIA BARCLAYS TPA (Local)",
-            "Acacia EY (Ernst & Young) TPA (Foreign)",
-            "Acacia EY (Ernst & Young) TPA (Local)",
-            "Acacia Health Insurance foreign",
-            "Acacia Health Insurance guinness Gh Brew Ltd Local",
-            "Acacia Health Insurance local",
-            "ACACIA HEALTH INSURANCE(Foreign)",
-            "ACACIA HEALTH INSURANCE(Guinness Gh. Brew ltd) Local",
-            "ACACIA HEALTH INSURANCE(Local)",
-            "Acacia Nestle (Foreign)",
-            "Acacia Nestle (Local)",
-            "Acacia Nestle Local",
-            "Acacia US Embassy (TPA) (Foreign)",
-            "Acacia US Embassy (TPA) (Local)",
-            "ACE MEDICAL INSURANCE(FOREIGN)",
-            "ACE MEDICAL INSURANCE(LOCAL)",
-            "AETNA INT FOREIGN",
-            "AFRI BAND TELECOMMUNICATION NETWORK LTD.",
-            "African Continental Free Trade Area Secretariat AfCFTA",
-            "AFRICAN UNDERGROUND MINING SERVICE (LOCAL)",
-            "AITEO GHANA LIMITED (FOREIGN)",
-            "AKPO JAMES TORGBUI AFEDE XIV LOCAL",
-            "AKYEA FAMILY",
-            "Alliance International Medical Services Foreign",
-            "Allianz Worldwide Care foreign",
-            "Allianz Worldwide Care local",
-            "Apex Bost Tpa",
-            "Apex Mutual Healthcare local",
-            "APEX MUTUAL HEALTHCARE(FOREIGN)",
-            "APEX MUTUAL HEALTHCARE(Local)",
-            "ARTHUR MATUSEVIC FAMILY",
-            "Asante Gold Bibiani Ltd Foreign",
-            "Asante Gold Bibiani Ltd Local",
-            "Asante Gold Chirano Ltd Foreign",
-            "Axa Assistance Foreign",
-            "Axa Assistance Local",
-            "Aya Engineering Limited",
-            "AZUMAH RESOURCES",
-            "BLUE CROSS BLUE SHIELD FOREIGN",
-            "BLUE CROSS BLUE SHIELD LOCAL",
-            "Bupa Ins Services foreign",
-            "Bupa Ins Services local",
-            "Cal bank Limited",
-            "Chemquest Ghana Ltd",
-            "CHRISTMAN ESTATES",
-            "Cigna International foreign",
-            "Cigna International local",
-            "CISI FOREIGN",
-            "CISI LOCAL",
-            "CMA CGM GHANA LTD FOREIGN",
-            "CMA CGM GHANA LTD LOCAL",
-            "Comfort Berkoh",
-            "Corporate",
-            "Corporate Foreigner",
-            "Cosmopolitan Health Insurance local",
-            "COSMOPOLITAN HEALTH INSURANCE(FOREIGN)",
-            "COSMOPOLITAN HEALTH INSURANCE(Local)",
-            "Dashen Opticians",
-            "Databank Financial Services Ltd local",
-            "DIAGNOSTIC CENTRE LIMITED (Walk-Ins)",
-            "Dosh Health Insurance Ltd",
-            "Dr Victoria Lokko Family And Friends",
-            "Dwamena Family",
-            "E process International foreign",
-            "E process International local",
-            "Early Power Ltd",
-            "Ecobank foreign",
-            "Ecobank local",
-            "ECOBANK(FOREIGN)",
-            "ECOBANK(Local)",
-            "EDC ECOBANK",
-            "ENSIGN COLLEGE OF PUBLIC HEALTH",
-            "Equity Health Insurance (FOREIGN)",
-            "Equity Health Insurance (LOCAL)",
-            "Equity Health Insurance Local",
-            "Euro centre Cape Town foreign",
-            "Euro centre Cape Town local",
-            "European Union ghana local",
-            "Foreign cash",
-            "Foreign Credit",
-            "GAB HEALTH INSURANCE (Local)",
-            "Gab Health Insurance Local",
-            "Geodrill Ghana foreign",
-            "Geodrill Ghana Local",
-            "Getfund Foreign",
-            "Getfund Local",
-            "Ghana Mine Workers Union foreign",
-            "Ghana Mine Workers Union local",
-            "Ghana National Gas Company foreign",
-            "Ghana National Gas Company local",
-            "Ghana Oil Company",
-            "Glico Health Care local",
-            "GLICO HEALTH CARE(Local)",
-            "GLICO TPA (FOREIGN)",
-            "GLICO TPA (LOCAL)",
-            "Glico Tpa Foreign",
-            "Glico Tpa Local",
-            "GLOBAL GOLD COMPANY",
-            "Gmc Services Ltd local",
-            "Gold Fields Ghana Tarkwa local",
-            "GOLDEN STAR LTD WASSA LOCAL",
-            "Goodwill Health Limited",
-            "GPMS (PCR)",
-            "GRID COMPANY LIMITED",
-            "Grid Petroleum Gh Ltd",
-            "Gts Drilling",
-            "HAGAN FAMILY",
-            "Hth Worldwide Ins foreign",
-            "Int Sos Assistance Uk Ltd Foreign",
-            "Int Sos Assistance Uk Ltd Local",
-            "Jfe Engineering Corporation Ltd",
-            "JUDITH AKILAKPA SAWYER LOCAL",
-            "Kek Insurance Brokers Ltd foreign",
-            "Kek Insurance Brokers Ltd local",
-            "LABADI BEACH HOTEL FOREIGN",
-            "LABADI BEACH HOTEL LOCAL",
-            "Lighthouse International Ltd",
-            "Local cash",
-            "Local Credit",
-            "LYCOPODIUM GHANA LIMITED",
-            "M & J Travel And Tours Limited",
-            "MARBEN FAMILY",
-            "Maripoma Mining Services LtD",
-            "MAXAM GHANA LTD FOREIGN",
-            "MAXAM GHANA LTD LOCAL",
-            "MEDILINK INTERNATIONAL LIMITED",
-            "Medisite Newmont Gh FOREIGN",
-            "Medisite Newmont Gh Local",
-            "Metropolitan Health Insurance foreign",
-            "Metropolitan Health Insurance local",
-            "METROPOLITAN HEALTH INSURANCE(FOREIGN)",
-            "METROPOLITAN HEALTH INSURANCE(Local)",
-            "METSO GHANA LTD",
-            "Mimi Attipoe For Delivery Only",
-            "MR. KOJO FYNN",
-            "Mrs Janet Tamaklo Family Friends",
-            "Msh International foreign",
-            "Msh International Local",
-            "Mso bupa Foreign",
-            "Mso bupa Local",
-            "Mso optimum Global Foreign",
-            "Mso optimum Global Local",
-            "National Homeownership Company Limited",
-            "Nationwide cash foreign",
-            "Nationwide cash local",
-            "NATIONWIDE(CASH)foreign",
-            "NATIONWIDE(CASH)local",
-            "NMC BOARD MEMBERS",
-            "Norpalm Ghana Limited local",
-            "NOW HEALTH INT. GULF TPA LLC (FOREIGN)",
-            "NOW HEALTH INT. GULF TPA LLC (Local)",
-            "NYAHO MEDICAL CENTRE STAFF",
-            "NYAHO SPECIALIST CONSULTANTS",
-            "NYAKO P.A. JOHN(Local)",
-            "OKERE FAMILY",
-            "Omaboe E N FOREIGN",
-            "Omaboe E N local",
-            "Oxfam Gb FOREIGN",
-            "Oxfam Gb local",
-            "Oxford Business Group",
-            "Perseus Mining Ltd FOREIGN",
-            "Perseus Mining Ltd Local",
-            "PETROLEUM COMMISSION FOREIGN",
-            "PETROLEUM COMMISSION LOCAL",
-            "PHOENIX HEALTH INSURANCE(FOREIGN)",
-            "PHOENIX HEALTH INSURANCE(LOCAL)",
-            "Premier Health Insurance Co Ltd Local",
-            "PREMIER HEALTH INSURANCE CO. LTD (Local)",
-            "PREMIER HEALTH INSURANCE CO. LTD(Foreign)",
-            "PRIME INSURANCE COMPANY LTD",
-            "Prime Insurance Company Ltd local",
-            "PROMASIDOR GHANA LIMITED(Local)",
-            "Prudential Life Insurance (LOCAL)",
-            "Prudential Life Insurance Ghana Foreign",
-            "Pz Cussons Ghana Ltd FOREIGN",
-            "Pz Cussons Ghana Ltd Local",
-            "Republic Bank FOREIGN",
-            "Republic Bank Local",
-            "Rocksure International FOREIGN",
-            "Rocksure International local",
-            "Sahel Health Gh (Patients)",
-            "Sahel Health Gh Patients",
-            "Sahel Health Gh staff FOREIGN",
-            "Sahel Health Gh staff Local",
-            "SANDVIK MINING & CONSTRUCTION(FOREIGN)",
-            "SANDVIK MINING & CONSTRUCTION(Local)",
-            "Securities And Exchange Commission",
-            "Sgs Inspection Testing Services FOREIGN",
-            "Sgs Inspection Testing Services Local",
-            "Spie Oil Gas Services Gh Ltd FOREIGN",
-            "Spie Oil Gas Services Gh Ltd Local",
-            "Stanbic Bank Ghana Ltd FOREIGN",
-            "Stanbic Bank Ghana Ltd local",
-            "Star Health Insurance Ghana",
-            "STEC",
-            "SWISS EMBASSY(FOREIGN)",
-            "SWISS EMBASSY(Local)",
-            "TEMA TANK FARM LOCAL",
-            "THAMES BUSINESS SOLUTIONS GH LTD. (Local)",
-            "THE AFRICAN REGENT(FOREIGN)",
-            "THE AFRICAN REGENT(Local)",
-            "The Ghana Chamber Of Mines FOREIGN",
-            "The Ghana Chamber Of Mines Local",
-            "TITUS GLOVER FAMILY",
-            "Trustee Services Ltd",
-            "UMB INVESTMENT HOLDINGS LIMITED (FOREIGN)",
-            "UMB INVESTMENT HOLDINGS LIMITED (LOCAL)",
-            "Underground Mining Alliance FOREIGN",
-            "Underground Mining Alliance Local",
-            "UNISURE SES ASSISTANCE PTY LTD",
-            "VISA SERVICE DESK",
-            "Vitality Mutual Health Foreign",
-            "VITALITY MUTUAL HEALTH(Local)",
-            "VOLTA RIVER AUTHORITY(FOREIGN)",
-            "VOLTA RIVER AUTHORITY(Local)",
-            "Wapco Medicals local",
-            "West African Gas Pipeline Co foreign",
-            "West African Gas Pipeline Co Local",
-            "West African Rescue Asso FOREIGN",
-            "West African Rescue Asso locaL",
-            "ZENITH BANK LIMITED(FOREIGN)",
-            "ZENITH BANK LIMITED(Local)"
+                "A.G.C. ANGLOGOLD GHANA FOREIGN",
+                "A.G.C. ANGLOGOLD GHANA LOCAL",
+                "ACACIA ABSA TPA MEDICALS",
+                "ACACIA BARCLAYS TPA (Local)",
+                "Acacia EY (Ernst & Young) TPA (Foreign)",
+                "Acacia EY (Ernst & Young) TPA (Local)",
+                "Acacia Health Insurance foreign",
+                "Acacia Health Insurance guinness Gh Brew Ltd Local",
+                "Acacia Health Insurance local",
+                "ACACIA HEALTH INSURANCE(Foreign)",
+                "ACACIA HEALTH INSURANCE(Guinness Gh. Brew ltd) Local",
+                "ACACIA HEALTH INSURANCE(Local)",
+                "Acacia Nestle (Foreign)",
+                "Acacia Nestle (Local)",
+                "Acacia Nestle Local",
+                "Acacia US Embassy (TPA) (Foreign)",
+                "Acacia US Embassy (TPA) (Local)",
+                "ACE MEDICAL INSURANCE(FOREIGN)",
+                "ACE MEDICAL INSURANCE(LOCAL)",
+                "AETNA INT FOREIGN",
+                "AFRI BAND TELECOMMUNICATION NETWORK LTD.",
+                "African Continental Free Trade Area Secretariat AfCFTA",
+                "AFRICAN UNDERGROUND MINING SERVICE (LOCAL)",
+                "AITEO GHANA LIMITED (FOREIGN)",
+                "AKPO JAMES TORGBUI AFEDE XIV LOCAL",
+                "AKYEA FAMILY",
+                "Alliance International Medical Services Foreign",
+                "Allianz Worldwide Care foreign",
+                "Allianz Worldwide Care local",
+                "Apex Bost Tpa",
+                "Apex Mutual Healthcare local",
+                "APEX MUTUAL HEALTHCARE(FOREIGN)",
+                "APEX MUTUAL HEALTHCARE(Local)",
+                "ARTHUR MATUSEVIC FAMILY",
+                "Asante Gold Bibiani Ltd Foreign",
+                "Asante Gold Bibiani Ltd Local",
+                "Asante Gold Chirano Ltd Foreign",
+                "Axa Assistance Foreign",
+                "Axa Assistance Local",
+                "Aya Engineering Limited",
+                "AZUMAH RESOURCES",
+                "BLUE CROSS BLUE SHIELD FOREIGN",
+                "BLUE CROSS BLUE SHIELD LOCAL",
+                "Bupa Ins Services foreign",
+                "Bupa Ins Services local",
+                "Cal bank Limited",
+                "Chemquest Ghana Ltd",
+                "CHRISTMAN ESTATES",
+                "Cigna International foreign",
+                "Cigna International local",
+                "CISI FOREIGN",
+                "CISI LOCAL",
+                "CMA CGM GHANA LTD FOREIGN",
+                "CMA CGM GHANA LTD LOCAL",
+                "Comfort Berkoh",
+                "Corporate",
+                "Corporate Foreigner",
+                "Cosmopolitan Health Insurance local",
+                "COSMOPOLITAN HEALTH INSURANCE(FOREIGN)",
+                "COSMOPOLITAN HEALTH INSURANCE(Local)",
+                "Dashen Opticians",
+                "Databank Financial Services Ltd local",
+                "DIAGNOSTIC CENTRE LIMITED (Walk-Ins)",
+                "Dosh Health Insurance Ltd",
+                "Dr Victoria Lokko Family And Friends",
+                "Dwamena Family",
+                "E process International foreign",
+                "E process International local",
+                "Early Power Ltd",
+                "Ecobank foreign",
+                "Ecobank local",
+                "ECOBANK(FOREIGN)",
+                "ECOBANK(Local)",
+                "EDC ECOBANK",
+                "ENSIGN COLLEGE OF PUBLIC HEALTH",
+                "Equity Health Insurance (FOREIGN)",
+                "Equity Health Insurance (LOCAL)",
+                "Equity Health Insurance Local",
+                "Euro centre Cape Town foreign",
+                "Euro centre Cape Town local",
+                "European Union ghana local",
+                "Foreign cash",
+                "Foreign Credit",
+                "GAB HEALTH INSURANCE (Local)",
+                "Gab Health Insurance Local",
+                "Geodrill Ghana foreign",
+                "Geodrill Ghana Local",
+                "Getfund Foreign",
+                "Getfund Local",
+                "Ghana Mine Workers Union foreign",
+                "Ghana Mine Workers Union local",
+                "Ghana National Gas Company foreign",
+                "Ghana National Gas Company local",
+                "Ghana Oil Company",
+                "Glico Health Care local",
+                "GLICO HEALTH CARE(Local)",
+                "GLICO TPA (FOREIGN)",
+                "GLICO TPA (LOCAL)",
+                "Glico Tpa Foreign",
+                "Glico Tpa Local",
+                "GLOBAL GOLD COMPANY",
+                "Gmc Services Ltd local",
+                "Gold Fields Ghana Tarkwa local",
+                "GOLDEN STAR LTD WASSA LOCAL",
+                "Goodwill Health Limited",
+                "GPMS (PCR)",
+                "GRID COMPANY LIMITED",
+                "Grid Petroleum Gh Ltd",
+                "Gts Drilling",
+                "HAGAN FAMILY",
+                "Hth Worldwide Ins foreign",
+                "Int Sos Assistance Uk Ltd Foreign",
+                "Int Sos Assistance Uk Ltd Local",
+                "Jfe Engineering Corporation Ltd",
+                "JUDITH AKILAKPA SAWYER LOCAL",
+                "Kek Insurance Brokers Ltd foreign",
+                "Kek Insurance Brokers Ltd local",
+                "LABADI BEACH HOTEL FOREIGN",
+                "LABADI BEACH HOTEL LOCAL",
+                "Lighthouse International Ltd",
+                "Local cash",
+                "Local Credit",
+                "LYCOPODIUM GHANA LIMITED",
+                "M & J Travel And Tours Limited",
+                "MARBEN FAMILY",
+                "Maripoma Mining Services LtD",
+                "MAXAM GHANA LTD FOREIGN",
+                "MAXAM GHANA LTD LOCAL",
+                "MEDILINK INTERNATIONAL LIMITED",
+                "Medisite Newmont Gh FOREIGN",
+                "Medisite Newmont Gh Local",
+                "Metropolitan Health Insurance foreign",
+                "Metropolitan Health Insurance local",
+                "METROPOLITAN HEALTH INSURANCE(FOREIGN)",
+                "METROPOLITAN HEALTH INSURANCE(Local)",
+                "METSO GHANA LTD",
+                "Mimi Attipoe For Delivery Only",
+                "MR. KOJO FYNN",
+                "Mrs Janet Tamaklo Family Friends",
+                "Msh International foreign",
+                "Msh International Local",
+                "Mso bupa Foreign",
+                "Mso bupa Local",
+                "Mso optimum Global Foreign",
+                "Mso optimum Global Local",
+                "National Homeownership Company Limited",
+                "Nationwide cash foreign",
+                "Nationwide cash local",
+                "NATIONWIDE(CASH)foreign",
+                "NATIONWIDE(CASH)local",
+                "NMC BOARD MEMBERS",
+                "Norpalm Ghana Limited local",
+                "NOW HEALTH INT. GULF TPA LLC (FOREIGN)",
+                "NOW HEALTH INT. GULF TPA LLC (Local)",
+                "NYAHO MEDICAL CENTRE STAFF",
+                "NYAHO SPECIALIST CONSULTANTS",
+                "NYAKO P.A. JOHN(Local)",
+                "OKERE FAMILY",
+                "Omaboe E N FOREIGN",
+                "Omaboe E N local",
+                "Oxfam Gb FOREIGN",
+                "Oxfam Gb local",
+                "Oxford Business Group",
+                "Perseus Mining Ltd FOREIGN",
+                "Perseus Mining Ltd Local",
+                "PETROLEUM COMMISSION FOREIGN",
+                "PETROLEUM COMMISSION LOCAL",
+                "PHOENIX HEALTH INSURANCE(FOREIGN)",
+                "PHOENIX HEALTH INSURANCE(LOCAL)",
+                "Premier Health Insurance Co Ltd Local",
+                "PREMIER HEALTH INSURANCE CO. LTD (Local)",
+                "PREMIER HEALTH INSURANCE CO. LTD(Foreign)",
+                "PRIME INSURANCE COMPANY LTD",
+                "Prime Insurance Company Ltd local",
+                "PROMASIDOR GHANA LIMITED(Local)",
+                "Prudential Life Insurance (LOCAL)",
+                "Prudential Life Insurance Ghana Foreign",
+                "Pz Cussons Ghana Ltd FOREIGN",
+                "Pz Cussons Ghana Ltd Local",
+                "Republic Bank FOREIGN",
+                "Republic Bank Local",
+                "Rocksure International FOREIGN",
+                "Rocksure International local",
+                "Sahel Health Gh (Patients)",
+                "Sahel Health Gh Patients",
+                "Sahel Health Gh staff FOREIGN",
+                "Sahel Health Gh staff Local",
+                "SANDVIK MINING & CONSTRUCTION(FOREIGN)",
+                "SANDVIK MINING & CONSTRUCTION(Local)",
+                "Securities And Exchange Commission",
+                "Sgs Inspection Testing Services FOREIGN",
+                "Sgs Inspection Testing Services Local",
+                "Spie Oil Gas Services Gh Ltd FOREIGN",
+                "Spie Oil Gas Services Gh Ltd Local",
+                "Stanbic Bank Ghana Ltd FOREIGN",
+                "Stanbic Bank Ghana Ltd local",
+                "Star Health Insurance Ghana",
+                "STEC",
+                "SWISS EMBASSY(FOREIGN)",
+                "SWISS EMBASSY(Local)",
+                "TEMA TANK FARM LOCAL",
+                "THAMES BUSINESS SOLUTIONS GH LTD. (Local)",
+                "THE AFRICAN REGENT(FOREIGN)",
+                "THE AFRICAN REGENT(Local)",
+                "The Ghana Chamber Of Mines FOREIGN",
+                "The Ghana Chamber Of Mines Local",
+                "TITUS GLOVER FAMILY",
+                "Trustee Services Ltd",
+                "UMB INVESTMENT HOLDINGS LIMITED (FOREIGN)",
+                "UMB INVESTMENT HOLDINGS LIMITED (LOCAL)",
+                "Underground Mining Alliance FOREIGN",
+                "Underground Mining Alliance Local",
+                "UNISURE SES ASSISTANCE PTY LTD",
+                "VISA SERVICE DESK",
+                "Vitality Mutual Health Foreign",
+                "VITALITY MUTUAL HEALTH(Local)",
+                "VOLTA RIVER AUTHORITY(FOREIGN)",
+                "VOLTA RIVER AUTHORITY(Local)",
+                "Wapco Medicals local",
+                "West African Gas Pipeline Co foreign",
+                "West African Gas Pipeline Co Local",
+                "West African Rescue Asso FOREIGN",
+                "West African Rescue Asso locaL",
+                "ZENITH BANK LIMITED(FOREIGN)",
+                "ZENITH BANK LIMITED(Local)"
         };
 
         List<String> keys = getCustomerGroups(organisationId).stream().map(CustomerGroup::getName).toList();
@@ -468,7 +467,7 @@ public class SetupService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<V1Response> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 V1Response.class);
-         System.err.println(response.getBody().getAccess());
+        System.err.println(response.getBody().getAccess());
         return (response.getBody());
     }
 
@@ -524,7 +523,7 @@ public class SetupService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity,
                 String.class);
-    //    System.err.println(response.getBody());
+        // System.err.println(response.getBody());
         return (response.getBody());
     }
 
@@ -954,14 +953,14 @@ public class SetupService {
         for (long id : repository.findAllId()) {
 
             HealthCareServices services = repository.findByPk(id);
-        //    services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(id));
-          //  services.getPriceTiers().size();
+            // services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(id));
+            // services.getPriceTiers().size();
             String payload = formulatePayload(services);
 
             try {
                 System.err.println(payload);
                 if (id > 6) {
-                  //  addHealthServiceProdWithAuth(payload, response.getAccess());
+                    // addHealthServiceProdWithAuth(payload, response.getAccess());
                 }
             } catch (Exception e) {
                 System.err.println(id + " failed");
@@ -975,33 +974,28 @@ public class SetupService {
 
     }
 
-
     public String loadToProdTest() {
         V1Response response = getProdToken();
 
+        HealthCareServices services = repository.findByPk(526);
+        services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(services.getId()));
+        System.err.println(services.getPriceTiers());
+        String payload = formulatePayload(services);
 
-            HealthCareServices services = repository.findByPk(526);
-           services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(services.getId()));
-           System.err.println(services.getPriceTiers());
-            String payload = formulatePayload(services);
+        try {
+            System.err.println(payload);
 
-            try {
-                System.err.println(payload);
-     
-               //   addHealthServiceProdWithAuth(payload, response.getAccess());
-                
-            } catch (Exception e) {
-                System.err.println(526 + " failed");
-                e.printStackTrace();
+            // addHealthServiceProdWithAuth(payload, response.getAccess());
 
-            }
+        } catch (Exception e) {
+            System.err.println(526 + " failed");
+            e.printStackTrace();
 
-    
+        }
 
         return "done";
 
     }
-
 
     public String formulatePayload(HealthCareServices healthcareService) {
         String priceTiers = null;
@@ -1011,7 +1005,7 @@ public class SetupService {
         } catch (Exception e) {
             e.printStackTrace();
 
-        } 
+        }
         String payload = String.format(
                 """
                                  {
@@ -1126,327 +1120,324 @@ public class SetupService {
 
     }
 
-
-
     public String formulatePayloadConsultation(HealthCareServices healthcareService) {
-        
+
         String payload = String.format(
                 """
-                              {
-    "healthcare_service_categories": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_specialties": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_types": [
-        {
-            "code": "%s",
-            "display": "%s"
-        }
-    ],
-    "slot_duration": 30,
-    "virtual_service": false,
-    "healthcare_service_appointment_required": false,
-    "comment": "Healthcare service for %s at Nyaho Medical Center",
-    "healthcare_service_service_provision_code": "cost",
-    "price_tiers": [],
-    "extra_details": %s,
-    "revenue_tag_display": "%s",
-    "healthcare_service_name": "%s",
-    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
-    "healthcare_service_not_available_times": []
-}
-                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
-                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails(),healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName());
+                                                      {
+                            "healthcare_service_categories": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_specialties": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_types": [
+                                {
+                                    "code": "%s",
+                                    "display": "%s"
+                                }
+                            ],
+                            "slot_duration": 30,
+                            "virtual_service": false,
+                            "healthcare_service_appointment_required": false,
+                            "comment": "Healthcare service for %s at Nyaho Medical Center",
+                            "healthcare_service_service_provision_code": "cost",
+                            "price_tiers": [],
+                            "extra_details": %s,
+                            "revenue_tag_display": "%s",
+                            "healthcare_service_name": "%s",
+                            "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                            "healthcare_service_not_available_times": []
+                        }
+                                                """, healthcareService.getServiceClass(),
+                healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),
+                healthcareService.getServiceName(),
+                healthcareService.getExtraDetails().isEmpty() ? 0 : healthcareService.getExtraDetails(),
+                healthcareService.getRevenueTagDisplay(), healthcareService.getServiceName());
 
         return payload;
 
     }
 
-
-
     public String formulatePayloadDiagnostics(HealthCareServices healthcareService) {
-        
+
         String payload = String.format(
                 """
-                              {
-    "healthcare_service_categories": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_specialties": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_types": [
-        {
-            "code": "%s",
-            "display": "%s"
-        }
-    ],
-    "slot_duration": 30,
-    "virtual_service": false,
-    "healthcare_service_appointment_required": false,
-    "comment": "Healthcare service for %s at Nyaho Medical Center",
-    "healthcare_service_service_provision_code": "cost",
-    "price_tiers": [],
-    "extra_details": %s,
-    "revenue_tag_display": "%s",
-    "service_request_category": "%s",
-    "order_code": "%s",
-    "diagnostic_service_section": "%s",
-    "healthcare_service_name": "%s",
-    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
-    "healthcare_service_not_available_times": []
-}
-                        """, 
-                healthcareService.getServiceClass(), 
+                                                      {
+                            "healthcare_service_categories": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_specialties": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_types": [
+                                {
+                                    "code": "%s",
+                                    "display": "%s"
+                                }
+                            ],
+                            "slot_duration": 30,
+                            "virtual_service": false,
+                            "healthcare_service_appointment_required": false,
+                            "comment": "Healthcare service for %s at Nyaho Medical Center",
+                            "healthcare_service_service_provision_code": "cost",
+                            "price_tiers": [],
+                            "extra_details": %s,
+                            "revenue_tag_display": "%s",
+                            "service_request_category": "%s",
+                            "order_code": "%s",
+                            "diagnostic_service_section": "%s",
+                            "healthcare_service_name": "%s",
+                            "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                            "healthcare_service_not_available_times": []
+                        }
+                                                """,
+                healthcareService.getServiceClass(),
                 healthcareService.getServiceSpecialty(),
-                healthcareService.getServiceType(), 
+                healthcareService.getServiceType(),
                 healthcareService.getServiceType(),
                 healthcareService.getServiceName(),
-                (healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),
+                (healthcareService.getExtraDetails().isEmpty() ? 0 : healthcareService.getExtraDetails()),
                 healthcareService.getRevenueTagDisplay(),
                 healthcareService.getServiceRequestCategory(),
                 healthcareService.getOrderCode(),
-                healthcareService.getDiagnosticServiceSection(),       
+                healthcareService.getDiagnosticServiceSection(),
                 healthcareService.getServiceName());
 
         return payload;
 
     }
 
-
-
     public String formulatePayloadHospitalization(HealthCareServices healthcareService) {
-        
+
         String payload = String.format(
                 """
-        {
-    "healthcare_service_categories": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_specialties": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_types": [
-        {
-            "code": "%s",
-            "display": "%s"
-        }
-    ],
-    "slot_duration": 30,
-    "virtual_service": false,
-    "healthcare_service_appointment_required": true,
-    "comment": "Healthcare service for %s at Nyaho Medical Center",
-    "healthcare_service_service_provision_code": "cost",
-    "price_tiers": [],
-    "maximum_capacity": %s,
-    "extra_details": %s,
-    "healthcare_service_name": "%s",
-    "ward_type": "%s",
-    "subscription_frequency": "%s",
-    "revenue_tag_display": "%s",
-    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
-    "healthcare_service_not_available_times": []
-}
-                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
-                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),
-               healthcareService.getMaximumCapacity(), (healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getServiceName(),
-               healthcareService.getWardType(), healthcareService.getSubscriptionFrequency(),
-               healthcareService.getRevenueTagDisplay());
+                                {
+                            "healthcare_service_categories": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_specialties": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_types": [
+                                {
+                                    "code": "%s",
+                                    "display": "%s"
+                                }
+                            ],
+                            "slot_duration": 30,
+                            "virtual_service": false,
+                            "healthcare_service_appointment_required": true,
+                            "comment": "Healthcare service for %s at Nyaho Medical Center",
+                            "healthcare_service_service_provision_code": "cost",
+                            "price_tiers": [],
+                            "maximum_capacity": %s,
+                            "extra_details": %s,
+                            "healthcare_service_name": "%s",
+                            "ward_type": "%s",
+                            "subscription_frequency": "%s",
+                            "revenue_tag_display": "%s",
+                            "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                            "healthcare_service_not_available_times": []
+                        }
+                                                """, healthcareService.getServiceClass(),
+                healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),
+                healthcareService.getServiceName(),
+                healthcareService.getMaximumCapacity(),
+                (healthcareService.getExtraDetails().isEmpty() ? 0 : healthcareService.getExtraDetails()),
+                healthcareService.getServiceName(),
+                healthcareService.getWardType(), healthcareService.getSubscriptionFrequency(),
+                healthcareService.getRevenueTagDisplay());
 
         return payload;
 
     }
-
 
     public String formulatePayloadProcedure(HealthCareServices healthcareService) {
-        
+
         String payload = String.format(
                 """
-                              {
-    "healthcare_service_categories": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_specialties": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_types": [
-        {
-            "code": "%s",
-            "display": "%s"
-        }
-    ],
-    "slot_duration": 30,
-    "virtual_service": false,
-    "healthcare_service_appointment_required": false,
-    "comment": "Healthcare service for %s at Nyaho Medical Center",
-    "healthcare_service_service_provision_code": "cost",
-    "price_tiers": [],
-    "extra_details": %s,
-    "revenue_tag_display": "%s",
-    "healthcare_service_name": "%s",
-    "service_request_category": "%s",
-    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
-    "healthcare_service_not_available_times": []
-}
-                        """, healthcareService.getServiceClass(), healthcareService.getServiceSpecialty(),
-                healthcareService.getServiceType(), healthcareService.getServiceType(),healthcareService.getServiceName(),(healthcareService.getExtraDetails().isEmpty()?0:healthcareService.getExtraDetails()),healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName(),
-               healthcareService.getServiceRequestCategory()
-                );
+                                                      {
+                            "healthcare_service_categories": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_specialties": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_types": [
+                                {
+                                    "code": "%s",
+                                    "display": "%s"
+                                }
+                            ],
+                            "slot_duration": 30,
+                            "virtual_service": false,
+                            "healthcare_service_appointment_required": false,
+                            "comment": "Healthcare service for %s at Nyaho Medical Center",
+                            "healthcare_service_service_provision_code": "cost",
+                            "price_tiers": [],
+                            "extra_details": %s,
+                            "revenue_tag_display": "%s",
+                            "healthcare_service_name": "%s",
+                            "service_request_category": "%s",
+                            "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                            "healthcare_service_not_available_times": []
+                        }
+                                                """, healthcareService.getServiceClass(),
+                healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(), healthcareService.getServiceType(),
+                healthcareService.getServiceName(),
+                (healthcareService.getExtraDetails().isEmpty() ? 0 : healthcareService.getExtraDetails()),
+                healthcareService.getRevenueTagDisplay(), healthcareService.getServiceName(),
+                healthcareService.getServiceRequestCategory());
 
         return payload;
 
     }
-
-
-
 
     public String formulatePayloadAdministrative(HealthCareServices healthcareService) {
-        
+
         String payload = String.format(
                 """
-{
-    "healthcare_service_categories": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_specialties": [
-        {
-            "code": "%s"
-        }
-    ],
-    "healthcare_service_types": [
-        {
-            "code": "%s",
-            "display": "%s"
-        }
-    ],
-    "slot_duration": 30,
-    "virtual_service": false,
-    "healthcare_service_appointment_required": false,
-    "comment": "Healthcare service for %s at Nyaho Medical Center",
-    "healthcare_service_service_provision_code": "cost",
-    "price_tiers": [],
-    "extra_details": 10,
-    "revenue_tag_display": "%s",
-    "healthcare_service_name": "%s",
-    "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
-    "healthcare_service_not_available_times": []
-}    
+                        {
+                            "healthcare_service_categories": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_specialties": [
+                                {
+                                    "code": "%s"
+                                }
+                            ],
+                            "healthcare_service_types": [
+                                {
+                                    "code": "%s",
+                                    "display": "%s"
+                                }
+                            ],
+                            "slot_duration": 30,
+                            "virtual_service": false,
+                            "healthcare_service_appointment_required": false,
+                            "comment": "Healthcare service for %s at Nyaho Medical Center",
+                            "healthcare_service_service_provision_code": "cost",
+                            "price_tiers": [],
+                            "extra_details": 10,
+                            "revenue_tag_display": "%s",
+                            "healthcare_service_name": "%s",
+                            "provider": "161380e9-22d3-4627-a97f-0f918ce3e4a9",
+                            "healthcare_service_not_available_times": []
+                        }
 
-                        """, 
-                        healthcareService.getServiceClass(), 
-                        healthcareService.getServiceSpecialty(),
-                healthcareService.getServiceType(), 
+                                                """,
+                healthcareService.getServiceClass(),
+                healthcareService.getServiceSpecialty(),
+                healthcareService.getServiceType(),
                 healthcareService.getServiceType(),
                 healthcareService.getServiceName(),
-               
-                healthcareService.getRevenueTagDisplay(),healthcareService.getServiceName()
-           
-                );
+
+                healthcareService.getRevenueTagDisplay(), healthcareService.getServiceName()
+
+        );
 
         return payload;
 
     }
 
-public List<HealthCareServices> sethealthcareServicePayload(){
-   List<HealthCareServices> updateList = new ArrayList<>();
-   List<HealthCareServices> createList = new ArrayList<>();
-   List<HealthCareServices> failed = new ArrayList<>();
-   Map<String,HealthcareService> dbData = getHealthcareServiceIndDb();
-List<HealthCareServices> services= repository.findAll();
-services.forEach(e ->{
-    if(dbData.keySet().contains(e.getServiceName().strip())){
-        try {
-            e.setId((dbData.get(e.getServiceName().strip()).getId()));
-            e.setUuid(UUID.fromString(dbData.get(e.getServiceName().strip()).getUuid()));
-        } catch (Exception ec) {
-            ec.printStackTrace();
-            // TODO: handle exception
-        } 
-      
- updateList.add(e);
-    }else{
-        try{
-       addHealthServiceProdWithAuth(convertHealthCareServices(e),getProdToken().getAccess());
-       System.err.println(e.getServiceName());
-        }catch(Exception ex){
-            ex.printStackTrace();
-System.err.println(e.getServiceName() +"\t"+e.getRevenueTagDisplay());
-failed.add(e);
-        }
-        createList.add(e);
+    public List<HealthCareServices> sethealthcareServicePayload() {
+        List<HealthCareServices> updateList = new ArrayList<>();
+        List<HealthCareServices> createList = new ArrayList<>();
+        List<HealthCareServices> failed = new ArrayList<>();
+        Map<String, HealthcareService> dbData = getHealthcareServiceIndDb();
+        List<HealthCareServices> services = repository.findAll();
+        int count =0;
+        services.forEach(e -> {
+            if (dbData.keySet().contains(e.getServiceName().strip())) {
+                try {
+                    e.setId((dbData.get(e.getServiceName().strip()).getId()));
+                    e.setUuid(UUID.fromString(dbData.get(e.getServiceName().strip()).getUuid()));
+                } catch (Exception ec) {
+                    ec.printStackTrace();
+                    // TODO: handle exception
+                }
+
+                updateList.add(e);
+            } else {
+                try {
+                    addHealthServiceProdWithAuth(convertHealthCareServices(e), getProdToken().getAccess());
+                    System.err.println(e.getServiceName());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.err.println(e.getServiceName() + "\t" + e.getRevenueTagDisplay());
+                    failed.add(e);
+                }
+                createList.add(e);
+
+            }
+
+        });
+
+        // services.stream().forEach(e ->{ data.add(convertHealthCareServices(e));});
+
+        // addHealthService(convertHealthCareServices(s));
+
+        System.err.println(createList.size() + "---tocreate");
+        System.err.println(updateList.size() + "---toupdate");
+        System.err.println(failed.size() + "--failed");
+
+        return createList;
 
     }
 
+    public Set<String> testCodeInDb() {
+        List<TestCode> healthcareServices = new ArrayList<>();
+        String sql = "SELECT * from diagnostic_test_code";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+        while (set.next()) {
 
-});
+            TestCode service = new TestCode();
+            service.setTestId(set.getString("test_id"));
+            service.setTestOrderName(set.getString("order_name"));
+            // System.err.println(service);
+            healthcareServices.add(service);
 
+        }
+        Set<String> dbCodes = healthcareServices.stream().map(TestCode::getTestId).collect(Collectors.toSet());
+        List<TestCode> codes = testCodeRepository.findAll();
+        System.err.println(codes.size() + " --------------");
+        List<TestCode> data = codes.stream().filter(e -> !dbCodes.contains(e.getTestId())).collect(Collectors.toList());
 
-
-//services.stream().forEach(e ->{ data.add(convertHealthCareServices(e));});
-
-
-      //  addHealthService(convertHealthCareServices(s));
-
-
-System.err.println(createList.size()+"---tocreate");
-System.err.println(updateList.size()+"---toupdate");
-System.err.println(failed.size()+"--failed");
-
-return createList;
-
-}
-
-public Set<String> testCodeInDb(){
-    List<TestCode> healthcareServices = new ArrayList<>();
-String sql="SELECT * from diagnostic_test_code";
-SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
-while (set.next()) {
-
-    TestCode service = new TestCode();
-    service.setTestId(set.getString("test_id")); 
-    service.setTestOrderName(set.getString("order_name"));
-  //  System.err.println(service);
-    healthcareServices.add(service);
-
-}
-Set<String> dbCodes =healthcareServices.stream().map(TestCode::getTestId).collect(Collectors.toSet());
-List<TestCode> codes = testCodeRepository.findAll();
-System.err.println(codes.size() +" --------------");
-List<TestCode> data = codes.stream().filter(e ->!dbCodes.contains(e.getTestId())).collect(Collectors.toList());
-
- sql ="""
-        INSERT INTO public.diagnostic_test_code
-("uuid", created_at,modified_at ,is_deleted,id, test_id, loinc_code, loinc_attributes, order_name, method_name, alias, is_available_at_provider, provider_id)
-VALUES(?::uuid, now(), now(),false, nextval('diagnostic_test_code_id_seq'::regclass), ?, ?, ?, ?, ?, ?, true, '161380e9-22d3-4627-a97f-0f918ce3e4a9');
-        """;
+        sql = """
+                        INSERT INTO public.diagnostic_test_code
+                ("uuid", created_at,modified_at ,is_deleted,id, test_id, loinc_code, loinc_attributes, order_name, method_name, alias, is_available_at_provider, provider_id)
+                VALUES(?::uuid, now(), now(),false, nextval('diagnostic_test_code_id_seq'::regclass), ?, ?, ?, ?, ?, ?, true, '161380e9-22d3-4627-a97f-0f918ce3e4a9');
+                        """;
 
         legJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-               
+
                 TestCode code = data.get(i);
-                ps.setString(1,UUID.randomUUID().toString());
+                ps.setString(1, UUID.randomUUID().toString());
                 ps.setString(2, code.getTestId());
                 ps.setString(3, code.getOrderLoincCode());
                 ps.setString(4, code.getLoincAttributes());
@@ -1460,246 +1451,230 @@ VALUES(?::uuid, now(), now(),false, nextval('diagnostic_test_code_id_seq'::regcl
                 // TODO Auto-generated method stub
                 return data.size();
             }
-            
+
         });
-return dbCodes;
+        return dbCodes;
 
-
-}
-
-
-public Map<String,HealthcareService> getHealthcareServiceIndDb(){
-    List<HealthcareService> healthcareServices = new ArrayList<>();
-String sql="SELECT * from healthcare_service";
-SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
-while (set.next()) {
-
-    HealthcareService service = new HealthcareService();
-    service.setUuid(set.getString("uuid")); 
-    service.setId(set.getString("id"));
-    service.setHealthcareServiceName(set.getString("name").strip());
-   // System.err.println(service);
-    healthcareServices.add(service);
-}
-return healthcareServices.stream().collect(Collectors.toMap(e -> e.getHealthcareServiceName(), e -> e));
-
-}
-
-public Map<String,String> getGroupsIndDb(){
-    Map<String,String>  groups = new HashMap<>();
-String sql="SELECT * from customer_groups";
-SqlRowSet set = serenityJdbcTemplate.queryForRowSet(sql);
-
-while (set.next()) {
-groups.put(set.getString("name"), set.getString("uuid"));
-}
-return groups; 
-}
-
-
-public Map<String,String> getPricesIndDb(){
-    Map<String,String>  groups = new HashMap<>();
-String sql="SELECT * from healthcare_service_price_tiers";
-SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
-
-while (set.next()) {
-groups.put(set.getString("display"), set.getString("uuid"));
-    
-}
-
-
-return groups;
-
-}
-
-
-public String convertHealthCareServices(HealthCareServices hCareServices){
-    String data =null;
-    switch (hCareServices.getServiceClass()) {
-
-        case "Medication": data= formulatePayloadConsultation(hCareServices);
-          
-            break;
-
-        case "Procedure": data= formulatePayloadProcedure(hCareServices);
-          
-            break;
-  
-
-        case "Hospitalization": data= formulatePayloadHospitalization(hCareServices);
-          
-            break;
-            case "Consultation": data= formulatePayloadConsultation(hCareServices);
-          
-            break;
-
-        case "Administrative": data= formulatePayloadAdministrative(hCareServices);
-          
-            break;
-    
-        default:
-        data =formulatePayloadDiagnostics(hCareServices);
-            break;
-    }
-    return data;
-
-}
-
-
-public void setHealthcareIds(){
-
-    Map<String,HealthcareService> services= getHealthcareServiceIndDb();
-    List<HealthCareServices> healthcareServicse = repository.findAll();
-    healthcareServicse.forEach(e ->{
-
-        if(services.containsKey(e.getServiceName().strip())){
-            e.setId(services.get(e.getServiceName().strip()).getUuid());
-         
-                   
-
-        }
-    });
-
-    repository.saveAllAndFlush(healthcareServicse);
-
-
-}
-
-
-
-
-public void setPriceMigrate(){
-
-     Map<String,String> services= getGroupsIndDb();
-     Map<String,String> oldPrices= getPricesIndDb();
-
-    List<ServicePrice> healthcareServicse = servicePriceRepo.findAll();
-    healthcareServicse.forEach(e ->{
-
-        if(services.containsKey(e.getCustomerGroupName().strip())){
-            e.setCustomerGroupId(services.get(e.getCustomerGroupName().strip()));
-         System.err.println("found");
-                   
-
-        }
-    });
-
-    servicePriceRepo.saveAllAndFlush(healthcareServicse); 
-
-     int rows =healthcareServicse.size();
-    int totalSize = (int) rows;
-    int batches = (totalSize + 100 - 1) / 100;
-
-    for (int i = 0; i < batches; i++) {
-        final int batchNumber = i; // For use in lambda
-       
-        List<ServicePrice> pricing = servicePriceRepo.findServicePrices((i*100),100);
-
-
-    String sql ="""
-            INSERT INTO service_prices (unit_price,uuid,name,amount_type,currency,healthcare_service_id,managing_organization,created_by_id,created_by_name,is_active ,created_at,updated_at,customer_group_id,customer_group_name) 
-            VALUES (?,  ?::uuid, ?,  ?,  ?, ?,   '161380e9-22d3-4627-a97f-0f918ce3e4a9',  '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku',true,now(),now(),?,?)
-            """;
-    serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-		@Override
-		public void setValues(PreparedStatement ps, int i) throws SQLException {
-			// TODO Auto-generated method stub
-            ServicePrice price = pricing.get(i);
-            ps.setBigDecimal(1,price.getCharge());
-            ps.setString(2, UUID.randomUUID().toString());
-            ps.setString(3, price.getPriceName());
-            ps.setString(4, price.getPriceType());
-            ps.setString(5, price.getCurrency());
-            ps.setString(6,price.getHealthcareServiceId());
-            ps.setString(7,price.getCustomerGroupId());
-            ps.setString(8,price.getCustomerGroupName());
-
-
-
-        }
-
-		@Override
-		public int getBatchSize() {
-			// TODO Auto-generated method stub
-            return pricing.size();
-
-        }
-        
-    });
-
-
-} 
-
-}
-
-
-
-public void setPriceGroupIdMigrate() {
-    final int BATCH_SIZE = 5;
-
-    Map<String, String> existingPrices = getPricesIndDb();
-    List<ServicePrice> allPrices = servicePriceRepo.findAll();
-
-    // Assign UUIDs
-    for (ServicePrice price : allPrices) {
-        String existingUuid = existingPrices.get(price.getPriceName());
-        if (existingUuid != null) {
-            price.setUuid(existingUuid);
-        } else {
-            price.setUuid(UUID.randomUUID().toString());
-        }
-        System.err.println("UUID set for " + price.getPriceName() + ": " + price.getUuid());
     }
 
-    int totalSize = allPrices.size();
-    int batches = (totalSize + BATCH_SIZE - 1) / BATCH_SIZE;
+    public Map<String, HealthcareService> getHealthcareServiceIndDb() {
+        List<HealthcareService> healthcareServices = new ArrayList<>();
+        String sql = "SELECT * from healthcare_service";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+        while (set.next()) {
 
-    String sql = """
-        INSERT INTO service_prices (
-            unit_price, uuid, name, amount_type, currency, 
-            healthcare_service_id, managing_organization, 
-            created_by_id, created_by_name, is_active, 
-            created_at, updated_at, customer_group_id, customer_group_name,healthcare_service_name
-        ) VALUES (
-            ?, ?::uuid, ?, ?, ?, 
-            ?, '161380e9-22d3-4627-a97f-0f918ce3e4a9', 
-            '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku', true, 
-            now(), now(), ?, ?,?
-        )
-    """;
+            HealthcareService service = new HealthcareService();
+            service.setUuid(set.getString("uuid"));
+            service.setId(set.getString("id"));
+            service.setHealthcareServiceName(set.getString("name").strip());
+            // System.err.println(service);
+            healthcareServices.add(service);
+        }
+        return healthcareServices.stream().collect(Collectors.toMap(e -> e.getHealthcareServiceName(), e -> e));
 
-    for (int i = 0; i < batches; i++) {
-        int fromIndex = i * BATCH_SIZE;
-        int toIndex = Math.min(fromIndex + BATCH_SIZE, totalSize);
-        List<ServicePrice> batch = allPrices.subList(fromIndex, toIndex);
-try{
-        serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ServicePrice price = batch.get(i);
-                ps.setBigDecimal(1, price.getCharge());
-                ps.setString(2, price.getUuid());
-                ps.setString(3, price.getPriceName());
-                ps.setString(4, price.getPriceType());
-                ps.setString(5, price.getCurrency());
-                ps.setString(6, price.getHealthcareServiceId());
-                ps.setString(7, price.getCustomerGroupId());
-                ps.setString(8, price.getCustomerGroupName());
-                ps.setString(9, price.getHealthcareServiceName());
-            }
+    }
 
-            @Override
-            public int getBatchSize() {
-                return batch.size();
+    public Map<String, String> getGroupsIndDb() {
+        Map<String, String> groups = new HashMap<>();
+        String sql = "SELECT * from customer_groups";
+        SqlRowSet set = serenityJdbcTemplate.queryForRowSet(sql);
+
+        while (set.next()) {
+            groups.put(set.getString("name"), set.getString("uuid"));
+        }
+        return groups;
+    }
+
+    public Map<String, String> getPricesIndDb() {
+        Map<String, String> groups = new HashMap<>();
+        String sql = "SELECT * from healthcare_service_price_tiers";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+
+        while (set.next()) {
+            groups.put(set.getString("display"), set.getString("uuid"));
+
+        }
+
+        return groups;
+
+    }
+
+    public String convertHealthCareServices(HealthCareServices hCareServices) {
+        String data = null;
+        switch (hCareServices.getServiceClass()) {
+
+            case "Medication":
+                data = formulatePayloadConsultation(hCareServices);
+
+                break;
+
+            case "Procedure":
+                data = formulatePayloadProcedure(hCareServices);
+
+                break;
+
+            case "Hospitalization":
+                data = formulatePayloadHospitalization(hCareServices);
+
+                break;
+            case "Consultation":
+                data = formulatePayloadConsultation(hCareServices);
+
+                break;
+
+            case "Administrative":
+                data = formulatePayloadAdministrative(hCareServices);
+
+                break;
+
+            default:
+                data = formulatePayloadDiagnostics(hCareServices);
+                break;
+        }
+        return data;
+
+    }
+
+    public void setHealthcareIds() {
+
+        Map<String, HealthcareService> services = getHealthcareServiceIndDb();
+        List<HealthCareServices> healthcareServicse = repository.findAll();
+        healthcareServicse.forEach(e -> {
+
+            if (services.containsKey(e.getServiceName().strip())) {
+                e.setId(services.get(e.getServiceName().strip()).getUuid());
+
             }
         });
-    }
-    catch(Exception e ){
-        e.printStackTrace();
-    }
-    System.out.println("Finished inserting " + totalSize + " service prices in " + batches + " batches.");
-}
 
-}
+        repository.saveAllAndFlush(healthcareServicse);
+
+    }
+
+    public void setPriceMigrate() {
+
+        Map<String, String> services = getGroupsIndDb();
+        Map<String, String> oldPrices = getPricesIndDb();
+
+        List<ServicePrice> healthcareServicse = servicePriceRepo.findAll();
+        healthcareServicse.forEach(e -> {
+
+            if (services.containsKey(e.getCustomerGroupName().strip())) {
+                e.setCustomerGroupId(services.get(e.getCustomerGroupName().strip()));
+                System.err.println("found");
+
+            }
+        });
+
+        servicePriceRepo.saveAllAndFlush(healthcareServicse);
+
+        int rows = healthcareServicse.size();
+        int totalSize = (int) rows;
+        int batches = (totalSize + 100 - 1) / 100;
+
+        for (int i = 0; i < batches; i++) {
+            final int batchNumber = i; // For use in lambda
+
+            List<ServicePrice> pricing = servicePriceRepo.findServicePrices((i * 100), 100);
+
+            String sql = """
+                    INSERT INTO service_prices (unit_price,uuid,name,amount_type,currency,healthcare_service_id,managing_organization,created_by_id,created_by_name,is_active ,created_at,updated_at,customer_group_id,customer_group_name)
+                    VALUES (?,  ?::uuid, ?,  ?,  ?, ?,   '161380e9-22d3-4627-a97f-0f918ce3e4a9',  '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku',true,now(),now(),?,?)
+                    """;
+            serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    // TODO Auto-generated method stub
+                    ServicePrice price = pricing.get(i);
+                    ps.setBigDecimal(1, price.getCharge());
+                    ps.setString(2, UUID.randomUUID().toString());
+                    ps.setString(3, price.getPriceName());
+                    ps.setString(4, price.getPriceType());
+                    ps.setString(5, price.getCurrency());
+                    ps.setString(6, price.getHealthcareServiceId());
+                    ps.setString(7, price.getCustomerGroupId());
+                    ps.setString(8, price.getCustomerGroupName());
+
+                }
+
+                @Override
+                public int getBatchSize() {
+                    // TODO Auto-generated method stub
+                    return pricing.size();
+
+                }
+
+            });
+
+        }
+
+    }
+
+    public void setPriceGroupIdMigrate() {
+        final int BATCH_SIZE = 5;
+
+        Map<String, String> existingPrices = getPricesIndDb();
+        List<ServicePrice> allPrices = servicePriceRepo.findAll();
+
+        // Assign UUIDs
+        for (ServicePrice price : allPrices) {
+            String existingUuid = existingPrices.get(price.getPriceName());
+            if (existingUuid != null) {
+                price.setUuid(existingUuid);
+            } else {
+                price.setUuid(UUID.randomUUID().toString());
+            }
+            System.err.println("UUID set for " + price.getPriceName() + ": " + price.getUuid());
+        }
+
+        int totalSize = allPrices.size();
+        int batches = (totalSize + BATCH_SIZE - 1) / BATCH_SIZE;
+
+        String sql = """
+                    INSERT INTO service_prices (
+                        unit_price, uuid, name, amount_type, currency,
+                        healthcare_service_id, managing_organization,
+                        created_by_id, created_by_name, is_active,
+                        created_at, updated_at, customer_group_id, customer_group_name,healthcare_service_name
+                    ) VALUES (
+                        ?, ?::uuid, ?, ?, ?,
+                        ?, '161380e9-22d3-4627-a97f-0f918ce3e4a9',
+                        '8aaf05f8-741e-4e66-86df-a595f981d963', 'Rejoice Hormeku', true,
+                        now(), now(), ?, ?,?
+                    )
+                """;
+
+        for (int i = 0; i < batches; i++) {
+            int fromIndex = i * BATCH_SIZE;
+            int toIndex = Math.min(fromIndex + BATCH_SIZE, totalSize);
+            List<ServicePrice> batch = allPrices.subList(fromIndex, toIndex);
+            try {
+                serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ServicePrice price = batch.get(i);
+                        ps.setBigDecimal(1, price.getCharge());
+                        ps.setString(2, price.getUuid());
+                        ps.setString(3, price.getPriceName());
+                        ps.setString(4, price.getPriceType());
+                        ps.setString(5, price.getCurrency());
+                        ps.setString(6, price.getHealthcareServiceId());
+                        ps.setString(7, price.getCustomerGroupId());
+                        ps.setString(8, price.getCustomerGroupName());
+                        ps.setString(9, price.getHealthcareServiceName());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return batch.size();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Finished inserting " + totalSize + " service prices in " + batches + " batches.");
+        }
+
+    }
 }

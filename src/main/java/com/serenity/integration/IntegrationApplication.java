@@ -149,9 +149,10 @@ visitMigration.getVisitThreads(5000); */
 //chargeItemService.chargeThread(5000);
 //invoiceService.getLegacyChargeItem(10000,date);
 //invoiceService.migrateinvoiceThread(3000);
-observationService.migrateObservationThread(5000);  
+//observationService.migrateObservationThread(5000);  
 //serviceRequestService.migrateThread(3000);
 //setupService.testCodeInDb();
+setupService.sethealthcareServicePayload();
 LocalDateTime ends = LocalDateTime.now();
 
 
