@@ -17,11 +17,13 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "service_prices")
 @Setter
 @Getter
+
 public class ServicePrice {
 
 

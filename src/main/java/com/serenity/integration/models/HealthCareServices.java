@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -105,5 +106,6 @@ public class HealthCareServices {
 
     //@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     //@JoinColumn(name = "healthcare_service_pk") // Foreign key in `service_details` table
-  //  private List<ServicePrice> priceTiers;
+  @Transient
+    private List<ServicePrice> priceTiers;
 }

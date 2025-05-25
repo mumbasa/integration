@@ -961,7 +961,7 @@ public class SetupService {
             try {
                 System.err.println(payload);
                 if (id > 6) {
-                    addHealthServiceProdWithAuth(payload, response.getAccess());
+                  //  addHealthServiceProdWithAuth(payload, response.getAccess());
                 }
             } catch (Exception e) {
                 System.err.println(id + " failed");
@@ -975,15 +975,43 @@ public class SetupService {
 
     }
 
+
+    public String loadToProdTest() {
+        V1Response response = getProdToken();
+
+
+            HealthCareServices services = repository.findByPk(526);
+           services.setPriceTiers(servicePriceRepo.findByHealthcareServiceId(services.getId()));
+           System.err.println(services.getPriceTiers());
+            String payload = formulatePayload(services);
+
+            try {
+                System.err.println(payload);
+     
+               //   addHealthServiceProdWithAuth(payload, response.getAccess());
+                
+            } catch (Exception e) {
+                System.err.println(526 + " failed");
+                e.printStackTrace();
+
+            }
+
+    
+
+        return "done";
+
+    }
+
+
     public String formulatePayload(HealthCareServices healthcareService) {
-       /*  String priceTiers = null;
+        String priceTiers = null;
         try {
             priceTiers = new ObjectMapper().writeValueAsString(healthcareService.getPriceTiers());
 
         } catch (Exception e) {
             e.printStackTrace();
 
-        } */
+        } 
         String payload = String.format(
                 """
                                  {
@@ -1092,7 +1120,7 @@ public class SetupService {
                         }
 
                         """, healthcareService.getServiceName(), healthcareService.getServiceName(),
-                healthcareService.getId(), healthcareService.getUuid(), null, healthcareService.getOrderCode());
+                healthcareService.getId(), healthcareService.getUuid(), priceTiers, healthcareService.getOrderCode());
 
         return payload;
 
@@ -1355,10 +1383,11 @@ services.forEach(e ->{
             // TODO: handle exception
         } 
       
-    // updateList.add(e);
+ updateList.add(e);
     }else{
         try{
-        addHealthService(convertHealthCareServices(e));
+       addHealthServiceProdWithAuth(convertHealthCareServices(e),getProdToken().getAccess());
+       System.err.println(e.getServiceName());
         }catch(Exception ex){
             ex.printStackTrace();
 System.err.println(e.getServiceName() +"\t"+e.getRevenueTagDisplay());
