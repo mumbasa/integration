@@ -116,10 +116,14 @@ InvoiceService invoiceService;
 	LocalDateTime starts = LocalDateTime.now();
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
-	//encounterService.encounterLegacythread(500);
+	chargeItemService.chargeThread(5000);
+noteService.noteThread(4000);
+serviceRequestService.migrateThread(3000);
+invoiceService.migrateinvoiceThread(3000);
+dService.migrationThread(5000);
 
-	allergyService.migrateAllergyThread(1000);
-referalService.migrateReferalThread(1000);
+	//allergyService.migrateAllergyThread(1000);
+//referalService.migrateReferalThread(1000);
 /* patientService.getLegacyAllPatients2(20000, 20000, date);
 
 practitionerService.getLegacyPractitioner(date);
