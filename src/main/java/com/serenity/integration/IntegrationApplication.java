@@ -116,47 +116,53 @@ InvoiceService invoiceService;
 	LocalDateTime starts = LocalDateTime.now();
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
-//patientService.getLegacyAllPatients2(20000, 20000, date);
-//patientMigrationService.migratePatientThread(3000);
+patientService.getLegacyAllPatients2(20000, 20000, date);
 
-//practitionerService.getLegacyPractitioner(date);
-//practitionerService.migrateDoctors();
+practitionerService.getLegacyPractitioner(date);
+//
 
-//visitService.getLegacyVisit(20000, date);
-visitMigration.getVisitThreads(5000);
+visitService.getLegacyVisit(20000, date);
+//
 
 encounterService.getLegacyEncounters(10000,date);
-encounterService.encounterLegacythread(1000);
-
+//
 allergyService.getLegacyAllergies(2000,date);
-allergyService.migrateAllergyThread(1000);
-
+//
 referalService.getLegacyReferral(2000,date);
-referalService.migrateReferalThread(1000);
+//
  
 serviceRequestService.getLegacyRequest(3000,date);
-serviceRequestService.migrateThread(3000);
+//
 
 dService.getLegacyDiagnosis(30000,date);
-dService.migrationThread(5000);
+//
 
 diagnosisService.getLegacyDiagnosticReport(30000,date);
-diagnosisService.migrateDiagReportThread(5000);
-
+//
 medicalRequestService.getLegacyRequest2(date);
-medicalRequestService.saveMedicalRequestThread();
+//
 
 noteService.getLegacyVisitNotesEncounters(30000,date);
 noteService.getLegacyCarePlan(30000,date);
 noteService.getLegacyEncounters(20000,date) ;	 
-noteService.noteThread(4000);
+//
 
 chargeItemService.getLegacyChargeItem(30000,date);
-chargeItemService.chargeThread(5000);
 
 invoiceService.getLegacyChargeItem(10000,date);
+patientMigrationService.migratePatientThread(3000);
+practitionerService.migrateDoctors();
+visitMigration.getVisitThreads(5000);
+encounterService.encounterLegacythread(1000);
+allergyService.migrateAllergyThread(1000);
+referalService.migrateReferalThread(1000);
+chargeItemService.chargeThread(5000);
+noteService.noteThread(4000);
+serviceRequestService.migrateThread(3000);
 invoiceService.migrateinvoiceThread(3000);
-
+dService.migrationThread(5000);
+diagnosisService.migrateDiagReportThread(5000);
+medicalRequestService.saveMedicalRequestThread();
 observationService.getLegacyObservations(50000,date);  
 observationService.migrateObservationThread(5000);  
 
