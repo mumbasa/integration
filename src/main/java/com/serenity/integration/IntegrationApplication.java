@@ -165,7 +165,7 @@ invoiceService.migrateinvoiceThread(3000);
 dService.migrationThread(5000);
 diagnosisService.migrateDiagReportThread(5000);
 medicalRequestService.saveMedicalRequestThread(); */
-observationService.getLegacyObservations(50000,date);  
+//observationService.getLegacyObservations(50000,date);  
 //observationService.migrateObservationThread(5000);  
 
 
