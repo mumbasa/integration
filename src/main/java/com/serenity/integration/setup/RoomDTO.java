@@ -22,4 +22,5 @@ public class RoomDTO {
         wardUuid=room.getWardUuid();
 
     }
+    
 }

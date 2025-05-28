@@ -545,7 +545,7 @@ public class SetupService {
 
     public String addHealthServiceProdWithAuth(String c, String auth) {
         LOGGER.info("Searching for " + c);
-        String url = "https://dev.api.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
+        String url = "https://api.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9/administration/healthcareservices";
         System.err.println(url);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -1374,6 +1374,7 @@ public class SetupService {
                 try {
                     e.setId((dbData.get(e.getServiceName().strip()).getId()));
                     e.setUuid(UUID.fromString(dbData.get(e.getServiceName().strip()).getUuid()));
+                    
                 } catch (Exception ec) {
                     ec.printStackTrace();
                     // TODO: handle exception
@@ -1395,9 +1396,9 @@ public class SetupService {
 
         });
 
-        // services.stream().forEach(e ->{ data.add(convertHealthCareServices(e));});
+        //services.stream().forEach(e ->{ data.add(convertHealthCareServices(e));});
 
-        // addHealthService(convertHealthCareServices(s));
+       // addHealthService(convertHealthCareServices(s));
 
         System.err.println(createList.size() + "---tocreate");
         System.err.println(updateList.size() + "---toupdate");
