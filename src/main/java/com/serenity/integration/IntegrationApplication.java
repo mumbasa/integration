@@ -114,7 +114,7 @@ InvoiceService invoiceService;
 	LocalDateTime mid =(LocalDateTime.now());
 
 	LocalDateTime starts = LocalDateTime.now();
-	LocalDate date= LocalDate.now().minusDays(2);
+	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 patientService.getLegacyAllPatients2(10000, 10000, date);
 patientMigrationService.migratePatientThread(3000);
