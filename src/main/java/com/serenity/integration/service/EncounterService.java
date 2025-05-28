@@ -110,14 +110,9 @@ public class EncounterService {
                         batchNumber + 1, batches, startIndex);
                 List<Encounter> notes = encounterRepository.getfirst100k(startIndex);
 
-                try {
+            
                     saveEncounters(notes);
-                } catch (Exception e) {
-                    // TODO: handle exception
-                    e.printStackTrace();
-                    logger.info("error adding note");
-
-                }
+               
 
                 return 1;
             });
