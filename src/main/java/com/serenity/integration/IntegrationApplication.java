@@ -170,7 +170,7 @@ diagnosisService.migrateDiagReportThread(5000);
 medicalRequestService.saveMedicalRequestThread(); */
 //observationService.getLegacyObservations(50000,date);  
 
-diagnosisService.migrateDiagReportThread(5000);
+//diagnosisService.migrateDiagReportThread(5000);
 observationService.migrateObservationThread(5000);  
 
 
