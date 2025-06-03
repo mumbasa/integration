@@ -199,7 +199,7 @@ public void updateVisit(String current,String now){
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 // TODO Auto-generated method stub
                 ps.setString(1, visits.get(i).getCreatedAt().replaceAll("T", " "));
-                ps.setLong(2, visits.get(i).getId());
+                ps.setLong(2, visits.get(i).getId()+1012913);
 
                 ps.setString(3, visits.get(i).getUuid().toString());
                 ps.setString(4, visits.get(i).getEncounterClass());
