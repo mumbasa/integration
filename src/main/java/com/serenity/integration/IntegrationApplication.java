@@ -139,10 +139,10 @@ noteService.getLegacyCarePlan(30000,"2025-05-27",date);
 noteService.getLegacyEncounters(20000,"2025-05-27",date) ;	 
 serviceRequestService.getLegacyRequest("2025-05-27", date); */
 
-patientMigrationService.patientUpdate("2025-05-27",date.toString());
-/* practitionerService.updatePractitioners("2025-05-27",date.toString());
+//patientMigrationService.patientUpdate("2025-05-27",date.toString());
+ practitionerService.updatePractitioners("2025-05-27",date.toString());
 visitMigration.updateVisit("2025-05-27",date.toString());
-encounterService.updateEncounter("2025-05-27",date.toString());
+/*encounterService.updateEncounter("2025-05-27",date.toString());
 allergyService.update("2025-05-27",date.toString());
 referalService.updateReferral("2025-05-27",date.toString());
 diagnosisService.updateDiagReports("2025-05-27",date.toString());
