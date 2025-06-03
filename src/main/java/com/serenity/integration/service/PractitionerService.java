@@ -601,7 +601,7 @@ migrateDoctors(doctors);
         String sql ="""
                 INSERT INTO public.practitioners
                         (created_at,  id, \"uuid\", first_name, last_name, full_name, mobile, email, birth_date, gender, is_active, managing_organization_id, managing_organization_name,  external_id, external_system, name_prefix, national_mobile_number,specialty) 
-                        VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('practitioners_id_seq'::regclass), uuid(?), ?, ?, ?, ?, ?, to_date(?, 'YYYY-MM-DD'), ?, false, uuid('161380e9-22d3-4627-a97f-0f918ce3e4a9'), 'Nyaho Medical Centre',  ?, ?, ?, ?,?);
+                        VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'), nextval('practitioners_id_seq'::regclass), uuid(?), ?, ?, ?, ?, ?, to_date(?, 'YYYY-MM-DD'), ?, false, uuid('161380e9-22d3-4627-a97f-0f918ce3e4a9'), 'Nyaho Medical Centre',  ?, ?, ?, ?,?::varchar[]);
 
                         """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
