@@ -65,7 +65,57 @@ public class AllergyService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
+    public void getLegacyAllergies(String current,LocalDate date ) {
+      
+         String sql = "Select count(*) from allergy_intolerance where created_at::date >?::date and created_at::date <=?";
+         long rows = legJdbcTemplate.queryForObject(sql, new Object[]{current,date},Long.class);
+        logger.info("New allergies ="+rows);
 
+             List<AllergyIntolerance> serviceRequests = new ArrayList<AllergyIntolerance>();
+ 
+             String sqlQuery = """
+ SELECT a."uuid", a.created_at, a.is_deleted, a.modified_at, a.id, a."type", a.category, clinical_status, verification_status, code, last_occurrence, e.id as encounter_id,e.visit_id,p.uuid as  patient_id, e.chief_complaint_author_id,e.history_of_presenting_illness_author_id 
+ FROM allergy_intolerance a left join patient p  on p.id=a.patient_id left join encounter e  on e.id=a.encounter_id  
+ where a.created_at::date >?::date and a.created_at::date <=?
+             order by a.id asc 
+                      """;
+             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,current, date);
+             while (set.next()) {
+                 AllergyIntolerance request = new AllergyIntolerance();
+               //  request.setId(set.getLong("id"));
+                 request.setUuid(set.getString("id"));
+                 request.setCreatedAt(set.getString("created_at"));
+                 request.setRecordedDate(set.getString("last_occurrence"));
+                 request.setUpdatedAt(set.getString("modified_at"));
+                 request.setCategory(set.getString("type"));
+                 request.setAllergyIntoleranceType(set.getString("type"));
+                 request.setClinicalStatus(set.getString("clinical_status"));
+                 request.setVerificationStatus(set.getString("verification_status"));
+                 request.setCode(set.getString("code"));
+                 request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                 String encounterId = set.getString("encounter_id");
+                 if (encounterId != null) {
+                     request.setEncounterId(encounterId);
+                 }
+              
+                  request.setPatientId(set.getString("patient_id"));            
+                             
+             String practitionerId =set.getString("chief_complaint_author_id")==null?set.getString("history_of_presenting_illness_author_id"):set.getString("chief_complaint_author_id");
+                if(practitionerId !=null){
+               //  System.err.println(practitionerId+"----------");
+                 request.setPractitionerId(practitionerId);
+                }
+                 request.setVisitId(set.getString("visit_id"));
+                 serviceRequests.add(request);
+ 
+             }
+             allergyRepository.saveAll(serviceRequests);
+             logger.info("Saved Allergy");
+         
+         logger.info("Cleaning Requests");
+       cleanAllergies();
+ 
+     }
     public void getLegacyAllergies(int batchSize,LocalDate date ) {
        // Map<String, PatientData> mps = patientRepository.findAll().stream()
          //       .collect(Collectors.toMap(e -> e.getExternalId(), e -> e));
@@ -122,6 +172,11 @@ where a.created_at::date <=?
         logger.info("Cleaning Requests");
        cleanAllergies();
 
+    }
+
+    public void update(String current,String now){
+List<AllergyIntolerance> allergyIntolerances = allergyRepository.getUpdates(LocalDate.parse(current), LocalDate.parse(now));
+migrateAllergy(allergyIntolerances);
     }
 
     public int migrateAllergy(List<AllergyIntolerance> allergies){

@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,9 @@ public interface DiagnosisRepository extends JpaRepository<Diagnosis,Long>{
 
     @Query(value = "SELECT count(*) FROM diagnosis where patientid is  null",nativeQuery = true)
   long findBySystemLimitCount();
+
+  @Query(value = "SELECT * FROM diagnosis where createdat::date >?1 and createdat::date <=?2 order by id",nativeQuery = true)
+    List<Diagnosis> findUpdatess(LocalDate localDate, LocalDate localDate2);
 
 
 }

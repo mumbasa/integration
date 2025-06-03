@@ -26,6 +26,8 @@ public class WardRoom {
     @JsonIgnore
     private long id;
 
+    private String uuid;
+
     @Column(name = "room")
     @SerializedName("name")
     private String room;

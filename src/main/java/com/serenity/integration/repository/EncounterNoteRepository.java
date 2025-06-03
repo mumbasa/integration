@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,9 @@ public interface EncounterNoteRepository extends  JpaRepository<EncounterNote, S
 
 
     int countByNoteType(String notetype);
-    int countByExternalSystem(String notetype); 
+    int countByExternalSystem(String notetype);
+
+    @Query(value = "select * from encounternote where createdat::date >?1 and createdat::date <=?2 order by id",nativeQuery = true)
+    List<EncounterNote> getUpdates(LocalDate localDate, LocalDate localDate2); 
 
 }

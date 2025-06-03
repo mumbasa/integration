@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,7 @@ public List<Doctors> findHisPractitioners();
 public List<Doctors> findOPDPractitioners();
 @Query(value = "select * from doctors where externalsystem ='his' offset ? LIMIT 10",nativeQuery = true)
 public List<Doctors> getfirst100k(int startIndex);
+
+@Query(value = "select * from doctors where createdat::date > ?1 and createdat::date <=?2",nativeQuery = true)
+public List<Doctors> getUpdates(LocalDate current,LocalDate now);
 }

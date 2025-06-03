@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,9 +25,14 @@ public interface VisitRepository extends JpaRepository<Visits,Long>{
     public Optional<Visits>  findByExternalId(String encounterClass);
 
 
+    @Query(value = "select * from visits  where createdat::date >?1 and createdat::date <=?2 order by id",nativeQuery = true)
+    List<Visits> getUpdates(LocalDate current,LocalDate now);
+
 
     @Query(value = "select * from visits  order by id  offset ?1   LIMIT 1000",nativeQuery = true)
     List<Visits> getfirst100k(int offset);
+
+
     @Query(value = "select count(*) from visits where externalsystem='opd' and patientmrnumber is not null and patientid in (select uuid from patient_information pi2)",nativeQuery = true)
     int getCounter();
 

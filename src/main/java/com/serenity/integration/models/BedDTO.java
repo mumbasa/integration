@@ -24,7 +24,7 @@ public class BedDTO {
 
 
 @JsonIgnore
-private long id;
+private long pk;
 
    @SerializedName("room_uuid")
     private String roomUuid;

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
@@ -35,10 +36,12 @@ import com.serenity.integration.models.HealthcareService;
 import com.serenity.integration.models.HealthcareServiceResponse;
 import com.serenity.integration.models.User;
 import com.serenity.integration.models.V1Response;
+import com.serenity.integration.models.Ward;
 import com.serenity.integration.models.WardRoom;
 import com.serenity.integration.repository.BedRepo;
 import com.serenity.integration.repository.ReportRepo;
 import com.serenity.integration.repository.ServiceDataRepo;
+import com.serenity.integration.repository.WardRep;
 import com.serenity.integration.repository.WardRoomRepo;
 import com.serenity.integration.setup.Bed;
 import com.serenity.integration.setup.HealthcareResponse;
@@ -47,7 +50,6 @@ import com.serenity.integration.setup.Room;
 import com.serenity.integration.setup.RoomDTO;
 import com.serenity.integration.setup.BedResponse;
 import com.serenity.integration.setup.RoomResponse;
-import com.serenity.integration.setup.Ward;
 import com.serenity.integration.setup.WardResponse;
 
 @Service
@@ -68,6 +70,8 @@ public class WardSetupService {
     @Autowired
     BedRepo bedRepo;
 
+    @Autowired
+    WardRep wardRep;
     @Autowired
     ReportRepo reportRepo;
     Logger LOGGER = LoggerFactory.getLogger("Ward Setup");
@@ -99,7 +103,7 @@ public class WardSetupService {
         return (response.getBody());
     }
 
-    public Ward addWard(String orgId, String data, String tokens) {
+    public String addWard(String orgId, String data, String tokens) {
         // LOGGER.info("Searching for "+stock.getFullName());
         String url = "https://staging.nyaho.serenity.health/v1/providers/" + orgId
                 + "/administration/healthcareservices";
@@ -115,10 +119,10 @@ public class WardSetupService {
 
         System.err.println(response.getBody());
 
-        return response.getBody().getData();
+        return response.getBody().toString();
     }
 
-    public Ward addWard(String data) {
+    public String addWard(String data) {
         // LOGGER.info("Searching for "+stock.getFullName());
         String url = "https://dev.api.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9"
                 + "/administration/healthcareservices";
@@ -134,7 +138,7 @@ public class WardSetupService {
 
         System.err.println(response.getBody());
 
-        return response.getBody().getData();
+        return response.getBody().toString();
     }
 
     public List<Room> addRoom(String orgId, List<RoomDTO> rooms, String tokens) {
@@ -314,41 +318,43 @@ public class WardSetupService {
 
         System.err.println(wards.size() + " Start from db");
 
-        String sql = "SELECT ward from wards";
-        List<String> wardsInvec = vectorJdbcTemplate.queryForList(sql, String.class);
+        List<com.serenity.integration.models.Ward> wardsInvec = wardRep.findAll();
         System.err.println(wardsInvec.size() + " Start");
-        List<String> wardsInvecNew = new ArrayList<>();
+        List<Ward> wardsInvecNew = new ArrayList<>();
 
-        for (String war : wardsInvec) {
-            if (!wards.keySet().contains(war.toLowerCase())) {
+        for (Ward war : wardsInvec) {
+            if (!wards.keySet().contains(war.getWard().toLowerCase())) {
 
                 wardsInvecNew.add(war);
 
+            }else{
+
+               war.setWardId(wards.get(war.getWard().toLowerCase()));
+               wardRep.save(war);
             }
         }
             List<WardRoom> wardRoomss = wardRoomRepo.findAll();
 
-            for (WardRoom wr : wardRoomss) {
+             for (WardRoom wr : wardRoomss) {
 
                 if (!rooms.keySet().contains(wr.getRoom().toLowerCase())) {
                     wr.setWardId(wards.get(wr.getWard().toLowerCase()));
                     wardRoomRepo.save(wr);
                 }
 
-            }
-List<WardRoom> newRooms = wardRoomss.stream().filter(e -> e.getWardId()!=null).toList();
+            } 
+List<WardRoom> newRooms = wardRoomss.stream().filter(e -> !rooms.keySet().contains(e.getRoom().toLowerCase())).toList();
+System.err.println(newRooms.size()+";;;;;;;;;;;;;;;;s");
 for (WardRoom f : newRooms){
-  
+    f.setUuid(UUID.randomUUID().toString());
+wardRoomRepo.save(f);  
     String json = String.format("""
             {"name":"%s","ward_uuid":"%s"}
             """,f.getRoom(),f.getWardId());
-
-
-      
-
-     //   addRooms(json);
+     
+System.err.println(json);
+       //addRooms(json);
 }
-
            // rooms = getRooms();
 
             List<BedDTO> vecBedDTOs = bedRepo.findAll();

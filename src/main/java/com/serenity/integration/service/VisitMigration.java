@@ -2,6 +2,7 @@ package com.serenity.integration.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -171,6 +172,11 @@ return 1;
         }
 
     }
+public void updateVisit(String current,String now){
+    List<Visits> visits = visitRepository.getUpdates(LocalDate.parse(current), LocalDate.parse(now));
+    logger.info("NEw visits =>"+visits.size());
+    task(visits);
+}
 
     public int task(List<Visits> visits) {
 

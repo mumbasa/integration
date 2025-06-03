@@ -127,7 +127,72 @@ order by rr.id  asc offset ? LIMIT ?
         setRequesterName();
 
     }
+
+
+    public void getLegacyReferral(int batchSize,String current,LocalDate date) {
+
+        
+        String sql = "SELECT count(*) from referral_request where created_at::date >?::date and created_at::date <=?";
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date} ,Long.class);
+        logger.info("New referals ="+rows);
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<Referal> serviceRequests = new ArrayList<Referal>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+                    SELECT rr.id, rr."uuid", rr.created_at, rr.is_deleted, rr.modified_at, rr.priority, recipient_extra_detail, rr.specialty, reason, description, referral_type, rr.status, encounter_id, p.uuid as patient_id, recipient_id,concat(pd.first_name,' ',pd.last_name) as recipient_name,replaces_id, requester_id, visit_id,concat(pr.title ,' ',pr.first_name,' ',pr.last_name) as full_name,requesting_organization_id
+FROM public.referral_request rr left join patient p on p.id=rr.patient_id left join encounter e on e.id=rr.encounter_id left join practitioner_role pr on pr.id=requester_id left join practitioner_role pd on pd.id=recipient_id  
+where  rr.created_at::date >?::date and rr.created_at::date <=?
+order by rr.id  asc offset ? LIMIT ?
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,current,date, startIndex, batchSize);
+            while (set.next()) {
+                Referal request = new Referal();
+                request.setId(set.getLong("id"));
+                request.setUuid(set.getString("uuid"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setDescription(set.getString("description"));
+                request.setPriority(set.getString("priority"));
+                request.setReason(set.getString("reason"));
+                request.setRecipientExtraDetail(set.getString("recipient_extra_detail"));
+                request.setReferralType(set.getString("referral_type"));
+                request.setStatus(set.getString("status"));
+                request.setSpecialty(set.getString("specialty"));
+                request.setRecipientId(set.getString("recipient_id"));
+                request.setRecipientName(set.getString("recipient_name"));
+                request.setRequesterId(set.getString("requester_id"));
+                request.setRequesterName(set.getString("full_name"));
+                request.setRequestingOrganizationId(set.getString("requesting_organization_id"));
+                request.setReplacesId(set.getString("replaces_id"));
+                String encounterId = set.getString("encounter_id");
+                if (encounterId != null) {
+                    request.setEncounterId(encounterId);
+                }
+               
+                request.setPatientId(set.getString("patient_id"));            
+                
+                
+            
+                              serviceRequests.add(request);
+
+            }
+           referralRepository.saveAll(serviceRequests);
+            logger.info("Saved Allergy");
+        }
+        logger.info("Cleaning Requests");
+       setRequesterName();
+
+    }
     
+    public void updateReferral(String current,String now){
+        List<Referal> referals = referralRepository.findUpdatess(LocalDate.parse(current),LocalDate.parse(now));
+        logger.info("Referals to migrate =>"+referals.size());
+        migrateReferal(referals);
+    }
 
     private void migrateReferal(List<Referal> referals){
         String sql ="""

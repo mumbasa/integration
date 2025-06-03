@@ -24,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
+import com.serenity.integration.models.DiagnosticReport;
 import com.serenity.integration.models.Doctors;
 import com.serenity.integration.models.Observation;
 import com.serenity.integration.models.PatientData;
@@ -218,6 +219,166 @@ public class ObservationService {
         cleanObservation();
     }
 
+
+    public void getLegacyObservations(int batchSize,String current,LocalDate date) {
+
+        Map<String, String> codeDisplayMap = new HashMap<>();
+
+        codeDisplayMap.put("RESIDENT_COUNTRY", "Resident Country");
+        codeDisplayMap.put("ALCOHOL_INTAKE", "Alcohol");
+        codeDisplayMap.put("TOBACCO_PACKS_PER_DAY", "Tobacco packs per day");
+        codeDisplayMap.put("PHYSICAL_ACTIVITY_FREQUENCY", "Physical activity frequency");
+        codeDisplayMap.put("STRESS", "Stress");
+        codeDisplayMap.put("VEGAN_STATUS", "Vegan status");
+        codeDisplayMap.put("FAMILY_HISTORY", "Family history");
+        codeDisplayMap.put("EATING_HABITS", "Eating Habits");
+
+        Map<String, String> previousCode = new HashMap<>();
+
+        codeDisplayMap.put("PREVIOUS_MEDICATION", "10160-0");
+        codeDisplayMap.put("PREVIOUS_ILLNESS", "11348-0");
+
+        Map<String, String> prevDisplay = new HashMap<>();
+
+        codeDisplayMap.put("PREVIOUS_MEDICATION", "Medications");
+        codeDisplayMap.put("PREVIOUS_ILLNESS", "Medical Conditions");
+      
+
+        Map<String, String> vitalMap = new HashMap<>();
+        vitalMap.put("SBP", "8480-6");
+        vitalMap.put("BLOOD_PRESSURE", "8462-4");
+        vitalMap.put("RESPIRATORY_RATE", "9279-1");
+        vitalMap.put("OXYGEN_SATURATION", "20564-1");
+        vitalMap.put("DEGREES_CELCIUS", "8310-5");
+        vitalMap.put("temperature", "8310-5");
+        vitalMap.put("WEIGHT_KG", "3141-9");
+        vitalMap.put("PULSE", "8867-4");
+        vitalMap.put("BLOOD_SUGAR", "2339-0");
+        vitalMap.put("BMI", "39156-5");
+        vitalMap.put("HEIGHT_CM", "8302-2");
+        vitalMap.put("HEART_RATE", "8867-4");
+        vitalMap.put("AVPU", "67775-7");
+
+        Map<String, String> unitlMap = new HashMap<>();
+        unitlMap.put("SBP", "mm[Hg]");
+        unitlMap.put("BLOOD_PRESSURE", "mm[Hg]");
+        unitlMap.put("RESPIRATORY_RATE", "beats/min");
+        unitlMap.put("OXYGEN_SATURATION", "%");
+        unitlMap.put("DEGREES_CELCIUS", "°C");
+        unitlMap.put("temperature", "°C");
+        unitlMap.put("WEIGHT_KG", "kg");
+        unitlMap.put("PULSE", "beats/min");
+        unitlMap.put("BLOOD_SUGAR", "mmol/L");
+        unitlMap.put("BMI", "kg/m2");
+        unitlMap.put("HEIGHT_CM", "cm");
+        unitlMap.put("HEART_RATE", "beats/min");
+        unitlMap.put("AVPU", "");
+
+        Map<String, String> displayMap = new HashMap<>();
+        displayMap.put("SBP", "Systolic blood pressure");
+        displayMap.put("BLOOD_PRESSURE", "Diastolic blood pressure");
+        displayMap.put("RESPIRATORY_RATE", "Respiratory rate");
+        displayMap.put("OXYGEN_SATURATION", "Oxygen saturation in Blood%");
+        displayMap.put("DEGREES_CELCIUS", "Body Temperature");
+        displayMap.put("temperature", "Body Temperature");
+        displayMap.put("WEIGHT_KG", "Body weight Measured");
+        displayMap.put("PULSE", "Heart rate");
+        displayMap.put("BLOOD_SUGAR", "Blood Sugar");
+        displayMap.put("BMI", "Body mass index (BMI) [Ratio]");
+        displayMap.put("HEIGHT_CM", "Body height");
+        displayMap.put("HEART_RATE", "Heart rate");
+        displayMap.put("AVPU", "Level of responsiveness (AVPU)");
+
+        String sql = "SELECT count(*) from observation where  created_at::date >?::date and created_at::date <=?";
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Long.class);
+        logger.info("New Observations =>"+rows);
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<Observation> serviceRequests = new ArrayList<Observation>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+                     SELECT o.id, o."uuid", o.created_at, o.is_deleted, o.modified_at, o.status, o.category, o.code,
+                                 issued, unit, value, data_absent_reason, body_site, "method", specimen, device, o.effective_date_time,
+                                 dr."uuid" as diagnostic_report_id, o.encounter_id, p.uuid as patient_id, e.visit_id, o.display, interpretation,
+                                   reference_range_high, reference_range_low, "rank", performer_id, performer_name
+                    FROM observation o left join patient p on p.id=o.patient_id left join encounter e  on e.id =o.encounter_id  left join diagnostic_report dr on o.diagnostic_report_id=dr.id
+                    where  o.created_at::date > ?::date and o.created_at::date <= ?           
+                    order by o.id asc offset ? LIMIT ?
+                                         """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,current,date, startIndex, batchSize);
+            while (set.next()) {
+                Observation request = new Observation();
+                request.setUuid(set.getString(2));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setEncounterId(set.getString("encounter_id"));
+                request.setStatus(set.getString("status") == null ? "registered" : set.getString("status"));
+                request.setEffectiveDateTime(set.getString("effective_date_time"));
+                String codes = set.getString("unit");
+
+                if (vitalMap.keySet().contains(set.getString("unit"))) {
+                    request.setCode(vitalMap.get(codes));
+                    request.setDisplay(displayMap.get(codes));
+                    request.setUnit(unitlMap.get(codes));
+                    request.setCategory("vital-signs");
+                    request.setEnconterType("vitals-observation");
+                    request.setEffectiveDateTime(set.getString("effective_date_time"));
+
+                }else if(previousCode.containsKey(set.getString("unit"))){
+                    request.setCode(previousCode.get(codes));
+                    request.setDisplay(prevDisplay.get(codes));
+                    //request.setUnit(unitlMap.get(codes));
+                    request.setCategory("previous-medical-history");
+                    request.setEnconterType("outpatient-consultation");
+
+                }
+
+                else if (codeDisplayMap.containsKey(set.getString("unit"))) {
+                    request.setCode(set.getString("unit"));
+                    request.setDisplay(codeDisplayMap.get((set.getString("unit"))));
+                    request.setUnit(set.getString("unit"));
+                    request.setCategory("social-history");
+                    request.setEnconterType("outpatient-consultation");
+                    request.setRank(set.getInt("rank"));
+                } else {
+                    request.setCode(set.getString("code"));
+                    request.setDisplay(set.getString("display"));
+                    request.setUnit(set.getString("unit"));
+                    request.setCategory(set.getString("category"));
+                    request.setRank(set.getInt("rank"));
+                }
+                if (request.getCategory() == null) {
+                    request.setCategory("outpatient-consultation");
+                    request.setRank(set.getInt("rank"));
+                }
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setIssued(set.getString("issued"));
+                request.setValue(set.getString("value"));
+                request.setBodySite(set.getString("body_site"));
+                request.setInterpretation(set.getString("interpretation"));
+
+                request.setReferenceRangeHigh(set.getString("reference_range_high"));
+                request.setReferenceRangeLow(set.getString("reference_range_low"));
+                request.setSpecimen(set.getString("specimen"));
+                request.setVisitId(set.getString("visit_id"));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setDiagnosticReportId(set.getString("diagnostic_report_id"));
+                request.setScore("The score associated with this observation");
+                request.setSystem("http://loinc.org");
+                request.setHexColorCode(
+                        "The color code associated with the score or interpretation of this observation");
+                serviceRequests.add(request);
+
+            }
+           observationRepository.saveAll(serviceRequests);
+            logger.info("Saved Observation result");
+        }
+       cleanObservation();
+    }
+
     public void migrateObservation(List<Observation> observations) {
         String sql = """
                         INSERT INTO observations
@@ -406,5 +567,12 @@ vectorJdbcTemplate.update(sql);
                         """;
         serenityJdbcTemplate.update(sql);
 
+    }
+
+
+    public void updateObservations(String current, String now) {
+        List<Observation> reports = observationRepository.findUpdates(LocalDate.parse(current), LocalDate.parse(now));
+        logger.info("New Observations reports =>"+reports.size());
+        migrateObservation(reports);
     }
 }

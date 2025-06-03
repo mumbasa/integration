@@ -122,6 +122,76 @@ order by dr.id asc offset ? LIMIT ?
     }
 
 
+    public void getLegacyDiagnosticReport(int batchSize,String current,LocalDate date) {
+     
+        String sql = "SELECT count(*) from diagnostic_report  where created_at::date > ?::date and created_at::date <=?";
+        int rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Integer.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<DiagnosticReport> serviceRequests = new ArrayList<DiagnosticReport>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+                    SELECT dr.id, dr."uuid", dr.created_at, dr.is_deleted, dr.modified_at, dr.category, dr.code, dr.display, conclusion, dr.status, issued_date, effective_date_time, effective_period_start, effective_period_end, approved_date_time, approved_by_uuid, approved_by_name, rejected_by_uuid, rejected_by_name, rejected_date_time, review_request_by_uuid, review_request_by_name, review_request_date_time, based_on_id,sr."uuid" as service_request_id, sr.encounter_id, p.uuid as patient_id, dr.visit_id, service_request_category, billing_turnaround_time, intra_laboratory_turnaround_time, total_turnaround_time
+from diagnostic_report dr left join patient p on p.id = dr.patient_id  left join service_request sr on dr.based_on_id =sr.id
+where dr.created_at::date > ?::date and dr.created_at::date <= ?
+order by dr.id asc offset ? LIMIT ?
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, current,date,startIndex, batchSize);
+            while (set.next()) {
+                DiagnosticReport request = new DiagnosticReport();
+                
+                request.setAcessionNumber(set.getString("based_on_id"));
+                request.setUuid(set.getString("uuid"));
+                request.setBasedOnId(set.getString("service_request_id"));
+                request.setDisplay(set.getString("display"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setConclusion(set.getString("conclusion"));
+                request.setApprovedById(set.getString("approved_by_uuid"));
+                request.setApprovedByName(set.getString("approved_by_name"));
+                request.setReviewedById(set.getString("review_request_by_uuid"));
+                request.setReviewedByName(set.getString("rejected_by_name"));
+                request.setRejectedById(set.getString("rejected_by_uuid"));
+                request.setRejectedDatetime(set.getString("rejected_date_time"));
+                request.setReviewedDateTime(set.getString("review_request_date_time"));
+                request.setApprovedDateTime(set.getString("approved_date_time"));
+                request.setEffectiveDateTime(set.getString("effective_date_time"));
+                request.setEncounterId(set.getString("encounter_id"));
+                request.setIssuedDate(set.getString("issued_date")==null?request.getCreatedAt(): request.getIssuedDate());
+                request.setServiceRequestCategory(set.getString("category"));
+                request.setStatus(set.getString("status"));
+                request.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                if (set.getString("approved_by_uuid") != null) {
+                   try{
+                    request.setPerformerId(set.getString("approved_by_uuid"));
+                    request.setPerformerName((set.getString("approved_by_name")));
+                   }catch (Exception e){
+                    e.printStackTrace();
+                   }
+               
+                }
+                request.setCreatedAt(set.getString(3));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setDeleted(set.getBoolean("is_deleted"));
+                request.setVisitId(set.getString("visit_id"));
+                serviceRequests.add(request);
+
+            }
+            diagnosticReportRepository.saveAll(serviceRequests);
+            logger.info("Saved Diagnostic result");
+            cleanDiagnositcs();
+        }
+    }
+
+    public void updateDiagReports(String current,String now){
+        List<DiagnosticReport> reports = diagnosticReportRepository.findUpdates(LocalDate.parse(current), LocalDate.parse(now));
+        logger.info("New Diagnostic reports =>"+reports.size());
+        migrateDiagnosticReports(reports);
+    }
+
     public void migrateDiagnosticReports(List<DiagnosticReport> reports) {
         String sql = """
     INSERT INTO diagnostic_reports (

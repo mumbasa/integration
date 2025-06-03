@@ -148,6 +148,36 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
 
     }
 
+    public void getLegacyPractitioner(String current,LocalDate date) {
+        List<Doctors> doctors = new ArrayList<>();
+       String sql ="SELECT  * FROM public.practitioner_role WHERE  created_at::date > ?::date and created_at::date <=? order by id";
+
+       SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,current,date);
+       while (set.next()) {
+        Doctors doctor = new Doctors();
+        doctor.setManagingOrganisation("Nyaho Medical Center");
+        doctor.setManagingOrganisationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+        doctor.setGender(set.getString("gender"));
+        doctor.setTitle(set.getString("title"));
+        doctor.setDateOfBirth(set.getString("birth_date"));
+        doctor.setExternalId(set.getString("id"));
+        doctor.setHomeAddress(set.getString("address"));
+        doctor.setSerenityUUid(set.getString("id"));
+        doctor.setExternalId(set.getString("id"));
+        doctor.setCountryCode("+233");
+        doctor.setCreatedAt(set.getString("created_at"));
+        doctor.setExternalSystem("opd");
+        doctor.setFirstName(set.getString("first_name"));
+        doctor.setMobile(set.getString("mobile"));
+        doctor.setLastName(set.getString("last_name"));
+        doctor.setFullName(doctor.getFirstName()+" "+doctor.getLastName());
+        doctors.add(doctor);
+       }
+
+       doctorRepository.saveAll(doctors);
+
+    }
+
     public String getPractitioner1() throws UnsupportedEncodingException {
         // LOGGER.info("Searching for "+stock.getFullName());
         String url = "https://staging.nyaho.serenity.health/v1/providers/161380e9-22d3-4627-a97f-0f918ce3e4a9"
@@ -203,6 +233,7 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
             }
 
         }
+        
         // System.err.println("Doctors are " + doctors.stream().filter(e ->
         // !e.getEmail().isBlank()).toList().size());
 
@@ -559,6 +590,11 @@ FROM   doctor_master dm    left JOIN doctor_employee de ON dm.doctor_id = de.doc
         return callables;
     }
 
+    public void updatePractitioners(String current,String now){
+        List<Doctors> doctors = doctorRepository.getUpdates(LocalDate.parse(current),LocalDate.parse(now));
+System.err.println(doctors.size()+"----");
+migrateDoctors(doctors);
+    }
 
     public int migrateDoctors(List<Doctors> doctors){
       

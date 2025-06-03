@@ -110,6 +110,66 @@ public class PatientService {
 
 
 
+    public Map<String,List<RelatedPerson>> getLegacyRelated(String current,String now) {
+        Map<String,List<RelatedPerson>> persons = new HashMap<>();
+     
+            List<RelatedPerson> serviceRequests = new ArrayList<RelatedPerson>();
+
+            
+            String sqlQuery = """
+                        select pr.id, pr.created_at, pr.is_deleted, pr.modified_at, pr."uuid" as uuid, 
+                        pr.first_name, pr.last_name, pr.is_active, pr.other_names, pr.mobile,pr.email, 
+                        relationship, line_address, place_of_work, period_start, period_end, pr.birth_date, 
+                        pr.gender, p.uuid as patient_id FROM patient_relatedperson pr join patient 
+                        p on p.id=pr.patient_id  
+                        where pr.created_at >?::date and pr.created_at::date<=?::date
+                        order by pr.id 
+                        
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, current,now);
+            while (set.next()) {
+                RelatedPerson request = new RelatedPerson();
+                request.setUuid(set.getString("uuid"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setBirthDate(set.getString("birth_date"));
+                request.setEmail(set.getString("email"));
+                request.setMobile(set.getString("mobile"));
+                request.setLastName(set.getString("last_name"));
+                request.setFirstName(set.getString("first_name"));
+                request.setOtherNames(set.getString("other_names"));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setRelationship(set.getString("relationship"));
+                request.setLineAddress(set.getString("line_address"));
+                request.setPeriodStart(set.getString("period_start"));
+                request.setPeriodEnd(set.getString("period_end"));
+                request.setGender(set.getString("gender"));
+                request.setId(set.getLong("id"));
+                request.setActive(set.getBoolean("is_active"));
+                if(persons.keySet().contains(request.getPatientId())){
+                    persons.get(request.getPatientId()).add(request);
+
+                }else{
+                    List<RelatedPerson> person= new ArrayList<>();
+                    person.add(request);
+                    persons.put(request.getPatientId(), person);
+
+                }
+             
+                serviceRequests.add(request);
+          
+
+            }
+            relatedRepo.saveAll(serviceRequests);
+            LOGGER.info("Saved Related result");
+          //  saveRelatedPersion(serviceRequests);
+        
+        return persons;
+    }
+
+
+
+
     public Map<String,List<RelatedPerson>> getLegacyRelated(int batchSize) {
         Map<String,List<RelatedPerson>> persons = new HashMap<>();
         String sql = "SELECT count(*) from patient_relatedperson";
@@ -127,7 +187,9 @@ public class PatientService {
                         pr.first_name, pr.last_name, pr.is_active, pr.other_names, pr.mobile,pr.email, 
                         relationship, line_address, place_of_work, period_start, period_end, pr.birth_date, 
                         pr.gender, p.uuid as patient_id FROM patient_relatedperson pr join patient 
-                        p on p.id=pr.patient_id  order by pr.id asc offset ? LIMIT ?
+                        p on p.id=pr.patient_id  
+                        order by pr.id asc offset ? LIMIT ?
+                        
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -172,10 +234,60 @@ public class PatientService {
 
 
 
+    public  Map<String,Address> getLegacyAddress(String current,String now) {
+      
+      
+        Map<String,Address> addresses = new HashMap<String,Address>();
+
+  
+            List<Address> serviceRequests = new ArrayList<Address>();
+
+      
+            String sqlQuery = """
+                     SELECT pa.id, pa.created_at, pa.modified_at, pa."uuid", use, city, line, 
+                     "type", state, country, district, postal_code, p.uuid as patient_id
+FROM patient_address pa join patient p on p.id=pa.patient_id 
+where pa.created_at::date >?::date and pa.created_at::date<=?::date
+order by pa.id  asc 
+                     """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, current,now);
+            while (set.next()) {
+                Address request = new Address();
+                request.setUuid(set.getString("uuid"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setUse(set.getString("use"));
+                request.setCity(set.getString("city"));
+                request.setLine(set.getString("line"));
+                request.setType(set.getString("type"));
+                request.setState(set.getString("state"));
+                request.setUpdatedAt(set.getString("modified_at"));
+                request.setPostalCode(set.getString("postal_code"));
+                request.setId(set.getLong("id"));
+                request.setDistrict(set.getString("district"));
+                request.setCountry(set.getString("country"));
+             
+                addresses.put(request.getPatientId(), request);
+
+                
+            
+
+                serviceRequests.add(request);
+
+            }
+            addressRepo.saveAll(serviceRequests);
+        //  saveLegacyAddressInSerenity(serviceRequests);
+            LOGGER.info("Saved Address result");
+         
+        
+        return addresses;
+    }
+
+
     public  Map<String,Address> getLegacyAddress(int batchSize) {
       
-        String sql = "SELECT count(*) from patient_address";
-        long rows = legJdbcTemplate.queryForObject(sql, Long.class);
+        String sql = "SELECT count(*) from patient_address ";
+        long rows = legJdbcTemplate.queryForObject(sql,  Long.class);
 
         long totalSize = rows;
         long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
@@ -188,7 +300,8 @@ public class PatientService {
             String sqlQuery = """
                      SELECT pa.id, pa.created_at, pa.modified_at, pa."uuid", use, city, line, 
                      "type", state, country, district, postal_code, p.uuid as patient_id
-FROM patient_address pa join patient p on p.id=pa.patient_id order by pa.id  asc offset ? LIMIT ?
+FROM patient_address pa join patient p on p.id=pa.patient_id 
+order by pa.id  asc offset ? LIMIT ?
                      """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, startIndex, batchSize);
             while (set.next()) {
@@ -864,6 +977,114 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
          
      
         }
+
+    
+        public void getLegacyAllPatients2(String current,LocalDate date) {
+         Map<String,Address> address = getLegacyAddress(current,date.toString());
+         Map<String,List<RelatedPerson>> persons = getLegacyRelated(current,date.toString());
+        
+                Set<String> mrs = new HashSet<>();
+        
+                String sql = "SELECT count(*) from patient where created_at::date > ?::date and created_at::date <=?";
+                long rows = legJdbcTemplate.queryForObject (sql,new Object[]{current,date}, Long.class);
+        System.err.println(rows+"-------");
+                long totalSize = rows;
+               
+                    List<PatientData> patients = new ArrayList<PatientData>();
+                    String sqlQuery = """
+                SELECT p.id, p."uuid", p.created_at, p.modified_at, txid, ts, resource_type, p.status, resource, mr_number, birth_date, birth_time, blood_type, deceased_date_time, employer, first_name, gender, is_active, is_deceased,p.is_deleted, last_name, marital_status, meta, multiple_birth_boolean, multiple_birth_integer, name_prefix, occupation, other_names, religious_affiliation::text as religious_affiliation, photo, passport_number, general_practitioner_id, p.managing_organization_id, user_id, email, mobile, national_mobile_number, pa.uuid as previous_patient_account_uuid, previous_payment_method, is_hospitalized, admission_id,currency, current_visit_uuid
+    FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patient_account_uuid) WHERE p.created_at::date > ?::date and date(p.created_at) <=? ORDER BY p.id asc
+                             """;
+                    SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery,current, date);
+                    while (record.next()) {
+                        PatientData pd = new PatientData();
+                        pd.setExternalId(record.getString("mr_number"));
+                        pd.setLastName(record.getString("last_name"));
+                        pd.setFirstName(record.getString("first_name"));
+                        pd.setOtherNames(record.getString("other_names"));
+                        pd.setMobile(record.getString("mobile"));
+                        pd.setPaymentMethod(record.getString("previous_payment_method"));
+                        pd.setPaymentCurrency(record.getString("currency"));
+                      
+                        pd.setPreviousPatientAccountUuid(record.getString("previous_patient_account_uuid"));
+                      
+                      
+                        if(pd.getMobile()!=null){
+                        pd.setMobile(generateMobile(pd.getMobile().replaceAll("\u0000", "")));
+                        }else{
+                            pd.setMobile("");
+                        }
+                        pd.setEmail(record.getString("email"));
+                        pd.setBirthDate(record.getString("birth_date"));
+                        pd.setCreatedAt(record.getString("created_at"));
+                        pd.setUpdatedAt(record.getString("modified_at"));
+                        pd.setDeleted(record.getBoolean("is_deleted"));
+                        String str = record.getString("created_at");
+        
+        
+                        if (str != null) {
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            LocalDate dateTime = LocalDate.parse(str.split(" ")[0], formatter);
+                            String mr = generateMRNumber("NMC", dateTime);
+                            pd.setMrNumber(checkAndGenereate(mrs, mr, "NMC", dateTime));
+                        }
+            
+                        pd.setUuid(record.getString("uuid"));
+                        pd.setId(record.getLong("id"));
+                        try{
+                   
+                        pd.setGender(record.getString("gender").toUpperCase());
+                        }catch(Exception e){
+    
+                        }
+                        pd.setExternalSystem("opd");
+                        pd.setNationalMobileNumber(record.getString("national_mobile_number"));
+                        pd.setOtherNames(record.getString("other_names"));
+                        pd.setTitle(record.getString("name_prefix"));
+                        pd.setOccupation(record.getString("occupation"));
+                        pd.setEmployer(record.getString("employer"));
+                        pd.setBloodType(record.getString("blood_type"));
+                        pd.setPhoto(record.getString("photo"));
+                        pd.setMaritalStatus(record.getString("marital_status"));
+                        pd.setPassportNumber(record.getString("passport_number"));
+                        pd.setBirthTime(record.getString("birth_time"));
+                        pd.setFullName(pd.getFirstName()+" "+pd.getLastName()+(pd.getOtherNames()==null?"":" "+pd.getOtherNames()));
+        
+                        try{
+                            String tags = record.getString("religious_affiliation");
+                        pd.setReligiousAffiliation(tags);
+                    }catch(Exception e){
+                            System.err.println("error");
+                        }
+                       pd.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                        pd.setManagingOrganization("Nyaho Medical Centre");
+                        pd.setDeceased(record.getBoolean("is_deceased"));
+                        pd.setActive(record.getBoolean("is_active"));
+                        pd.setMultipleBirthInteger(record.getInt("multiple_birth_integer"));
+                        pd.setMultipleBirth(record.getBoolean("multiple_birth_boolean"));
+                         try{
+                         String addressJson = new ObjectMapper().writeValueAsString(address.get(pd.getUuid()));
+                         String relatedJson = new ObjectMapper().writeValueAsString(persons.get(pd.getUuid()));
+                         pd.setRelatedPerson(relatedJson);
+                         pd.setAddress(addressJson);
+                        } catch(Exception e){
+                         System.err.println("data not exit");
+                         e.printStackTrace();
+        
+                        }   
+                         patients.add(pd);
+        
+                    }
+               patientRepository.saveAll(patients);
+                 addressRepo.saveAll(address.values());
+                    LOGGER.info("Saved patient result");
+                
+                
+              cleanPatient();
+                
+             
+         
+            }
 
         
 

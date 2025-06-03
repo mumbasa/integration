@@ -534,12 +534,12 @@ public class NoteService {
             public void setValues(@SuppressWarnings("null") PreparedStatement ps, int i) throws SQLException {
                 EncounterNote note = notes.get(i);
                 try{
-                    ps.setString(1, notes.get(i).getEncounterDate().replaceAll("T|Z", " ").strip());
-                    ps.setString(2, notes.get(i).getEncounterDate().replaceAll("T|Z", " ").strip());
+                    ps.setString(1, notes.get(i).getCreatedAt());
+                    ps.setString(2, notes.get(i).getUpdatedAt());
                       
                 }catch (Exception e){
-                        ps.setString(1, notes.get(i).getCreatedAt()+" 14:55:37");
-                        ps.setString(2, notes.get(i).getCreatedAt()+" 14:55:37");
+                        ps.setString(1, notes.get(i).getCreatedAt());
+                        ps.setString(2, notes.get(i).getCreatedAt());
 
     
                     }
@@ -742,17 +742,91 @@ where e.created_at::date <= ?
             }
             logger.info("adding encounter");
         }
-        encounterNoteRepository.saveAll(encounters);
+       // encounterNoteRepository.saveAll(encounters);
 
 
     }
-    cleanvisitNOte();
+    //cleanvisitNOte();
         System.err.println("patiend count is ");
    }
 
 
 
+   public void getLegacyEncounters(int batchSize,String current,LocalDate date) {
 
+  
+    String sql = "SELECT count(*) from encounter where  created_at::date < ?::date and  created_at::date <= ?";
+    long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Long.class);
+  
+          long totalSize = rows;
+          long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+  
+          for (int i = 0; i < batches; i++) {
+              int startIndex = i * batchSize;
+          List<EncounterNote> encounters = new ArrayList<>();
+           sql = """
+                   SELECT  e.uuid as id ,e.created_at, e.is_deleted, e.modified_at, e.id as uuid, e.status, encounter_class, chief_complaint, history_of_presenting_illness, "type", priority, start_time, end_time, length, dyte_meeting_id, dyte_room_name, appointment_id, charge_item_id, part_of_id,p.uuid as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, service_type_name, slot_practitioner_name, status_comment, title, chief_complaint_author_id, chief_complaint_editor_uuids, chief_complaint_editors_display, history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,  p.other_names
+  FROM encounter e left join patient p on e.patient_id =p.id
+  where e.created_at::date > ?::date and e.created_at::date <= ?
+   order by p.id offset ? LIMIT ? 
+                   """;
+          SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,current,date,startIndex, batchSize);
+          while (set.next()) {
+             // PatientData patient = patientDataMap.get(set.getString("patient_id"));
+             // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
+              if(set.getString("chief_complaint") != null |set.getString("chief_complaint") !="" ){
+              EncounterNote encounter = new EncounterNote();
+              encounter.setUuid(UUID.randomUUID().toString());
+              encounter.setEncounterId(set.getString("uuid"));
+              encounter.setExternalId(set.getString("id"));
+              encounter.setCreatedAt(set.getString("created_at"));
+              encounter.setEncounterType(set.getString("encounter_class"));
+              encounter.setPatientId(set.getString("patient_id"));
+              encounter.setNoteType("chief-complaint");
+              encounter.setPatientBirthDate(set.getString("birth_date"));
+              encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
+              encounter.setPatientMobile(set.getString("mobile"));
+              encounter.setUpdatedAt(set.getString("modified_at"));
+              encounter.setExternalSystem("opd");
+              encounter.setNote(set.getString("chief_complaint"));
+              encounter.setLocationId(set.getString("primary_location_id"));
+              encounter.setVisitId(set.getString("visit_id"));
+              encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+              encounter.setServiceProviderName("Nyaho Medical Centre");
+              encounters.add(encounter);
+              }
+              if(set.getString("history_of_presenting_illness") !=null|set.getString("history_of_presenting_illness") !=""){
+  
+                  EncounterNote encounter = new EncounterNote();
+                  encounter.setUuid(UUID.randomUUID().toString());
+                  encounter.setEncounterId(set.getString("uuid"));
+                  encounter.setExternalId(set.getString("id"));
+                  encounter.setCreatedAt(set.getString("created_at"));
+                  encounter.setEncounterType(set.getString("encounter_class"));
+                  encounter.setPatientId(set.getString("patient_id"));
+                  encounter.setNoteType("history-of-presenting-illness");
+                  encounter.setPatientBirthDate(set.getString("birth_date"));
+                  encounter.setPatientFullName(set.getString("last_name")+" "+set.getString("first_name"));
+                  encounter.setPatientMobile(set.getString("mobile"));
+                  encounter.setUpdatedAt(set.getString("modified_at"));
+                  encounter.setExternalSystem("opd");
+                  encounter.setNote(set.getString("history_of_presenting_illness"));
+                  encounter.setLocationId(set.getString("primary_location_id"));
+                  encounter.setVisitId(set.getString("visit_id"));
+                  encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                  encounter.setServiceProviderName("Nyaho Medical Centre");
+                  encounters.add(encounter);
+              }
+              logger.info("adding encounter");
+          }
+          encounterNoteRepository.saveAll(encounters);
+  
+  
+      }
+      cleanvisitNOte();
+          System.err.println("patiend count is ");
+     }
+  
 
     public void getLegacyVisitNotesEncounters(int batchSize,LocalDate date) {
 
@@ -817,7 +891,67 @@ where e.created_at::date <= ?
     }
 
 
+    public void getLegacyVisitNotesEncounters(int batchSize,String current,LocalDate date) {
 
+
+        String sql = "SELECT count(*) from encounter_patient_notes where created_at::date >?::date and created_at::date<=?";
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Long.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+List<EncounterNote> encounters = new ArrayList<>();
+int startIndex = i * batchSize;
+
+ sql = """
+    
+       
+ 
+ SELECT  e.created_at, e.is_deleted, e.modified_at, e.id as uuid, display, encounter_id, p.uuid as patient_id, practitioner_id,
+  practitioner_role_id, practitioner_name, note_type, practitioner_role_type,p.birth_date,p.mobile,p.gender,p.first_name,p.last_name
+                  
+ FROM encounter_patient_notes e left join patient p on p.id=e.patient_id  
+where e.created_at::date >?::date and e.created_at::date <=?
+ order by uuid   offset ? LIMIT ?
+                  
+                  """;
+SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,current,date,startIndex,batchSize);
+while (set.next()) {
+
+   // PatientData patient = patientDataMap.get(set.getString("patient_id"));
+   // Optional<Visits> visit = visitRepository.findByExternalId(set.getString("visit_id"));
+ System.err.println("Stating---"+set.getString("uuid") );
+
+    EncounterNote encounter = new EncounterNote();
+    encounter.setUuid(set.getString("uuid"));
+    encounter.setEncounterId(set.getString("encounter_id"));
+    encounter.setExternalId(set.getString("uuid"));
+    encounter.setCreatedAt(set.getString("created_at"));
+    encounter.setUpdatedAt(set.getString("modified_at"));
+    encounter.setEncounterType("ambulatory");
+    encounter.setPatientId(set.getString("patient_id"));
+    encounter.setNoteType(set.getString("note_type")==null?"progress-note":set.getString("note_type"));
+    encounter.setPatientBirthDate(set.getString("birth_date"));
+    encounter.setPatientGender(set.getString("gender"));
+     encounter.setPatientFullName(set.getString("first_name")+" "+set.getString("last_name"));
+     encounter.setPatientMobile(set.getString("mobile"));
+    encounter.setUpdatedAt(set.getString("modified_at"));
+    encounter.setExternalSystem("opd");
+    encounter.setNote(set.getString("display"));
+    encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
+    encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+    encounter.setServiceProviderName("Nyaho Medical Centre");
+    encounters.add(encounter);
+  
+    }
+   encounterNoteRepository.saveAll(encounters);
+    logger.info("adding encounter");
+
+}
+cleanvisitNOte();
+
+}
     public void getLegacyCarePlan(int batchSize,LocalDate date) {
 
      
@@ -866,14 +1000,70 @@ where c.created_at::date <= ?
             encounters.add(encounter);
           
             }
-            encounterNoteRepository.saveAll(encounters);
+           // encounterNoteRepository.saveAll(encounters);
             logger.info("adding encounter");
         
         }
-        cleanvisitNOte();
+        //cleanvisitNOte();
 
     }
 
+
+    public void getLegacyCarePlan(int batchSize,String current,LocalDate date) {
+
+     
+        String sql = "SELECT count(*) from care_plan where  created_at::date > ?::date and created_at::date <= ?";
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Long.class);
+
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling divisionddd
+
+        for (int i = 0; i < batches; i++) {
+List<EncounterNote> encounters = new ArrayList<>();
+int startIndex = i * batchSize;
+
+ sql = """
+         SELECT c.created_at as created_at, c.modified_at as updated_at, c.id as id, c.title as title, 
+         description, period_start, period_end, encounter_id, p.uuid as patient_id,p.birth_date ,p.gender 
+         ,p.birth_date ,p.mobile ,concat(p.first_name,' ',p.last_name) as fullname,e.visit_id ,e.encounter_class
+FROM care_plan c left join encounter e on e.id = c.encounter_id  left join patient p on p.id =e.patient_id 
+where c.created_at::date >?::date and  c.created_at::date <= ?
+order by c.id offset ? LIMIT ?
+         """;
+SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,current,date,startIndex,batchSize);
+while (set.next()) {
+
+
+ 
+    EncounterNote encounter = new EncounterNote();
+    encounter.setUuid(set.getString("id"));
+    encounter.setEncounterId(set.getString("encounter_id"));
+    encounter.setExternalId(set.getString("id"));
+    encounter.setCreatedAt(set.getString("created_at"));
+    encounter.setUpdatedAt(set.getString("updated_at"));
+    encounter.setEncounterType(set.getString("encounter_class"));
+    encounter.setPatientId(set.getString("patient_id"));
+    encounter.setNoteType("care-plan");
+    encounter.setPatientBirthDate(set.getString("birth_date"));
+    encounter.setPatientFullName(set.getString("fullname"));
+    encounter.setPatientMobile(set.getString("mobile"));
+    encounter.setPatientGender(set.getString("gender"));
+    encounter.setExternalSystem("opd");
+    encounter.setNote(set.getString("description"));
+    encounter.setVisitId(set.getString("visit_id"));
+    encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
+    encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+    encounter.setServiceProviderName("Nyaho Medical Centre");
+    encounters.add(encounter);
+  
+    }
+    encounterNoteRepository.saveAll(encounters);
+    logger.info("adding encounter");
+
+}
+cleanvisitNOte();
+
+}
     public void cleanvisitNOte(){
 
         String sql ="""
@@ -932,5 +1122,11 @@ where encounter_id =e.uuid
             """;
         serenityJdbcTemplate.update(sql);
     }
+
+public void updateNotes(String current, String now) {
+    List<EncounterNote> encounters = encounterNoteRepository.getUpdates(LocalDate.parse(current),LocalDate.parse(now));
+    System.err.println("Notes size=>"+encounters.size());
+    this.saveNotes(encounters);  
+}
 
 }

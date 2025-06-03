@@ -412,9 +412,8 @@ VALUES (
 
     }
 
-    public void patientETL() {
-        patientService.loadPatients();
-        getPatientsThreads();
-
+    public void patientUpdate(String current,String now) {
+        List<PatientData> patients = patientRepository.findySystem(LocalDate.parse(current),LocalDate.parse(now));
+     task2(patients);
     }
 }

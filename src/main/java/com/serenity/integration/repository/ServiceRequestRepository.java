@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,7 @@ public interface ServiceRequestRepository extends JpaRepository<ServiceRequest,L
 
     @Query(value = "select  count(*) from service_request WHERE encounterid  is null",nativeQuery = true)
     long getParactionerIdCount();
+
+    @Query(value = "select  * from service_request sr where createdat::date >?1 and createdat::date <=?2  order by id asc",nativeQuery = true)
+    List<ServiceRequest> findUpdatess(LocalDate localDate, LocalDate localDate2);
 }

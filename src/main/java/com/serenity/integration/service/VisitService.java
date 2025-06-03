@@ -449,6 +449,88 @@ ORDER BY
 }
 
 
+public  void  getLegacyVisit(String current,LocalDate date){
+
+    String sqlRow = "SELECT count(*) from visit WHERE   date(created_at) > ?::date and date(created_at) <= ?::date";
+    long rows = legJdbcTemplate.queryForObject (sqlRow,new Object[]{current,date}, Long.class);
+logger.info("New visits = "+rows);
+        
+        List<Visits> visits = new ArrayList<>();
+        String sql = """
+                      SELECT 
+    v.created_at,
+    v.is_deleted,
+    v.modified_at,
+    v.id AS uuid,
+    v.status,
+    visit_class,
+    priority,
+    arrived_at,
+    ended_at,
+    v.appointment_id,
+    assigned_to_id,
+    p.uuid AS patient_id,
+    service_provider_id,
+    primary_location_id,
+    next_encounter_due,
+    p.birth_date,
+    p.email,
+    p.first_name,
+    p.gender,
+    p.last_name,
+    p.mobile,
+    p.other_names,
+    encounter_history,
+    p.name_prefix AS title
+FROM 
+    visit v
+LEFT JOIN 
+    patient p ON p.id = v.patient_id
+WHERE date(v.created_at) > ?::date and date(v.created_at) <= ?
+ORDER BY 
+    v.created_at 
+
+                """;;
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,current,date);
+
+        while(set.next()){
+            Visits visit = new Visits();
+            visit.setUuid(UUID.fromString(set.getString("uuid")));
+            visit.setCreatedAt(set.getString("created_at"));
+            visit.setStatus(set.getString("status"));
+            visit.setStartedAt(set.getString("arrived_at"));
+            visit.setEndedAt(set.getString("ended_at"));
+            visit.setPatientId(set.getString("patient_id"));
+            visit.setExternalSystem("opd");
+            visit.setExternalId(set.getString("uuid"));
+           // visit.setInvoiceId(set.getString("invoiceid"));
+            visit.setAssignedToId(set.getString("assigned_to_id"));
+            
+            visit.setPractitionerId(set.getString("assigned_to_id"));
+            visit.setLocationId(set.getString("primary_location_id"));
+            visit.setPatientMobile(set.getString("mobile"));
+            visit.setPatientName(set.getString("first_name")+" "+set.getString("last_name"));
+            visit.setPatientDob(set.getString("birth_date")==null?"":set.getString("birth_date"));
+            visit.setGender(set.getString("gender"));
+            visit.setEncounterClass(set.getString("visit_class"));
+            //visit.setUserFriendlyId(set.getString("user_friendly_id"));
+        
+            visit.setDisplay("opd-"+visit.getUuid());
+            visit.setPriority(set.getString("priority")==null?"routine":set.getString("priority"));
+            visit.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+            visit.setServiceProviderName("Nyaho Medical Center");
+            visit.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
+            visit.setLocationName("Airport Primary Care");
+            visit.setUpdatedAt(set.getString("modified_at"));
+            
+            visits.add(visit);
+
+    }
+    visitRepository.saveAll(visits);
+    logger.info("saved visit");
+        
+        updateVisits();
+}
 
 public void getHisThreads(){
 

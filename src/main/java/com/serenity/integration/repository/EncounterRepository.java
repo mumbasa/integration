@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ public interface EncounterRepository extends JpaRepository<Encounter,Long>{
 
     @Query(value = "select * from encounter e   OFFSET 0  LIMIT 100000",nativeQuery = true)
     List<Encounter> getfirst100k();
+
+    @Query(value = "select * from encounter e  where created_at::date >?1 and created_at::date <=?2",nativeQuery = true)
+    List<Encounter> getUpdates(LocalDate current,LocalDate now);
 
     List<Encounter> findByExternalIdAndAssignedToId(String externalId,String patient);
    

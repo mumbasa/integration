@@ -30,6 +30,7 @@ import com.serenity.integration.models.Diagnosis;
 import com.serenity.integration.models.Encounter;
 import com.serenity.integration.models.EncounterNote;
 import com.serenity.integration.models.PatientData;
+import com.serenity.integration.models.Referal;
 import com.serenity.integration.repository.DiagnosisRepository;
 import com.serenity.integration.repository.DoctorRepository;
 import com.serenity.integration.repository.EncounterNoteRepository;
@@ -418,6 +419,12 @@ public class DiagnosisService {
 
     }
 
+       public void updateDianosis(String current,String now){
+        List<Diagnosis> referals = diagnosisRepository.findUpdatess(LocalDate.parse(current),LocalDate.parse(now));
+        logger.info("Referals to migrate =>"+referals.size());
+        saveDiagnoses(referals);
+    }
+
     public void saveDiagnoses(List<Diagnosis> diagnoses) {
 
         String sql = """
@@ -581,6 +588,61 @@ where e."uuid" =encounterid and visitid is null
 
                                         """;
             SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, date,startIndex,size);
+            while (set.next()) {
+                Diagnosis diagnosis = new Diagnosis();
+                diagnosis.setCode(set.getString("code"));
+                diagnosis.setRole(set.getString("role"));
+                diagnosis.setCondition(set.getString("condition"));
+                diagnosis.setRank(set.getInt("rank"));
+                diagnosis.setEncounterId(set.getString("encounter_id"));
+                diagnosis.setStatus(set.getString("status"));
+                switch (diagnosis.getStatus()){
+               case "final" -> diagnosis.setStatus("confirmed");
+               case "" ->diagnosis.setStatus("provisional");
+               default -> diagnosis.setStatus(diagnosis.getStatus().toLowerCase());
+            
+            }
+    
+                diagnosis.setNote(set.getString("note"));
+                diagnosis.setUuid(set.getString("id"));
+                diagnosis.setSystem("opd");
+                diagnosis.setDeleted(set.getBoolean("is_deleted"));
+                diagnosis.setCreatedAt(set.getString("created_at"));
+                diagnosis.setUpdatedAt(set.getString("modified_at"));
+                diagnoses.add(diagnosis);
+
+            }
+            diagnosisRepository.saveAll(diagnoses);
+            logger.info("saved diagnosis");
+        }
+
+        updateWithData();
+    }
+
+    public void getLegacyDiagnosis(int size,String current,LocalDate date) {
+
+        String sqlCount = """
+                                           select count(*) from
+                encounter_diagnosis
+                        where  created_at::date >?::date and created_at::date <=?
+
+                                                               """;
+        @SuppressWarnings("null")
+        int rows = legJdbcTemplate.queryForObject(sqlCount,new Object[]{current,date}, Integer.class);
+        logger.info(rows + "new number of rows");
+        int totalSize = rows;
+        int batches = (totalSize + size - 1) / size; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<Diagnosis> diagnoses = new ArrayList<>();
+
+            int startIndex = i * size;
+
+            String sqlQuery = """
+                    SELECT * FROM encounter_diagnosis   where created_at::date >?::date  and created_at::date <=? order by id OFFSET ? LIMIT ?;
+
+                                        """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, current,date,startIndex,size);
             while (set.next()) {
                 Diagnosis diagnosis = new Diagnosis();
                 diagnosis.setCode(set.getString("code"));

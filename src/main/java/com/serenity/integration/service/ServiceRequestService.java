@@ -138,6 +138,62 @@ order by sr.id asc
 
     }
 
+
+    public void getLegacyRequest(String current,LocalDate date) {
+          
+              List<ServiceRequest> serviceRequests = new ArrayList<ServiceRequest>();
+  
+         
+              String sqlQuery = """
+            SELECT sr.id, sr."uuid", sr.created_at, sr.is_deleted, sr.modified_at, body_site, display, code, sr.category, sr.diagnostic_service_section, due_date, purpose, p.passport_number, sample_received_date_time, priority, sr.status, group_identifier, status_reason, intent, do_not_perform, quantity_value, quantity_unit, ci.charge as charge,occurence, as_needed, authored_on, note, patient_instruction, assigned_to, assigned_to_name, encounter_id, healthcare_service_id,hs.name as healthcare_service_name, sr.location_id, p.uuid as patient_id, sr.price_tier_id, replaces_id, requesting_patient_id, requesting_practitioner_role_id, requesting_related_contact_id, sr.visit_id, bill_paid_at, canceled_by_name, canceled_by_practitioner_id, canceled_at, encounter_diagnoses, is_mismatched, is_mismatched_comment, hs.service_class,
+  ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.id =sr.patient_id left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid" left join healthcare_service hs on hs.id=healthcare_service_id 
+          where sr.created_at::date >?::date and sr.created_at <=?
+  order by sr.id asc
+   
+                       """;
+              SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,current,date);
+              while (set.next()) {
+                  ServiceRequest request = new ServiceRequest();
+                  request.setId(set.getLong("id"));
+                  request.setUuid(set.getString("uuid"));
+                  request.setDeleted(set.getBoolean("is_deleted"));
+                  request.setOccurence(set.getString("occurence"));
+                  request.setCategory(set.getString("category"));
+                  String encounterId = set.getString("encounter_id");
+                  if (encounterId != null) {
+                      request.setEncounterId(encounterId);
+                  }
+                  String patientMrNumber = set.getString("patient_id");
+                  request.setPatientId(patientMrNumber);
+                  request.setCreatedAt(set.getString("created_at"));
+                  request.setDisplay(set.getString("display"));
+                  request.setDoNotPerform(false);
+                  request.setCharge(set.getDouble("charge"));
+                  request.setIntent(set.getString("intent"));
+                  request.setCode(set.getString("code"));
+                  request.setPurpose(set.getString("purpose"));
+                  request.setStatus(set.getString("status"));
+                  request.setModifiedAt(set.getString("modified_at"));
+                  request.setDiagnosticServiceSection(set.getString("diagnostic_service_section"));
+                  request.setPaid(true);
+                  request.setAccessionNumber(set.getString("id"));
+                  request.setNote(set.getString("note"));
+                  request.setGroupIdentifier(set.getString("group_identifier"));
+                  request.setChargeItemId(set.getString("charge_item_uuid"));
+                  request.setHealthcareServiceId(set.getString("healthcare_service_id"));
+                  request.setHealthcareServiceName(set.getString("healthcare_service_name"));
+                  request.setSampleReceivedDateTime(set.getString("sample_received_date_time"));
+                  serviceRequests.add(request);
+  
+              }
+              serviceRequestRepository.saveAll(serviceRequests);
+              logger.info("Saved Requests");
+          
+          logger.info("Cleaning Requests");
+         addVields();
+  
+      }
+
     public void addVields() {
 
         String sql = """
@@ -148,6 +204,14 @@ order by sr.id asc
                                 """;
 
         vectorJdbcTemplate.update(sql);
+        sql="""
+                update service_request 
+set patientbirthdate =p.birthdate ,patientfullname =concat(p.lastname,' ',p.firstname,' ',p.othernames) ,patientgender =p.gender ,patientmrnumber =p.mrnumber ,patientmobile =p.mobile 
+from patient_information p
+where patientid = p.uuid and patientmrnumber is null
+                """;
+                vectorJdbcTemplate.update(sql);
+ 
 
         sql ="""
                 WITH ranked AS (
@@ -364,6 +428,12 @@ WHERE sr.patient_id = p.uuid AND sr.id > 1;
             """;
 
             serenityJdbcTemplate.update(sql);
+}
+
+public void updateServiceRequest(String current, String now) {
+    List<ServiceRequest> referals = serviceRequestRepository.findUpdatess(LocalDate.parse(current),LocalDate.parse(now));
+        logger.info("Service Requests to migrate =>"+referals.size());
+        migrateServiceRequestToSerenity(referals);
 }
 
 

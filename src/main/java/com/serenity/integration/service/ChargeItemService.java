@@ -26,6 +26,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.ChargeItem;
+import com.serenity.integration.models.MedicalRequest;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.repository.ChargeItemRepository;
 import com.serenity.integration.repository.DoctorRepository;
@@ -211,6 +212,149 @@ request.setCreatedByName(set.getString("created_by_name"));
     }
 
 
+    public void getLegacyChargeItem(int batchSize,String current,LocalDate date) {
+  
+        String sql = "select count(*) from \"ChargeItem\" ci where created_on::date >?::date and created_on::date <= ?";
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Long.class);
+ logger.info("New charge items =>"+rows);
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<ChargeItem> serviceRequests = new ArrayList<ChargeItem>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+         SELECT
+"ChargeItem"."id" AS "id",
+"ChargeItem"."appointmentid" AS "appointment_id",
+ps."uuid" AS "stock_item_id",
+"ChargeItem"."category" AS "category",
+"ChargeItem"."charge" AS "charge",
+"ChargeItem"."clinic_name" AS "location_name",
+"ChargeItem"."clinicid" AS "location_id",
+"ChargeItem"."created_on" AS "created_at",
+"ChargeItem"."transactionid" AS "transaction_id",
+"ChargeItem"."currency" AS "currency",
+"ChargeItem"."invoiceid" AS "invoice_id",
+"ChargeItem"."medicationrequestid" AS "medication_request_id",
+"ChargeItem"."patient_mobile" AS "patient_mobile",
+"ChargeItem"."patientid" AS "patient_id",
+"ChargeItem"."patientname" AS "patient_name",
+o.uuid AS "payer_id",
+"ChargeItem"."payername" AS "payer_name",
+"ChargeItem"."payment_method" AS "payment_method",
+"ChargeItem"."practitionerid" AS "practitioner_id",
+"ChargeItem"."practitionername" AS "practitioner_name",
+'161380e9-22d3-4627-a97f-0f918ce3e4a9' AS "provider_id",
+'Nyaho Medical Center' AS "provider_name",
+"ChargeItem"."relationship" AS "relationship",
+"ChargeItem"."service_or_product_name" AS "service_or_product_name",
+"ChargeItem"."servicerequestid" AS "service_request_id",
+"ChargeItem"."status" AS "status",
+"ChargeItem"."quantity" AS "quantity",
+"ChargeItem"."unit_price" AS "unit_price",
+"ChargeItem"."uuid" AS "uuid",
+"ChargeItem"."policy_id" AS "policy_id",
+"ChargeItem"."service_id" AS "service_id",
+"ChargeItem"."visit_id" AS "visit_id",
+"ChargeItem"."patient_contribution" AS "patient_contribution",
+"ChargeItem"."user_friendly_id" AS "user_friendly_id",
+"ChargeItem"."created_by" AS "created_by_name",
+"ChargeItem"."revenue_tag_display" AS "revenue_tag_display",
+"ChargeItem"."paid_at" AS "paid_at",
+"ChargeItem"."payer_contribution" AS "payer_contribution",
+ "Encounter"."id" AS "encounter_id",
+  cic.uuid  as cancellation_id,
+  cic.requested_date_time as cancelation_requested_at,
+   cic.requested_by_uuid as requested_by_id,
+    cic.requested_by_name as requested_by,
+     cic.canceled_date_time as canceled_at,
+     cic.approved_by_name as approved_by,
+     cic.approved_by_uuid as approved_by_id,
+      cic.approved_date_time as approved_at,
+       cic.canceled_by_uuid as canceled_by_id,
+       cic.canceled_by_name as canceled_by_name,
+       cic.reason as reason,
+       cashier_name
+FROM
+"ChargeItem"  left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id"  
+left join charge_item_cancelation cic on cic.charge_item_id="ChargeItem".id 
+left join pharmacy_stock ps on stock_item_id =ps.id
+LEFT JOIN
+    "public"."organization_clientaccount" ca ON "ChargeItem".payer_account_id::uuid = ca.uuid
+LEFT JOIN
+    "public"."organization" o ON ca.owner_id = o.id
+where  "ChargeItem".created_on::date >?::date  and "ChargeItem".created_on::date <= ?
+            order by "ChargeItem".id offset ? limit ?
+            """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery, current,date,startIndex, batchSize);
+            while (set.next()) {
+                ChargeItem request = new ChargeItem();
+
+               request.setAppointmentId(set.getString("appointment_id"));
+                request.setId(set.getLong("id"));
+                request.setUuid(set.getString("uuid"));
+                request.setCharge(set.getDouble("charge"));
+                request.setCurrency(set.getString("currency"));
+                request.setUnitPrice(set.getDouble("unit_price"));
+                request.setCategory(set.getString("category"));
+                request.setVisitId(set.getString("visit_id"));
+                request.setLocationId(set.getString("location_id")==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":set.getString("location_id"));
+                request.setLocationName(set.getString("location_name")==null?"Airport Main":set.getString("location_name"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                request.setProviderName("Nyaho Medical Center");
+                request.setPolicyId(set.getString("policy_id"));
+                request.setPayerId(set.getString("payer_id"));
+                request.setPayerName(set.getString("payer_name"));
+                request.setQuantity(set.getInt("quantity"));
+                request.setInvoiceId(set.getString("invoice_id"));
+                request.setServiceId(set.getString("service_id"));
+                request.setServiceOrProductName(set.getString("service_or_product_name"));
+                request.setServiceRequestId(set.getString("service_request_id"));
+                request.setUserFriendlyId(set.getString("user_friendly_id"));
+                request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
+               request.setPatientContribution(set.getDouble("patient_contribution"));
+               request.setRelationship(set.getString("relationship"));
+               request.setPractitionerId(set.getString("practitioner_id"));
+                request.setCreatedAt(set.getString("created_at"));
+                request.setEncounterId(set.getString("encounter_id"));
+               request.setPractitionerName(set.getString("practitioner_name"));
+               request.setUpdatedAt(set.getString("created_at"));
+               request.setStockItemId(set.getString("stock_item_id"));
+               request.setPaidAt(set.getString("paid_at"));
+               request.setMedicationRequestId(set.getString("medication_request_id"));
+                request.setPaymentMethod(set.getString("payment_method"));
+                request.setStatus(set.getString("status"));
+                request.setCashierName(set.getString("cashier_name"));
+                request.setCancellationRequestId(set.getString("cancellation_id"));
+                request.setCanceledAt(set.getString("canceled_at"));
+                request.setCancellationRequestedAt(set.getString("cancelation_requested_at"));
+                request.setCancellationRequestedById(set.getString("requested_by_id"));
+                request.setCancellationRequestedByName(set.getString("requested_by"));
+request.setCreatedByName(set.getString("created_by_name"));
+                request.setCancellationApprovedName(set.getString("approved_by"));
+                request.setCancellationApprovedById(set.getString("approved_by_id"));
+                request.setCancellationApprovedAt(set.getString("approved_at"));
+                request.setTransactionId(set.getString("transaction_id"));
+                request.setCanceledById(set.getString("canceled_by_id"));
+                request.setCanceledByName(set.getString("canceled_by_name"));
+                request.setCancellationReason(set.getString("reason"));
+                
+               
+                serviceRequests.add(request);
+
+            }
+           chargeItemRepository.saveAll(serviceRequests);
+           // migrateChargeItems(serviceRequests);
+            logger.info("Saved chargeItem");
+        }
+        logger.info("Cleaning Requests");
+      cleanItems();
+
+
+    }
 
 
     public long dumpFutureCallable(long offset,long limit) {
@@ -658,4 +802,11 @@ public void mig(int batchSize){
         migrateChargeItems(chargeItemRepository.findBhy(startIndex, batchSize));
 
 }}
+
+
+public void updateChargeItems(String current, String now) {
+   List<ChargeItem> requests = chargeItemRepository.findUpdatess(LocalDate.parse(current),LocalDate.parse(now));
+        logger.info("ChargeItems to migrate =>"+requests.size());
+        migrateChargeItems(requests);
+}
 }

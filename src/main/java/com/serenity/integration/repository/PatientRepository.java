@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ public interface PatientRepository extends JpaRepository<PatientData,Long>{
 
     @Query(value = "select * from patient_information pi2 order by id offset ?1 limit ?2 ",nativeQuery = true)
     public List<PatientData> findySystem (int offset,int limit);
+
+    @Query(value = "select * from patient_information pi2  where createdat::date > ?1 and createdat::date <=?2 order  by id",nativeQuery = true)
+    public List<PatientData> findySystem (LocalDate current,LocalDate now);
 
     public Optional<PatientData> findByExternalId(String hisNumber);
 }

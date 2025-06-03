@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,8 @@ import com.serenity.integration.models.AllergyIntolerance;
 public interface AllergyRepository extends JpaRepository<AllergyIntolerance,Long>{
 @Query(value="SELECT * FROM allergy_intolerance  order by id OFFSET ?1 LIMIT ?2",nativeQuery=true)
 List<AllergyIntolerance> findBatch(int offset ,int limit);
+
+
+@Query(value="SELECT * FROM allergy_intolerance  where createdat::date > ?1 and createdat::date <=?2 order by id",nativeQuery=true)
+List<AllergyIntolerance> getUpdates(LocalDate offset ,LocalDate now);
 }

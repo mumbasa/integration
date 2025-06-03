@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
+import com.serenity.integration.models.Diagnosis;
 import com.serenity.integration.models.Doctors;
 import com.serenity.integration.models.Encounter;
 import com.serenity.integration.models.EncounterNote;
@@ -627,6 +628,12 @@ WHERE id IN (
         return callables;
     }
 
+       public void updateMedicalRequest(String current,String now){
+        List<MedicalRequest> requests = medicalRequestRepository.findUpdatess(LocalDate.parse(current),LocalDate.parse(now));
+        logger.info("MeidcalRequest to migrate =>"+requests.size());
+        saveMedicalRequest(requests);
+    }
+
     public void saveMedicalRequest(List<MedicalRequest> requests) {
 
         String sql = """
@@ -796,6 +803,29 @@ movetoHub(startIndex, batchSize,doctorMap,date);
 //    cleanLegacyRequest();
             // Step 6: Clean up resources
 }
+
+
+public void getLegacyRequest2(String current,LocalDate date) {
+    logger.info("Starting importing Medical Requests");
+  
+
+    Map<String, Doctors> doctorMap = doctorRepository.findHisPractitioners().stream()
+    .collect(Collectors.toMap(e -> e.getSerenityUUid(), e->e ));
+
+    // Step 1: Get the total number of rows
+    String sqlCount = "SELECT count(*) FROM medication_request m  left JOIN patient p ON m.patient_id = p.id where m.created_at::date >?::date and m.created_at::date<=?";
+    long rows = legJdbcTemplate.queryForObject(sqlCount,new Object[]{current,date}, Long.class);
+    int batchSize = 40000;
+    long batches = ((rows + batchSize - 1) / batchSize); // Ceiling division
+    
+    for (int i = 0; i < batches; i++) {
+        int startIndex = i * batchSize;
+
+movetoHub(startIndex, batchSize,doctorMap,current,date);
+    }
+//    cleanLegacyRequest();
+            // Step 6: Clean up resources
+}
     public Set<Callable<Integer>> submitLegacyNotes(int batchSize, long rows,Map<String, PatientData> mps,Map<String, Doctors> doc,LocalDate date) {
         Set<Callable<Integer>> callables = new HashSet<>();
         long totalSize = rows; // Use long to avoid potential overflow
@@ -834,6 +864,59 @@ where mr.created_at::date <=?
 order by mr.patient_id OFFSET ? LIMIT ?
         """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,offset,limit);
+        while (set.next()) {
+            MedicalRequest request = new MedicalRequest();
+          request.setPatientId(set.getString("patient_id"));
+            request.setCode(set.getString("code"));
+            request.setCategory(set.getString("category"));
+            request.setDose(set.getDouble("quantity"));
+            request.setQuantityToDispense(set.getDouble("quantity"));
+            request.setDosageForm(set.getString("dosage_form"));
+            request.setAuthoredOn(set.getString("authored_on"));
+            request.setCreatedAt(set.getString("created_at"));
+            request.setUuid(set.getString("id"));
+            request.setEncounterId(set.getString("encounter_id"));
+            request.setName(set.getString("name"));
+            request.setExternalId(set.getString("id"));
+            request.setExternalSystem("opd");
+            
+            request.setDate(set.getString("date"));
+            request.setIntendedDispenser(set.getString("intended_dispenser"));
+            request.setCourseOfTherapy(set.getString("course_of_therapy_type"));
+            request.setStatus(set.getString("status"));
+            request.setPractitionerId(set.getString("requester_practitioner_role_id"));
+            try{
+            request.setPractitionerName(docs.get(request.getPractitionerId()).getFullName());
+            }catch(Exception e){
+                
+            }
+            request.setPatientName(set.getString("patient_name"));
+            request.setVisitId(set.getString("visit_id"));
+            request.setPriority(set.getString("priority"));
+            request.setStatus(set.getString("status"));
+            request.setUpdatedAt(set.getString("modified_at"));
+            request.setDeleted(set.getBoolean("is_deleted"));
+            
+            medicalRequests.add(request);
+            
+        }
+        medicalRequestRepository.saveAll(medicalRequests);
+        cleanLegacyRequest();
+        return 1;
+
+    }
+
+
+    public int movetoHub(int offset,int limit,Map<String,Doctors> docs,String current,LocalDate date){
+        List<MedicalRequest> medicalRequests = new ArrayList<>();
+        String sql ="""
+        
+        SELECT mr."uuid", mr.created_at, mr.is_deleted, mr.modified_at, mr.id, authored_on, "name", category, code, "date", form, intended_dispenser, priority, careplan, mr.status, status_reason, intent, do_not_perform, performer_type, course_of_therapy_type, quantity, past_refills, next_refill, dispense_interval_in_days, number_of_repeats_allowed, encounter_id, p.uuid as patient_id, concat(p.first_name,' ',p.last_name) as patient_name,performer_practitioner_id, performer_practitioner_role_id, prior_prescription_id, recorder_practitioner_id, recorder_practitioner_role_id, requester_patient_id, requester_practitioner_id, requester_practitioner_role_id, visit_id, dosage_form, is_mismatched, is_mismatched_comment
+FROM public.medication_request mr left join patient p  on p.id = mr.patient_id  
+where mr.created_at::date >?::date and mr.created_at::date <=?
+order by mr.patient_id OFFSET ? LIMIT ?
+        """;
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,current,date,offset,limit);
         while (set.next()) {
             MedicalRequest request = new MedicalRequest();
           request.setPatientId(set.getString("patient_id"));

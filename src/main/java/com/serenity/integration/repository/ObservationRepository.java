@@ -1,5 +1,6 @@
 package com.serenity.integration.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,8 @@ long findCleanDaas();
 
 @Query(value = "SELECT * from observations where encounterid =?1",nativeQuery = true)
 List<Observation> findByEncounterId(String uuid);
+
+@Query(value = "SELECT * from observations where createdat::date >?1 and createdat::date <=?2  order by id",nativeQuery = true)
+List<Observation> findUpdates(LocalDate localDate, LocalDate localDate2);
     
 } 

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import com.serenity.integration.models.AllergyIntolerance;
 import com.serenity.integration.models.ChargeItem;
+import com.serenity.integration.models.DiagnosticReport;
 import com.serenity.integration.models.Doctors;
 import com.serenity.integration.models.PatientData;
 import com.serenity.integration.models.PatientInvoice;
@@ -269,6 +270,104 @@ order by "ChargeItem".id
 
     }
 
+
+    public void getLegacyChargeItem(int batchSize,String current,LocalDate date) {
+        Set<String> ids = new HashSet<>();
+        String sql = "select count(*) from \"ChargeItem\" ci  where payment_method !='cash' and visit_id is not null and invoiceid is not null  and ci.created_on >?::date and  ci.created_on <=?";
+        long rows = legJdbcTemplate.queryForObject(sql,new Object[]{current,date}, Long.class);
+        logger.info("New invoices =>"+rows);
+        long totalSize = rows;
+        long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
+
+        for (int i = 0; i < batches; i++) {
+            List<PatientInvoice> serviceRequests = new ArrayList<PatientInvoice>();
+
+            int startIndex = i * batchSize;
+            String sqlQuery = """
+         select 
+"ChargeItem"."id" AS "id",
+"ChargeItem"."category" AS "category",
+"ChargeItem"."charge" AS "charge",
+"ChargeItem"."created_on" AS "created_at",
+"ChargeItem"."created_on" AS "updated_at",
+"ChargeItem"."currency" AS "currency",
+"ChargeItem"."invoiceid" AS "invoice_id",
+"ChargeItem"."patientid" AS "patient_id",
+o.uuid AS "payer_id",
+"ChargeItem"."payername" AS "payer_name",
+"ChargeItem"."payment_method" AS "payment_method",
+"ChargeItem"."practitionerid" AS "practitioner_id",
+"ChargeItem"."practitionername" AS "practitioner_name",
+'161380e9-22d3-4627-a97f-0f918ce3e4a9' AS "provider_id",
+'Nyaho Medical Center' AS "provider_name",
+"ChargeItem"."relationship" AS "relationship",
+"ChargeItem"."service_or_product_name" AS "service_or_product_name",
+"ChargeItem"."servicerequestid" AS "service_request_id",
+"ChargeItem"."status" AS "status",
+"ChargeItem"."uuid" AS "uuid",
+"ChargeItem"."visit_id" AS "visit_id",
+"ChargeItem"."patient_contribution" AS "patient_contribution",
+"ChargeItem"."user_friendly_id" AS "user_friendly_id",
+"ChargeItem"."created_by" AS "created_by_name",
+"ChargeItem"."revenue_tag_display" AS "revenue_tag_display",
+"ChargeItem"."paid_at" AS "paid_at",
+"ChargeItem"."payer_contribution" AS "payer_contribution",
+ CASE
+        WHEN o.uuid IS NOT NULL THEN 'ORGANIZATION'
+        ELSE 'PATIENT'
+    END AS payer_type
+FROM
+"ChargeItem"  left JOIN "encounter" AS "Encounter" ON "ChargeItem"."id" = "Encounter"."charge_item_id" 
+LEFT JOIN
+    "public"."organization_clientaccount" ca ON "ChargeItem".payer_account_id::uuid = ca.uuid
+LEFT JOIN
+    "public"."organization" o ON ca.owner_id = o.id
+    where payment_method != 'cash' and "ChargeItem".visit_id is not null and invoiceid is not null 
+    and  "ChargeItem".created_on::date > ?::date and "ChargeItem".created_on::date <= ?
+
+order by "ChargeItem".id
+            offset ? limit ?
+            """;
+            SqlRowSet set = legJdbcTemplate.queryForRowSet(sqlQuery,current, date,startIndex, batchSize);
+            while (set.next()) {
+                if(!ids.contains((set.getString("invoice_id")))){
+
+                PatientInvoice request = new PatientInvoice();
+       
+                request.setUuid(set.getString("invoice_id"));
+                request.setCurrency(set.getString("currency"));
+                request.setVisitId(set.getString("visit_id"));
+                request.setPatientId(set.getString("patient_id"));
+                request.setManagingOrganizationId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                request.setPayerId(set.getString("payer_id"));
+                request.setPayerName(set.getString("payer_name"));            
+                request.setCreatedAt(set.getString("created_at"));
+                request.setUpdatedAt(set.getString("updated_at"));
+                request.setInvoiceDate(set.getString("created_at"));
+               request.setUpdatedAt(set.getString("updated_at"));
+                request.setPaymentMethod(set.getString("payment_method"));
+                request.setPayerType(set.getString("payer_type"));
+                request.setPayerId(set.getString("payer_id"));
+                
+               
+                serviceRequests.add(request);
+            ids.add(set.getString("invoice_id"));
+            }
+             
+
+            }
+           invoiceRepository.saveAll(serviceRequests);
+         
+           // migrateChargeItems(serviceRequests);
+            logger.info("Saved chargeItem");
+           cleanItems();
+            logger.info("Cleaning Requests");
+
+        }
+     
+
+    }
+
     public void cleanItems(){
         String sql = """
              update patient_invoice set patientmrnumber =p.mrnumber ,patientbirthdate=p.birthdate,patientgender=p.gender,patientmobile=p.mobile,patientname=concat(p.firstname,' ',p.lastname)
@@ -470,5 +569,12 @@ GROUP BY
         System.err.println(rows);
 
     }
+
+     public void updateInvoices(String current,String now){
+        List<PatientInvoice> reports = invoiceRepository.findUpdates(LocalDate.parse(current), LocalDate.parse(now));
+        logger.info("New Invoices reports =>"+reports.size());
+        migrateInvoice(reports);
+    }
+
 
 }
