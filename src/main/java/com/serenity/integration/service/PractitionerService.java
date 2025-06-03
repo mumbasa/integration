@@ -610,7 +610,7 @@ migrateDoctors(doctors);
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 // TODO Auto-generated method stub
                 ps.setString(1,doctors.get(i).getCreatedAt());
-                ps.setString(2, doctors.get(i).getUuid());
+                ps.setString(2, doctors.get(i).getSerenityUUid());
                 ps.setString(3, doctors.get(i).getFirstName());
                 ps.setString(4, doctors.get(i).getLastName()==null?"": doctors.get(i).getLastName());
                 ps.setString(5, doctors.get(i).getFullName()==null?"": doctors.get(i).getFullName()+" "+doctors.get(i).getLastName());
