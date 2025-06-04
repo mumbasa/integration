@@ -131,13 +131,13 @@ referalService.getLegacyReferral(1000,"2025-05-27", date);
 dService.getLegacyDiagnosis(1000, "2025-05-27",date);
 diagnosisService.getLegacyDiagnosticReport(1000,"2025-05-27", date);
 medicalRequestService.getLegacyRequest2("2025-05-27",date);
-chargeItemService.getLegacyChargeItem(2000, "2025-05-27",date); */
+chargeItemService.getLegacyChargeItem(2000, "2025-05-27",date); 
 invoiceService.getLegacyChargeItem(4000,"2025-05-27", date);
 observationService.getLegacyObservations(5000,"2025-05-27", date);
 noteService.getLegacyVisitNotesEncounters(5000,"2025-05-27",date);
 noteService.getLegacyCarePlan(30000,"2025-05-27",date);
 noteService.getLegacyEncounters(20000,"2025-05-27",date) ;	 
-serviceRequestService.getLegacyRequest("2025-05-27", date); 
+serviceRequestService.getLegacyRequest("2025-05-27", date); */
 
 patientMigrationService.patientUpdate("2025-05-27",date.toString());
 practitionerService.updatePractitioners("2025-05-27",date.toString());
