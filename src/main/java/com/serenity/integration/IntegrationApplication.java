@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.serenity.integration.service.AllergyService;
 import com.serenity.integration.service.ChargeItemService;
@@ -35,6 +35,7 @@ import com.serenity.integration.service.WardSetupService;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
+@EnableScheduling
 @EnableJpaRepositories(basePackages = "com.serenity.integration.repository")
 public class IntegrationApplication {
 
@@ -106,7 +107,7 @@ InvoiceService invoiceService;
 		SpringApplication.run(IntegrationApplication.class, args);
 	}
 
-	@PostConstruct
+	//@PostConstruct
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
@@ -122,43 +123,7 @@ InvoiceService invoiceService;
 
 
 LocalDateTime ends = LocalDateTime.now();
-/* patientService.getLegacyAllPatients2( "2025-05-27", date);
-practitionerService.getLegacyPractitioner("2025-05-27",date);
-visitService.getLegacyVisit("2025-05-27", date);
-encounterService.getLegacyEncounters("2025-05-27", date);
-allergyService.getLegacyAllergies("2025-05-27", date);
-referalService.getLegacyReferral(1000,"2025-05-27", date);
-dService.getLegacyDiagnosis(1000, "2025-05-27",date);
-diagnosisService.getLegacyDiagnosticReport(1000,"2025-05-27", date);
-medicalRequestService.getLegacyRequest2("2025-05-27",date);
-chargeItemService.getLegacyChargeItem(2000, "2025-05-27",date); 
-invoiceService.getLegacyChargeItem(4000,"2025-05-27", date);
-observationService.getLegacyObservations(5000,"2025-05-27", date);
-noteService.getLegacyVisitNotesEncounters(5000,"2025-05-27",date);
-noteService.getLegacyCarePlan(30000,"2025-05-27",date);
-noteService.getLegacyEncounters(20000,"2025-05-27",date) ;	 
-serviceRequestService.getLegacyRequest("2025-05-27", date); */
 
-patientMigrationService.patientUpdate("2025-05-27",date.toString());
-practitionerService.updatePractitioners("2025-05-27",date.toString());
-visitMigration.updateVisit("2025-05-27",date.toString());
-encounterService.updateEncounter("2025-05-27",date.toString());
-allergyService.update("2025-05-27",date.toString());
-referalService.updateReferral("2025-05-27",date.toString());
-diagnosisService.updateDiagReports("2025-05-27",date.toString());
-dService.updateDianosis("2025-05-27",date.toString());
-medicalRequestService.updateMedicalRequest("2025-05-27",date.toString());
-chargeItemService.updateChargeItems("2025-05-27",date.toString());
-invoiceService.updateInvoices("2025-05-27",date.toString());
-noteService.updateNotes("2025-05-27",date.toString());
-observationService.updateObservations("2025-05-27",date.toString());
-serviceRequestService.updateServiceRequest("2025-05-27",date.toString()); 
-
-long stop = System.currentTimeMillis();
-		System.err.println((stop-start)/6000+" time taken to finish");
-		System.err.println(starts.toString() +"\t"+mid.toString() +"\t"+ends.toString());
-	
-		logger.info("finishi.ng import");
 
 	}
 

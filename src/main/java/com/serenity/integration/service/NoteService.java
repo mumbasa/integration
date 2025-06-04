@@ -742,11 +742,11 @@ where e.created_at::date <= ?
             }
             logger.info("adding encounter");
         }
-       // encounterNoteRepository.saveAll(encounters);
+        encounterNoteRepository.saveAll(encounters);
 
 
     }
-    //cleanvisitNOte();
+    cleanvisitNOte();
         System.err.println("patiend count is ");
    }
 
@@ -1000,11 +1000,11 @@ where c.created_at::date <= ?
             encounters.add(encounter);
           
             }
-           // encounterNoteRepository.saveAll(encounters);
+            encounterNoteRepository.saveAll(encounters);
             logger.info("adding encounter");
         
         }
-        //cleanvisitNOte();
+        cleanvisitNOte();
 
     }
 
