@@ -248,7 +248,7 @@ saveEncounters(encounters);
             public void setValues(PreparedStatement ps, int i) throws SQLException {
              
                 ps.setString(1, notes.get(i).getCreatedAt());
-                ps.setLong(2, notes.get(i).getId()+400000);
+                ps.setLong(2, notes.get(i).getId());
                 ps.setString(3, notes.get(i).getUuid());
                 ps.setString(4, notes.get(i).getEncounterClass());
                 ps.setString(5, "finished");

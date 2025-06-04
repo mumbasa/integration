@@ -406,7 +406,7 @@ public class ObservationService {
                 ps.setString(2, observation.getIssued());
                 ps.setString(3, observation.getUnit());
                 ps.setString(4, observation.getEffectiveDateTime());
-                ps.setLong(5, observation.getId()+6000000);
+                ps.setLong(5, observation.getId());
 
                 ps.setString(6, observation.getEncounterId());
                 ps.setString(7, "161380e9-22d3-4627-a97f-0f918ce3e4a9");

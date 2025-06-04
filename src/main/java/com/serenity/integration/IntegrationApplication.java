@@ -114,7 +114,7 @@ InvoiceService invoiceService;
 	LocalDateTime mid =(LocalDateTime.now());
 
 	LocalDateTime starts = LocalDateTime.now();
-	LocalDate date= LocalDate.now().minusDays(2);
+	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 
 //
@@ -122,7 +122,7 @@ InvoiceService invoiceService;
 
 
 LocalDateTime ends = LocalDateTime.now();
-/* patientService.getLegacyAllPatients2( "2025-05-27", date);
+patientService.getLegacyAllPatients2( "2025-05-27", date);
 practitionerService.getLegacyPractitioner("2025-05-27",date);
 visitService.getLegacyVisit("2025-05-27", date);
 encounterService.getLegacyEncounters("2025-05-27", date);
@@ -137,11 +137,11 @@ observationService.getLegacyObservations(1000,"2025-05-27", date);
 noteService.getLegacyVisitNotesEncounters(1000,"2025-05-27",date);
 noteService.getLegacyCarePlan(30000,"2025-05-27",date);
 noteService.getLegacyEncounters(20000,"2025-05-27",date) ;	 
-serviceRequestService.getLegacyRequest("2025-05-27", date); */
+serviceRequestService.getLegacyRequest("2025-05-27", date); 
 
-//patientMigrationService.patientUpdate("2025-05-27",date.toString());
- //practitionerService.updatePractitioners("2025-05-27",date.toString());
-//visitMigration.updateVisit("2025-05-27",date.toString());
+patientMigrationService.patientUpdate("2025-05-27",date.toString());
+practitionerService.updatePractitioners("2025-05-27",date.toString());
+visitMigration.updateVisit("2025-05-27",date.toString());
 encounterService.updateEncounter("2025-05-27",date.toString());
 allergyService.update("2025-05-27",date.toString());
 referalService.updateReferral("2025-05-27",date.toString());

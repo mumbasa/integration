@@ -217,7 +217,7 @@ serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
         ps.setString(4, report.getApprovedDateTime()); // approved_date_time
         ps.setString(5, report.getReviewedDateTime()); // reviewed_date_time
         ps.setString(6, report.getEffectiveDateTime()); // effective_datetime
-        ps.setLong(7, report.getId()+400000); // id
+        ps.setLong(7, report.getId()); // id
         ps.setString(8, report.getUuid()); // uuid
         ps.setString(9, report.getDisplay()); // display
         ps.setString(10, report.getCategory() == null ? "laboratory" : report.getCategory()); // category
