@@ -261,7 +261,7 @@ ps.setString(2, request.getDueDate());
 ps.setString(3, request.getSampleReceivedDateTime());
 ps.setDouble(4, request.getCharge()); // Set charge (assuming it's a numeric type)
 ps.setString(5, request.getOccurence());
-ps.setLong(6, (request.getId()-3464700)); // ID (Generated)
+ps.setLong(6, (request.getId()+564700)); // ID (Generated)
 ps.setString(7, request.getBodySite());
 ps.setString(8, request.getEncounterId());
 ps.setString(9, request.getPatientId());

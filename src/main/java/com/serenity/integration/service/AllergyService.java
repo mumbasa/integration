@@ -205,7 +205,7 @@ uuid(?), ?, ?, ?, ?,
            ps.setString(4,intolerance.getRecordedDate());
            ps.setString(5,intolerance.getRecordedDate());
 
-           ps.setLong(6,intolerance.getId());
+           ps.setLong(6,intolerance.getId()+400000);
            ps.setString(7,    intolerance.getEncounterId());
            ps.setString(8,     intolerance.getServiceProviderId());
            ps.setString(9,intolerance.getPatientId());

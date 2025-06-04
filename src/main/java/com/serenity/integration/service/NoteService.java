@@ -543,7 +543,7 @@ public class NoteService {
 
     
                     }
-                ps.setLong(3, note.getId());
+                ps.setLong(3, note.getId()+4000000);
                 ps.setString(4, note.getEncounterId());
                 ps.setString(5, note.getPatientId());
                 ps.setString(6, note.getVisitId());

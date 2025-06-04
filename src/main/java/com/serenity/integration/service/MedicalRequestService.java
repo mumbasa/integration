@@ -655,7 +655,7 @@ WHERE id IN (
                 // TODO Auto-generated method stub
                 MedicalRequest request = requests.get(i);
                 ps.setString(1, request.getCreatedAt());
-                ps.setLong(2, request.getId());
+                ps.setLong(2, request.getId()+700000);
                 ps.setString(3, "161380e9-22d3-4627-a97f-0f918ce3e4a9");
                 ps.setString(4, request.getUuid());
                 ps.setString(5, request.getName()==null?"":request.getName());

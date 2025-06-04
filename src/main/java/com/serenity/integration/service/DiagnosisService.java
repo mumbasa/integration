@@ -442,7 +442,7 @@ public class DiagnosisService {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 Diagnosis diagnosis = diagnoses.get(i);
                 ps.setString(1, diagnosis.getCreatedAt().replaceAll("T|Z", " "));
-                ps.setLong(2, diagnosis.getId());
+                ps.setLong(2, diagnosis.getId()+400000);
                 ps.setString(3, diagnosis.getUuid());
                 ps.setString(4, diagnosis.getCondition());
                 ps.setString(5, diagnosis.getRole());

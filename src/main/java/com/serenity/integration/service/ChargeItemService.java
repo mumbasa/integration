@@ -699,7 +699,7 @@ public void migrateChargeItems(List<ChargeItem> items) {
             ps.setDouble(4, item.getPayerContribution());
             ps.setDouble(5, item.getUnitPrice());
 
-            ps.setLong(6, item.getId());
+            ps.setLong(6, item.getId()+400000);
             ps.setString(7, item.getUuid());
             ps.setString(8, item.getCategory());
             ps.setString(9, item.getCreatedByName());

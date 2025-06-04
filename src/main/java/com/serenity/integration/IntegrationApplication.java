@@ -114,7 +114,7 @@ InvoiceService invoiceService;
 	LocalDateTime mid =(LocalDateTime.now());
 
 	LocalDateTime starts = LocalDateTime.now();
-	LocalDate date= LocalDate.now().minusDays(1);
+	LocalDate date= LocalDate.now().minusDays(2);
 	System.err.println(date +" is ...");
 
 //
