@@ -122,7 +122,7 @@ InvoiceService invoiceService;
 
 
 LocalDateTime ends = LocalDateTime.now();
-patientService.getLegacyAllPatients2( "2025-05-27", date);
+/* patientService.getLegacyAllPatients2( "2025-05-27", date);
 practitionerService.getLegacyPractitioner("2025-05-27",date);
 visitService.getLegacyVisit("2025-05-27", date);
 encounterService.getLegacyEncounters("2025-05-27", date);
@@ -131,7 +131,7 @@ referalService.getLegacyReferral(1000,"2025-05-27", date);
 dService.getLegacyDiagnosis(1000, "2025-05-27",date);
 diagnosisService.getLegacyDiagnosticReport(1000,"2025-05-27", date);
 medicalRequestService.getLegacyRequest2("2025-05-27",date);
-chargeItemService.getLegacyChargeItem(2000, "2025-05-27",date);
+chargeItemService.getLegacyChargeItem(2000, "2025-05-27",date); */
 invoiceService.getLegacyChargeItem(4000,"2025-05-27", date);
 observationService.getLegacyObservations(5000,"2025-05-27", date);
 noteService.getLegacyVisitNotesEncounters(5000,"2025-05-27",date);

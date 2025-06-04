@@ -2,6 +2,7 @@ package com.serenity.integration.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,5 @@ public interface InvoiceRepository extends JpaRepository<PatientInvoice,Long>{
 
 List<PatientInvoice> findUpdates(LocalDate localDate, LocalDate localDate2);
 
+Optional<PatientInvoice> findByUuid(String uuid);
 }

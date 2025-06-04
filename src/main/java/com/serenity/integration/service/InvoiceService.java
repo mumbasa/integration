@@ -349,8 +349,8 @@ order by "ChargeItem".id
                 request.setPayerType(set.getString("payer_type"));
                 request.setPayerId(set.getString("payer_id"));
                 
-               
-                serviceRequests.add(request);
+               if(invoiceRepository.findByUuid(request.getUuid()).isEmpty()){
+                serviceRequests.add(request);}
             ids.add(set.getString("invoice_id"));
             }
              
