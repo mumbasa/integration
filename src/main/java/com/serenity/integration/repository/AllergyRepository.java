@@ -14,6 +14,6 @@ public interface AllergyRepository extends JpaRepository<AllergyIntolerance,Long
 List<AllergyIntolerance> findBatch(int offset ,int limit);
 
 
-@Query(value="SELECT * FROM allergy_intolerance  where createdat::date > ?1 and createdat::date <=?2 order by id",nativeQuery=true)
+@Query(value="SELECT * FROM allergy_intolerance  where created_at::date > ?1 and created_at::date <=?2 order by id",nativeQuery=true)
 List<AllergyIntolerance> getUpdates(LocalDate offset ,LocalDate now);
 }
