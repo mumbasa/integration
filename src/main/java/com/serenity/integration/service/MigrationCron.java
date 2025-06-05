@@ -99,7 +99,7 @@ public class MigrationCron {
 
         LocalDateTime ends = LocalDateTime.now();
         
-        patientService.getLegacyAllPatients2(maxDate, date);
+       /*  patientService.getLegacyAllPatients2(maxDate, date);
         practitionerService.getLegacyPractitioner(maxDate, date);
         visitService.getLegacyVisit(maxDate, date);
         encounterService.getLegacyEncounters(maxDate, date);
@@ -117,7 +117,7 @@ public class MigrationCron {
         serviceRequestService.getLegacyRequest(maxDate, date);
 
         patientMigrationService.patientUpdate(maxDate, date.toString());
-        practitionerService.updatePractitioners(maxDate, date.toString());
+        practitionerService.updatePractitioners(maxDate, date.toString()); */
         visitMigration.updateVisit(maxDate, date.toString());
         encounterService.updateEncounter(maxDate, date.toString());
         allergyService.update(maxDate, date.toString());

@@ -37,12 +37,9 @@ public class VisitMigration {
     @Qualifier("serenityJdbcTemplate")
     JdbcTemplate serenityJdbcTemplate;
 
-    /*
-     * @Autowired
-     * 
-     * @Qualifier("hubJdbcTemplate")
-     * JdbcTemplate hubJdbcTemplate;
-     */
+    @Autowired
+    @Qualifier(value = "vectorJdbcTemplate")
+    JdbcTemplate vectorJdbcTemplate;
 
     @Autowired
     VisitRepository visitRepository;
@@ -173,6 +170,17 @@ return 1;
 
     }
 public void updateVisit(String current,String now){
+    String sql ="""
+            WITH ranked AS (
+  SELECT id, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
+  FROM visits   pi2  
+)
+DELETE FROM visits
+WHERE id IN (
+  SELECT id FROM ranked WHERE rn > 1
+);
+            """;
+            vectorJdbcTemplate.execute(sql);
     List<Visits> visits = visitRepository.getUpdates(LocalDate.parse(current), LocalDate.parse(now));
     logger.info("NEw visits =>"+visits.size());
     task(visits);

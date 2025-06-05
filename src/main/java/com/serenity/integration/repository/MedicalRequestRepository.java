@@ -24,7 +24,7 @@ public interface MedicalRequestRepository extends JpaRepository<MedicalRequest,L
     @Query(value = "select count(*) from medicalrequest where  practitionerid is not null and patientid is not null",nativeQuery = true)
     int findByCount();
 
-    @Query(value = "select * from medicalrequest where createdat::date >?1  and createdat::date <=?2 and practitionerid is not null and visitid is not null and patientid  is not null and encounterid is not  null",nativeQuery = true)
+    @Query(value = "select * from medicalrequest where createdat::date >?1  and createdat::date <=?2 ",nativeQuery = true)
     List<MedicalRequest> findUpdatess(LocalDate localDate, LocalDate localDate2);
 
 }
