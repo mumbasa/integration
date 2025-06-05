@@ -119,7 +119,7 @@ InvoiceService invoiceService;
 
 //
 //serviceRequestService.getLegacyRequest("2025-06-02", date);
-serviceRequestService.updateServiceRequest("2025-06-02", date.toString());
+serviceRequestService.updateServiceRequest("2025-05-27", date.toString());
 
 
 LocalDateTime ends = LocalDateTime.now();
