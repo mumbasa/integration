@@ -225,6 +225,7 @@ LEFT JOIN
 LEFT JOIN
     "public"."organization" o ON ca.owner_id = o.id
     where payment_method != 'cash' and "ChargeItem".visit_id is not null and invoiceid is not null 
+   and o.uuid is not null
     and "ChargeItem".created_on::date <= ?
 
 order by "ChargeItem".id
@@ -323,6 +324,7 @@ LEFT JOIN
 LEFT JOIN
     "public"."organization" o ON ca.owner_id = o.id
     where payment_method != 'cash' and "ChargeItem".visit_id is not null and invoiceid is not null 
+    and o.uuid is not null
     and  "ChargeItem".created_on::date > ?::date and "ChargeItem".created_on::date <= ?
 
 order by "ChargeItem".id

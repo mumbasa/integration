@@ -116,12 +116,8 @@ InvoiceService invoiceService;
 
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
-
-//
-//serviceRequestService.getLegacyRequest("2025-06-02", date);
-medicalRequestService.updateMedicalRequest("2025-05-27", date.toString());
-//serviceRequestService.updateServiceRequest("2025-05-27", date.toString());
-
+invoiceService.getLegacyChargeItem(3000,date);
+invoiceService.migrateinvoiceThread(10000);
 
 LocalDateTime ends = LocalDateTime.now();
 
