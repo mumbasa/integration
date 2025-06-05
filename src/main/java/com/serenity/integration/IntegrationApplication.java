@@ -109,7 +109,7 @@ InvoiceService invoiceService;
 		SpringApplication.run(IntegrationApplication.class, args);
 	}
 
-	//@PostConstruct
+	@PostConstruct
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
