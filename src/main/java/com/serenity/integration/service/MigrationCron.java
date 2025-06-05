@@ -84,7 +84,7 @@ public class MigrationCron {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 55 7 * * *")
     public void migration() {
         String sql ="SELECT date(max(created_at)) from observations";
         String maxDate= serenityJdbcTemplate.queryForObject(sql, String.class);
@@ -98,7 +98,7 @@ public class MigrationCron {
         System.err.println(date + " is ...");
 
         LocalDateTime ends = LocalDateTime.now();
-        /* 
+        
         patientService.getLegacyAllPatients2(maxDate, date);
         practitionerService.getLegacyPractitioner(maxDate, date);
         visitService.getLegacyVisit(maxDate, date);
@@ -130,7 +130,7 @@ public class MigrationCron {
         noteService.updateNotes(maxDate, date.toString());
         observationService.updateObservations(maxDate, date.toString());
         serviceRequestService.updateServiceRequest(maxDate, date.toString());
- */
+ 
         long stop = System.currentTimeMillis();
         System.err.println((stop - start) / 6000 + " time taken to finish");
         System.err.println(starts.toString() + "\t" +"\t" + ends.toString());
