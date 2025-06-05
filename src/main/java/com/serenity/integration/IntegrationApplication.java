@@ -20,6 +20,7 @@ import com.serenity.integration.service.DiagnosticReportService;
 import com.serenity.integration.service.EncounterService;
 import com.serenity.integration.service.InvoiceService;
 import com.serenity.integration.service.MedicalRequestService;
+import com.serenity.integration.service.MigrationCron;
 import com.serenity.integration.service.NoteService;
 import com.serenity.integration.service.ObservationService;
 import com.serenity.integration.service.PatientMigrationService;
@@ -96,7 +97,8 @@ public class IntegrationApplication {
 	@Autowired
 	WardSetupService wardSetupService;
 
-
+@Autowired
+MigrationCron mig;
 
 @Autowired
 InvoiceService invoiceService;
@@ -119,7 +121,7 @@ InvoiceService invoiceService;
 	System.err.println(date +" is ...");
 
 //
-
+mig.migration();
 
 
 LocalDateTime ends = LocalDateTime.now();
