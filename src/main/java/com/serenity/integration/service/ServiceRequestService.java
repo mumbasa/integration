@@ -147,7 +147,7 @@ order by sr.id asc
               String sqlQuery = """
             SELECT sr.id, sr."uuid", sr.created_at, sr.is_deleted, sr.modified_at, body_site, display, code, sr.category, sr.diagnostic_service_section, due_date, purpose, p.passport_number, sample_received_date_time, priority, sr.status, group_identifier, status_reason, intent, do_not_perform, quantity_value, quantity_unit, ci.charge as charge,occurence, as_needed, authored_on, note, patient_instruction, assigned_to, assigned_to_name, encounter_id, healthcare_service_id,hs.name as healthcare_service_name, sr.location_id, p.uuid as patient_id, sr.price_tier_id, replaces_id, requesting_patient_id, requesting_practitioner_role_id, requesting_related_contact_id, sr.visit_id, bill_paid_at, canceled_by_name, canceled_by_practitioner_id, canceled_at, encounter_diagnoses, is_mismatched, is_mismatched_comment, hs.service_class,
   ci."uuid" as charge_item_uuid FROM service_request sr left join patient p on p.id =sr.patient_id left join "ChargeItem" ci on ci.servicerequestid::uuid=sr."uuid" left join healthcare_service hs on hs.id=healthcare_service_id 
-          where sr.created_at::date >?::date and sr.created_at <=?
+          where sr.created_at::date >?::date and sr.created_at::date <=?
   order by sr.id asc
    
                        """;
@@ -344,9 +344,9 @@ where p."uuid" = service_request.patientid
     String sqlDupes ="""
             WITH ranked AS (
   SELECT id, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
-  FROM encounternote
+  FROM service_request
 )
-DELETE FROM encounternote e 
+DELETE FROM service_request e 
 WHERE id IN (
   SELECT id FROM ranked WHERE rn > 1
 );
