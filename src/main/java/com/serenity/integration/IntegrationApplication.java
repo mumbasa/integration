@@ -118,7 +118,8 @@ InvoiceService invoiceService;
 	System.err.println(date +" is ...");
 
 //
-serviceRequestService.getLegacyRequest("2025-06-02", date);
+//serviceRequestService.getLegacyRequest("2025-06-02", date);
+serviceRequestService.updateServiceRequest("2025-06-02", date.toString());
 
 
 LocalDateTime ends = LocalDateTime.now();
