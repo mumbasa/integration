@@ -84,7 +84,7 @@ public class MigrationCron {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Scheduled(cron = "0 55 7 * * *")
+    @Scheduled(cron = "0 57 9 * * *")
     public void migration() {
         String sql ="SELECT date(max(created_at)) from observations";
         String maxDate= serenityJdbcTemplate.queryForObject(sql, String.class);
