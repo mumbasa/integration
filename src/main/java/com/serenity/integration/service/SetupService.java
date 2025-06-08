@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1500,6 +1501,39 @@ public class SetupService {
 
     }
 
+
+
+    public List<ServicePrice> getPrices() {
+        List<ServicePrice>groups = new ArrayList<ServicePrice>();
+        String sql = "SELECT * from healthcare_service_price_tiers";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
+
+        while (set.next()) {
+            ServicePrice p = new ServicePrice();
+            p.setUuid(set.getString("uuid"));
+            p.setCharge( set.getBigDecimal("charge"));
+            groups.add(p);
+        }
+
+        return groups;
+
+    }
+    public List<ServicePrice> getPrices(LocalDate date) {
+        List<ServicePrice>groups = new ArrayList<ServicePrice>();
+        String sql = "SELECT * from healthcare_service_price_tiers where modified_at::date =?";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date);
+
+        while (set.next()) {
+            ServicePrice p = new ServicePrice();
+            p.setUuid(set.getString("uuid"));
+            p.setCharge( set.getBigDecimal("charge"));
+            groups.add(p);
+        }
+
+        return groups;
+
+    }
+
     public String convertHealthCareServices(HealthCareServices hCareServices) {
         String data = null;
         switch (hCareServices.getServiceClass()) {
@@ -1678,4 +1712,59 @@ public class SetupService {
         }
 
     }
+
+    public void setupPricesMigrate(){
+    List<ServicePrice> prices = getPrices();
+    String sql = """
+            UPDATE service_prices set unit_price=? where uuuid =?
+            """;
+    serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+        @Override
+        public void setValues(PreparedStatement ps, int i) throws SQLException {
+            // TODO Auto-generated method stub
+            ServicePrice price = prices.get(i);
+            ps.setBigDecimal(1, price.getCharge());
+            ps.setString(2, price.getUuid());
+        }
+
+        @Override
+        public int getBatchSize() {
+            // TODO Auto-generated method stub
+          return   prices.size();
+        }
+        
+    });
+    System.err.println("Update finished");
+
+
+    }
+
+
+    public void setupPricesUpdate(LocalDate date){
+        List<ServicePrice> prices = getPrices(date);
+        String sql = """
+                UPDATE service_prices set unit_price=? where uuuid =?
+                """;
+        serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+    
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                // TODO Auto-generated method stub
+                ServicePrice price = prices.get(i);
+                ps.setBigDecimal(1, price.getCharge());
+                ps.setString(2, price.getUuid());
+            }
+    
+            @Override
+            public int getBatchSize() {
+                // TODO Auto-generated method stub
+              return   prices.size();
+            }
+            
+        });
+        System.err.println("Update finished");
+    
+    
+        }
 }

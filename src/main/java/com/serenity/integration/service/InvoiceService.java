@@ -81,10 +81,6 @@ public class InvoiceService {
     
         Set<String> ids = new HashSet();
 
-
-        Map<String, PatientData> mps = patientRepository.findAll().stream()
-                .collect(Collectors.toMap(e -> e.getUuid(), e -> e));
-
         String sql = "Select count(*) from \"ChargeItem\" as ci where invoiceid is not null and visit_id is not null and payment_method  !='cash'";
         long rows = legJdbcTemplate.queryForObject(sql, Long.class);
         logger.info("row are :---"+rows);
