@@ -389,6 +389,21 @@ VALUES(?::timestamp, ?::timestamp, ?, uuid(?), uuid(?), ?, ?, ?, ?, ?, ?, ?, ?);
     }
 
 
+public void moveRelatedPErson(){
+    List<RelatedPerson> persons = relatedRepo.findAll();
+    saveRelatedPersion(persons);
+    System.err.println("Done");
+
+}
+
+public void moveAddress(){
+    List<Address> persons = addressRepo.findAll();
+    saveLegacyAddressInSerenity(persons);
+    System.err.println("Done");
+
+}
+
+
     public void saveRelatedPersion(List<RelatedPerson> persons){
             String sql ="""
                     INSERT INTO related_persons

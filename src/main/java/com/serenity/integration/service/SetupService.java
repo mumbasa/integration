@@ -1518,10 +1518,10 @@ public class SetupService {
         return groups;
 
     }
-    public List<ServicePrice> getPrices(LocalDate date) {
+    public List<ServicePrice> getServicePricesv1() {
         List<ServicePrice>groups = new ArrayList<ServicePrice>();
-        String sql = "SELECT * from healthcare_service_price_tiers where modified_at::date =?";
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date);
+        String sql = "SELECT * from healthcare_service_price_tiers";// where modified_at::date =?";
+        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql);
 
         while (set.next()) {
             ServicePrice p = new ServicePrice();
@@ -1742,9 +1742,9 @@ public class SetupService {
 
 
     public void setupPricesUpdate(LocalDate date){
-        List<ServicePrice> prices = getPrices(date);
+        List<ServicePrice> prices = getServicePricesv1();
         String sql = """
-                UPDATE service_prices set unit_price=? where uuuid =?
+                UPDATE service_prices set unit_price=? where uuid =?::uuid
                 """;
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
     
