@@ -119,8 +119,9 @@ InvoiceService invoiceService;
 
 //mig.migration();
 //setupService.setupPricesUpdate(LocalDate.now());
-patientService.moveAddress();
-patientService.moveRelatedPErson();
+//patientService.moveAddress();
+//patientService.moveRelatedPErson();
+referalService.migrateReferalThread(1000);
 LocalDateTime ends = LocalDateTime.now();
 
 
