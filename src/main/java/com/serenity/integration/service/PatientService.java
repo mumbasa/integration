@@ -390,14 +390,14 @@ VALUES(?::timestamp, ?::timestamp, ?, uuid(?), uuid(?), ?, ?, ?, ?, ?, ?, ?, ?);
 
 
 public void moveRelatedPErson(){
-    List<RelatedPerson> persons = relatedRepo.findAll();
+    List<RelatedPerson> persons = relatedRepo.findByAll();
     saveRelatedPersion(persons);
     System.err.println("Done");
 
 }
 
 public void moveAddress(){
-    List<Address> persons = addressRepo.findAll();
+    List<Address> persons = addressRepo.findByAll();
     saveLegacyAddressInSerenity(persons);
     System.err.println("Done");
 
