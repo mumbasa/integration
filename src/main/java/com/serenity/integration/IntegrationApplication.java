@@ -117,11 +117,8 @@ InvoiceService invoiceService;
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 
-//mig.migration();
-//setupService.setupPricesUpdate(LocalDate.now());
-//patientService.moveAddress();
-//patientService.moveRelatedPErson();
-referalService.migrateReferalThread(1000);
+mig.migration();
+
 LocalDateTime ends = LocalDateTime.now();
 
 

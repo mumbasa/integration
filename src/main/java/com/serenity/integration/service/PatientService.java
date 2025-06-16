@@ -389,16 +389,16 @@ VALUES(?::timestamp, ?::timestamp, ?, uuid(?), uuid(?), ?, ?, ?, ?, ?, ?, ?, ?);
     }
 
 
-public void moveRelatedPErson(){
-    List<RelatedPerson> persons = relatedRepo.findByAll();
-    saveRelatedPersion(persons);
+public void updateRelatedPerson(String current,String now){
+    List<RelatedPerson> persons = relatedRepo.findByAll(LocalDate.parse(current),LocalDate.parse(now));
+   // saveRelatedPersion(persons);
     System.err.println("Done");
 
 }
 
-public void moveAddress(){
-    List<Address> persons = addressRepo.findByAll();
-    saveLegacyAddressInSerenity(persons);
+public void updateAddress(String current,String now){
+    List<Address> persons = addressRepo.findByAll(LocalDate.parse(current),LocalDate.parse(now));
+    //saveLegacyAddressInSerenity(persons);
     System.err.println("Done");
 
 }
