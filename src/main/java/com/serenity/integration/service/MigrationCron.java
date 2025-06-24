@@ -88,7 +88,7 @@ public class MigrationCron {
     public void migration() {
         String sql ="SELECT date(max(created_at)) from observations";
         String maxDate= serenityJdbcTemplate.queryForObject(sql, String.class);
-
+        maxDate="2021-12-05";
         logger.info("Starting import for =>"+maxDate);
         long start = System.currentTimeMillis();
 
