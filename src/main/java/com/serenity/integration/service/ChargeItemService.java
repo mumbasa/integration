@@ -171,6 +171,8 @@ where "ChargeItem".created_on::date <= ?
                 request.setUserFriendlyId(set.getString("user_friendly_id"));
                 request.setRevenueTagDisplay(set.getString("revenue_tag_display"));
                request.setPatientContribution(set.getDouble("patient_contribution"));
+               request.setPayerContribution(set.getDouble("payer_contribution"));
+
                request.setRelationship(set.getString("relationship"));
                request.setPractitionerId(set.getString("practitioner_id"));
                 request.setCreatedAt(set.getString("created_at"));
@@ -324,6 +326,8 @@ where  "ChargeItem".created_on::date >?::date  and "ChargeItem".created_on::date
                request.setUpdatedAt(set.getString("created_at"));
                request.setStockItemId(set.getString("stock_item_id"));
                request.setPaidAt(set.getString("paid_at"));
+               request.setPayerContribution(set.getDouble("payer_contribution"));
+
                request.setMedicationRequestId(set.getString("medication_request_id"));
                 request.setPaymentMethod(set.getString("payment_method"));
                 request.setStatus(set.getString("status"));
@@ -439,6 +443,7 @@ request.setCreatedByName(set.getString("created_by_name"));
                  request.setLocationId(set.getString("location_id")==null?"2f7d4c40-fe53-491d-877b-c2fee7edc1f2":set.getString("location_id"));
                  request.setLocationName(set.getString("location_name")==null?"Airport Main":set.getString("location_name"));
                  request.setPatientId(set.getString("patient_id"));
+                 request.setPayerContribution(set.getDouble("payer_contribution"));
                  request.setProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
                  request.setProviderName("Nyaho Medical Center");
                  request.setPolicyId(set.getString("policy_id"));
