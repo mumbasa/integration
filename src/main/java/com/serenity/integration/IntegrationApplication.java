@@ -117,7 +117,7 @@ InvoiceService invoiceService;
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 setup(date);
-//mig.migration();
+mig.migration();
 
 LocalDateTime ends = LocalDateTime.now();
 
