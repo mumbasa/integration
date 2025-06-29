@@ -127,9 +127,9 @@ LocalDateTime ends = LocalDateTime.now();
 	public void setup(LocalDate date){
 
 
-		patientService.getLegacyAllPatients2(10000, 10000, date);	
-		practitionerService.getLegacyPractitioner(date);
-		visitService.getLegacyVisit(20000, date);
+		//patientService.getLegacyAllPatients2(10000, 10000, date);	
+		//practitionerService.getLegacyPractitioner(date);
+		//visitService.getLegacyVisit(20000, date);
 		encounterService.getLegacyEncounters(10000,date);
 		allergyService.getLegacyAllergies(1000,date);
 		referalService.getLegacyReferral(1000,date);
