@@ -577,7 +577,7 @@ where e.created_at::date <= ? order by  E.created_at offset ? limit ? ;
                 """;
         SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex,batchSize);
         while (set.next()) {
-            //System.err.println(set.getString("mr_number")+"-----------------");
+            System.err.println(set.getString("mr_number")+"-----------------");
          ;
             Encounter encounter = new Encounter();
             encounter.setUuid(set.getString("uuid"));
