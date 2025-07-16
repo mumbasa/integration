@@ -571,7 +571,7 @@ locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
         List<Encounter> encounters = new ArrayList<>();
         String sql = """
         SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,e.appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, hs.name  as service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names,s."start" as planned_start,s."end"  as planned_end
-FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id left join slot s on e.slot_id::uuid =s.uuid 
+FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id left join slot s on e.slot_id::uuid =s.id 
 where e.created_at::date <= ? order by  E.created_at offset ? limit ? ;        
 
                 """;

@@ -131,7 +131,7 @@ LocalDateTime ends = LocalDateTime.now();
 		//practitionerService.getLegacyPractitioner(date);
 		//visitService.getLegacyVisit(20000, date);
 		encounterService.getLegacyEncounters(10000,date);
-		allergyService.getLegacyAllergies(1000,date);
+		/* allergyService.getLegacyAllergies(1000,date);
 		referalService.getLegacyReferral(1000,date);
 		serviceRequestService.getLegacyRequest(3000,date);
 		dService.getLegacyDiagnosis(30000,date);
@@ -158,7 +158,7 @@ LocalDateTime ends = LocalDateTime.now();
 		diagnosisService.migrateDiagReportThread(5000);
 		medicalRequestService.saveMedicalRequestThread(); 
 		diagnosisService.migrateDiagReportThread(5000);
-		observationService.migrateObservationThread(5000);  
+		observationService.migrateObservationThread(5000);   */
 
 	}
 
