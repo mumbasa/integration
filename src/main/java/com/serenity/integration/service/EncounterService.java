@@ -550,7 +550,7 @@ System.err.println(encountersD.size() +" ------------------");
 
 
     public void getLegacyEncounters(int batchSize,LocalDate date) {
-
+System.err.println("Stating encounter migration");
 Map<String, String> locationMap = new HashMap<>();
 locationMap.put("6b46da79-5613-4827-91ae-f46aaf65d4da", "Accra Central (Octagon)");
 locationMap.put("23f59485-8518-4f4e-9146-d061dfe58175", "Airport Primary Care");
