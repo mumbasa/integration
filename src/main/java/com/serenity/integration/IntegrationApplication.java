@@ -130,7 +130,7 @@ LocalDateTime ends = LocalDateTime.now();
 		//patientService.getLegacyAllPatients2(10000, 10000, date);	
 		//practitionerService.getLegacyPractitioner(date);
 		//visitService.getLegacyVisit(20000, date);
-		encounterService.getLegacyEncounters(5000,date);
+		encounterService.getLegacyEncounters(100,date);
 		/* allergyService.getLegacyAllergies(1000,date);
 		referalService.getLegacyReferral(1000,date);
 		serviceRequestService.getLegacyRequest(3000,date);
