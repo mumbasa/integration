@@ -29,6 +29,7 @@ import com.serenity.integration.service.PractitionerService;
 import com.serenity.integration.service.ReferalService;
 import com.serenity.integration.service.ServiceRequestService;
 import com.serenity.integration.service.SetupService;
+import com.serenity.integration.service.SlotService;
 import com.serenity.integration.service.VisitMigration;
 import com.serenity.integration.service.VisitService;
 import com.serenity.integration.service.WardSetupService;
@@ -97,6 +98,9 @@ public class IntegrationApplication {
 	@Autowired
 	WardSetupService wardSetupService;
 
+	@Autowired
+	SlotService slotService;
+
 @Autowired
 MigrationCron mig;
 
@@ -125,13 +129,15 @@ LocalDateTime ends = LocalDateTime.now();
 	}
 
 	public void setup(LocalDate date){
+		
 
 
-		//patientService.getLegacyAllPatients2(10000, 10000, date);	
-		//practitionerService.getLegacyPractitioner(date);
-		//visitService.getLegacyVisit(20000, date);
-		encounterService.getLegacyEncounters(1000,date);
-		/* allergyService.getLegacyAllergies(1000,date);
+		patientService.getLegacyAllPatients2(10000, 10000, date);	
+		practitionerService.getLegacyPractitioner(date);
+		visitService.getLegacyVisit(20000, date);
+		encounterService.getLegacyEncounters(10000,date);
+		slotService.getLegacySlot(10000, date);
+		allergyService.getLegacyAllergies(1000,date);
 		referalService.getLegacyReferral(1000,date);
 		serviceRequestService.getLegacyRequest(3000,date);
 		dService.getLegacyDiagnosis(30000,date);
@@ -143,6 +149,7 @@ LocalDateTime ends = LocalDateTime.now();
 		chargeItemService.getLegacyChargeItem(30000,date);
 		invoiceService.getLegacyChargeItem(30000,date);
 		observationService.getLegacyObservations(50000,date);  
+		
 		
 		patientMigrationService.migratePatientThread(3000);
 		practitionerService.migrateDoctors();
@@ -158,7 +165,7 @@ LocalDateTime ends = LocalDateTime.now();
 		diagnosisService.migrateDiagReportThread(5000);
 		medicalRequestService.saveMedicalRequestThread(); 
 		diagnosisService.migrateDiagReportThread(5000);
-		observationService.migrateObservationThread(5000);   */
+		observationService.migrateObservationThread(5000);    
 
 	}
 
