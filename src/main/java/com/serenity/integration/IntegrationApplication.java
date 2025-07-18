@@ -132,7 +132,7 @@ LocalDateTime ends = LocalDateTime.now();
 		
 
 
-		patientService.getLegacyAllPatients2(10000, 10000, date);	
+		/* patientService.getLegacyAllPatients2(10000, 10000, date);	
 		practitionerService.getLegacyPractitioner(date);
 		visitService.getLegacyVisit(20000, date);
 		encounterService.getLegacyEncounters(10000,date);
@@ -148,7 +148,7 @@ LocalDateTime ends = LocalDateTime.now();
 		noteService.getLegacyEncounters(20000,date) ;	 
 		chargeItemService.getLegacyChargeItem(30000,date);
 		invoiceService.getLegacyChargeItem(30000,date);
-		observationService.getLegacyObservations(50000,date);  
+		observationService.getLegacyObservations(50000,date);   */
 		
 		
 		patientMigrationService.migratePatientThread(3000);
