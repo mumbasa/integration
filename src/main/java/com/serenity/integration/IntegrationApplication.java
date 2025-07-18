@@ -151,9 +151,9 @@ LocalDateTime ends = LocalDateTime.now();
 		observationService.getLegacyObservations(50000,date);   */
 		
 		
-		patientMigrationService.migratePatientThread(3000);
-		practitionerService.migrateDoctors();
-		visitMigration.getVisitThreads(5000);
+		//patientMigrationService.migratePatientThread(3000);
+		//practitionerService.migrateDoctors();
+		//visitMigration.getVisitThreads(5000);
 		encounterService.encounterLegacythread(1000);
 		allergyService.migrateAllergyThread(1000);
 		referalService.migrateReferalThread(1000);
