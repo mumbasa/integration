@@ -29,7 +29,6 @@ import com.serenity.integration.service.PractitionerService;
 import com.serenity.integration.service.ReferalService;
 import com.serenity.integration.service.ServiceRequestService;
 import com.serenity.integration.service.SetupService;
-import com.serenity.integration.service.SlotService;
 import com.serenity.integration.service.VisitMigration;
 import com.serenity.integration.service.VisitService;
 import com.serenity.integration.service.WardSetupService;
@@ -98,9 +97,6 @@ public class IntegrationApplication {
 	@Autowired
 	WardSetupService wardSetupService;
 
-	@Autowired
-	SlotService slotService;
-
 @Autowired
 MigrationCron mig;
 
@@ -120,8 +116,8 @@ InvoiceService invoiceService;
 
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
+
 setup(date);
-//mig.migration();
 
 LocalDateTime ends = LocalDateTime.now();
 
@@ -129,14 +125,12 @@ LocalDateTime ends = LocalDateTime.now();
 	}
 
 	public void setup(LocalDate date){
-		
 
 
 		/* patientService.getLegacyAllPatients2(10000, 10000, date);	
 		practitionerService.getLegacyPractitioner(date);
 		visitService.getLegacyVisit(20000, date);
 		encounterService.getLegacyEncounters(10000,date);
-		slotService.getLegacySlot(10000, date);
 		allergyService.getLegacyAllergies(1000,date);
 		referalService.getLegacyReferral(1000,date);
 		serviceRequestService.getLegacyRequest(3000,date);
@@ -148,24 +142,23 @@ LocalDateTime ends = LocalDateTime.now();
 		noteService.getLegacyEncounters(20000,date) ;	 
 		chargeItemService.getLegacyChargeItem(30000,date);
 		invoiceService.getLegacyChargeItem(30000,date);
-		observationService.getLegacyObservations(50000,date);   */
+		observationService.getLegacyObservations(50000,date);  
 		
-		
-		//patientMigrationService.migratePatientThread(3000);
-		//practitionerService.migrateDoctors();
-		//visitMigration.getVisitThreads(5000);
+		patientMigrationService.migratePatientThread(3000);
+		practitionerService.migrateDoctors();
+		visitMigration.getVisitThreads(5000);
 		encounterService.encounterLegacythread(1000);
 		allergyService.migrateAllergyThread(1000);
 		referalService.migrateReferalThread(1000);
 		chargeItemService.chargeThread(5000);
 		noteService.noteThread(4000);
-		serviceRequestService.migrateThread(3000);
+		serviceRequestService.migrateThread(3000); */
 		invoiceService.migrateinvoiceThread(3000);
-		dService.migrationThread(5000);
+	/* 	dService.migrationThread(5000);
 		diagnosisService.migrateDiagReportThread(5000);
 		medicalRequestService.saveMedicalRequestThread(); 
 		diagnosisService.migrateDiagReportThread(5000);
-		observationService.migrateObservationThread(5000);    
+		observationService.migrateObservationThread(5000);   */
 
 	}
 
