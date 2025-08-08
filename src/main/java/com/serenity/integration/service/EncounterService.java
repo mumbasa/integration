@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -234,13 +235,14 @@ saveEncounters(encounters);
                 "external_id, external_system,  service_provider_id, patient_mr_number," +
                 "patient_id, patient_full_name, patient_mobile, patient_birth_date, patient_gender," +
                 "encounter_type, practitioner_name, practitioner_id, service_provider_name,  visit_id," +
-                "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at,ended_at,display)" + //
+                "has_prescriptions,has_service_requests,slot_id,service_type_id,service_type_name,started_at,location_id,location_name,updated_at,ended_at,display,"+
+               " planned_start,planned_end)" + //
                 "VALUES(to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),  ?,  uuid(?),?,?,"
                 +
                 "?, ?,uuid(?),?,"+
                 "uuid(?), ?,?,to_date(?, 'YYYY-MM-DD'),?," +
                 "?,?,uuid(?),?, uuid(?),"+
-                "?,?,uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp,?::timestamp,?)";
+                "?,?,uuid(?),uuid(?),?,to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS'),uuid(?),?,?::timestamp,?::timestamp,?,?::timestamp,?::timestamp)";
 
         serenityJdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -278,7 +280,8 @@ saveEncounters(encounters);
                 ps.setString(28,notes.get(i).getUpdatedAt());
                 ps.setString(29,notes.get(i).getEndedAt());
                 ps.setString(30,notes.get(i).getDisplay()==null?"":notes.get(i).getDisplay());
-
+                ps.setString(31,notes.get(i).getPlannedStart());
+                ps.setString(32,notes.get(i).getPlannedEnd());
 
             }
 
@@ -493,9 +496,14 @@ System.err.println(encountersD.size() +" ------------------");
                        
                 List<Encounter> encounters = new ArrayList<>();
                 String sql = """
+<<<<<<< HEAD
               SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,e.appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, hs.name  as service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names,s.start as planned_start,s.end as planned_end
         FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id   
         left join slot s on s.id=slot_id
+=======
+               SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,e.appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, hs.name  as service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names,s."start" as planned_start,s."end"  as planned_end
+        FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id left join slot s on e.slot_id::uuid =s.uuid 
+>>>>>>> 0602125fcb4ead74954da06afef1f0ed0f47a900
         where e.created_at::date > ?::date and e.created_at::date <= ?  order by  E.created_at ;        
         
                         """;
@@ -550,81 +558,101 @@ System.err.println(encountersD.size() +" ------------------");
             }
         
 
-
-
-    public void getLegacyEncounters(int batchSize,LocalDate date) {
-
-Map<String, String> locationMap = new HashMap<>();
-locationMap.put("6b46da79-5613-4827-91ae-f46aaf65d4da", "Accra Central (Octagon)");
-locationMap.put("23f59485-8518-4f4e-9146-d061dfe58175", "Airport Primary Care");
-locationMap.put("b60c55f5-63dd-4ba2-9fe9-8192f57aaed2", "Tema Primary Care");
-locationMap.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care");
-locationMap.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
-locationMap.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
-
-                     String sqlRow = "SELECT count(*) from encounter where created_at::date <= ?";
-                long rows = legJdbcTemplate.queryForObject(sqlRow, new Object[]{date}, Long.class);
-       
-                long totalSize = rows;
-                long batches = (totalSize + batchSize - 1) / batchSize; // Ceiling division
-        
-                for (int i = 0; i < batches; i++) {
-        
-                    int startIndex = i * batchSize;
-        List<Encounter> encounters = new ArrayList<>();
-        String sql = """
-        SELECT e.id as "uuid", e.created_at, e.is_deleted,e.modified_at, e.status, encounter_class,  "type", priority, start_time, end_time, length,appointment_id, charge_item_id, part_of_id, p."uuid" as patient_id, price_tier_id, service_provider_id, service_type_id, slot_id, visit_id, primary_location_id, charge_item_status, hs.name  as service_type_name, slot_practitioner_name, status_comment, title,history_of_presenting_illness_author_id, history_of_presenting_illness_editor_uuids, history_of_presenting_illness_editors_display, has_prescriptions, hospitalization_id,  p.birth_date, p.email, p.first_name, p.gender, p.last_name, p.mobile,p.other_names
-FROM encounter e left join patient p on p.id =e.patient_id left join healthcare_service hs on hs.id=e.service_type_id   where e.created_at::date <= ? order by  E.created_at offset ? limit ? ;        
-
-                """;
-        SqlRowSet set = legJdbcTemplate.queryForRowSet(sql,date,startIndex,batchSize);
-        while (set.next()) {
-            //System.err.println(set.getString("mr_number")+"-----------------");
-         ;
-            Encounter encounter = new Encounter();
-            encounter.setUuid(set.getString("uuid"));
-            encounter.setEncounterType(set.getString("type"));
-            encounter.setExternalId(set.getString("uuid"));
-            encounter.setCreatedAt(set.getString("created_at"));
-            encounter.setStartedAt(set.getString("start_time"));
-            encounter.setEndedAt(set.getString("end_time"));
-            encounter.setUpdatedAt(set.getString("modified_at"));
-            encounter.setEncounterClass(set.getString("encounter_class"));
-            encounter.setPriority(set.getString("priority"));
-            encounter.setPatientId(set.getString("patient_id"));
-             encounter.setExternalSystem("opd");
-            encounter.setDeleted(set.getBoolean("is_deleted"));
-            encounter.setEncounterType("outpatient-consultation");
-            encounter.setPrescription(false);
-            encounter.setSlotId(set.getString("slot_id"));
-            encounter.setServiceTypeId(set.getString("service_type_id"));
-            encounter.setServiceTypeName(set.getString("service_type_name"));
-            encounter.setDisplay(set.getString("title"));
-            encounter.setLocationId(set.getString("primary_location_id")==null?"23f59485-8518-4f4e-9146-d061dfe58175":set.getString("primary_location_id"));
-           try{
-            encounter.setLocationName(locationMap.get(encounter.getLocationId()));
-           }catch(NullPointerException e){
-          //  encounter.setLocationName("Airport Main");
-           // encounter.setLocationId("23f59485-8518-4f4e-9146-d061dfe58175");
-
-           }
-            encounter.setVisitId(set.getString("visit_id"));
-            encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
-            encounter.setServiceProviderName("Nyaho Medical Centre");
-            encounter.setStatus(set.getString("status"));
-            encounter.setPrescription(set.getBoolean("has_prescriptions"));
-            encounters.add(encounter);
-
-          
-        }
-          logger.info("adding encounter");
-encounterRepository.saveAll(encounters);
+            public void getLegacyEncounters(int batchSize, LocalDate date) {
+                logger.info("Starting encounter migration...");
+            
+                Map<String, String> locationMap = getLocationMap();
+            
+                String countQuery = "SELECT count(*) FROM encounter WHERE created_at::date <= ?";
+                long totalRows = legJdbcTemplate.queryForObject(countQuery, new Object[]{date}, Long.class);
+                long totalBatches = (totalRows + batchSize - 1) / batchSize;
+            
+                for (int batch = 0; batch < totalBatches; batch++) {
+                    int offset = batch * batchSize;
+            
+                    String encounterQuery = """
+                        SELECT e.id as "uuid", e.created_at, e.is_deleted, e.modified_at, e.status,
+                               encounter_class, "type", priority, start_time, end_time, length, 
+                               e.appointment_id, charge_item_id, part_of_id, 
+                               p.uuid as patient_id, price_tier_id, service_provider_id, 
+                               service_type_id, slot_id, visit_id, primary_location_id, 
+                               charge_item_status, hs.name as service_type_name, 
+                               slot_practitioner_name, status_comment, title,
+                               history_of_presenting_illness_author_id,
+                               history_of_presenting_illness_editor_uuids,
+                               history_of_presenting_illness_editors_display,
+                               has_prescriptions, hospitalization_id, 
+                               p.birth_date, p.email, p.first_name, p.gender, 
+                               p.last_name, p.mobile, p.other_names
+                        FROM encounter e
+                        LEFT JOIN patient p ON p.id = e.patient_id
+                        LEFT JOIN healthcare_service hs ON hs.id = e.service_type_id
+                      
+                        WHERE e.created_at::date <= ?
+                        ORDER BY e.created_at
+                        OFFSET ? LIMIT ?
+                    """;
+            
+                    SqlRowSet rowSet = legJdbcTemplate.queryForRowSet(encounterQuery, date, offset, batchSize);
+                    List<Encounter> encounters = new ArrayList<>();
+            
+                    while (rowSet.next()) {
+                        Encounter encounter = new Encounter();
+                        encounter.setUuid(rowSet.getString("uuid"));
+                        encounter.setExternalId(rowSet.getString("uuid"));
+                        encounter.setCreatedAt(rowSet.getString("created_at"));
+                        encounter.setUpdatedAt(rowSet.getString("modified_at"));
+                        encounter.setStartedAt(rowSet.getString("start_time"));
+                        encounter.setEndedAt(rowSet.getString("end_time"));
+                        encounter.setDeleted(rowSet.getBoolean("is_deleted"));
+                        encounter.setEncounterClass(rowSet.getString("encounter_class"));
+                        encounter.setPriority(rowSet.getString("priority"));
+                        encounter.setStatus(rowSet.getString("status"));
+                        encounter.setDisplay(rowSet.getString("title"));
+                        encounter.setVisitId(rowSet.getString("visit_id"));
+                        encounter.setSlotId(rowSet.getString("slot_id"));
+                        encounter.setServiceTypeId(rowSet.getString("service_type_id"));
+                        encounter.setServiceTypeName(rowSet.getString("service_type_name"));
+                        encounter.setPatientId(rowSet.getString("patient_id"));
+                       // encounter.setPlannedStart(rowSet.getString("planned_start"));
+                        //encounter.setPlannedEnd(rowSet.getString("planned_end"));
+                        encounter.setPrescription(rowSet.getBoolean("has_prescriptions"));
+                        encounter.setExternalSystem("opd");
+            
+                        // Hardcoded fallback values
+                        encounter.setServiceProviderId("161380e9-22d3-4627-a97f-0f918ce3e4a9");
+                        encounter.setServiceProviderName("Nyaho Medical Centre");
+                        encounter.setEncounterType("outpatient-consultation");
+            
+                        String locationId = Optional.ofNullable(rowSet.getString("primary_location_id"))
+                                                    .orElse("23f59485-8518-4f4e-9146-d061dfe58175");
+                        encounter.setLocationId(locationId);
+                        encounter.setLocationName(locationMap.getOrDefault(locationId, "Unknown Location"));
+            
+                        encounters.add(encounter);
+                    }
+            
+                    logger.info("Saving {} encounters from batch {}/{}", encounters.size(), batch + 1, totalBatches);
+                    encounterRepository.saveAll(encounters);
                 }
+            
+                cleanEncounter();
+                populateWithVisits();
+            }
+            
+            private Map<String, String> getLocationMap() {
+                Map<String, String> map = new HashMap<>();
+                map.put("6b46da79-5613-4827-91ae-f46aaf65d4da", "Accra Central (Octagon)");
+                map.put("23f59485-8518-4f4e-9146-d061dfe58175", "Airport Primary Care");
+                map.put("b60c55f5-63dd-4ba2-9fe9-8192f57aaed2", "Tema Primary Care");
+                map.put("a79ae42b-03b7-4f5e-ac1a-cd42729c0b04", "Takoradi Primary Care");
+                map.put("29e22113-9d7b-46a6-a857-810ca3567ca7", "Airport Main");
+                map.put("2550dc16-3f64-4cee-b808-6c13b255d159", "Ward - Airport Main");
+                return map;
+            }
+            
 
-       cleanEncounter();
-       populateWithVisits();
-    }
-
+    
     public Set<Callable<Integer>> submitNote(List<Encounter> notes, int batchSize) {
 
         Set<Callable<Integer>> callables = new HashSet<>();

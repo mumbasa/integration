@@ -1013,6 +1013,10 @@ FROM patient p left join patient_account pa on pa."uuid" = uuid(p.previous_patie
                     SqlRowSet record = legJdbcTemplate.queryForRowSet(sqlQuery,current, date);
                     while (record.next()) {
                         PatientData pd = new PatientData();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0602125fcb4ead74954da06afef1f0ed0f47a900
                         pd.setId(record.getLong("id"));
                         pd.setExternalId(record.getString("mr_number"));
                         pd.setLastName(record.getString("last_name"));
