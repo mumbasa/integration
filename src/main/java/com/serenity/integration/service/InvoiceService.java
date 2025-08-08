@@ -378,7 +378,6 @@ order by "ChargeItem".id
 
 
 
-
     public int migrateInvoice(List<PatientInvoice> invoices){
         String sql ="""
                INSERT INTO invoices
@@ -386,13 +385,13 @@ order by "ChargeItem".id
 patient_mr_number, patient_birth_date, patient_gender, patient_mobile, payer_name, 
 managing_organization_id, payer_id, payer_type, currency, visit_id, 
 payment_method, invoice_date,
- updated_at)
+ updated_at,amount_paid)
 VALUES( 
 ?::timestamp,?,uuid(?),?,?,
 ?,?::date,?,?,?,
 uuid(?),?,?,?,uuid(?),
 ?,?::date,
-now()
+now(),0.0
 );
                 """;
 
@@ -416,7 +415,7 @@ now()
 
            ps.setString(11,intolerance.getManagingOrganizationId());
            ps.setString(12, intolerance.getPayerId()==null?"":intolerance.getPayerId());
-           ps.setString(13, intolerance.getPayerType().toLowerCase());
+           ps.setString(13, intolerance.getPayerType());
            ps.setString(14,intolerance.getCurrency());
            ps.setString(15,intolerance.getVisitId());
 

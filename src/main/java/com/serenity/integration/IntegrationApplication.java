@@ -113,7 +113,6 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
-
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 
@@ -125,7 +124,6 @@ LocalDateTime ends = LocalDateTime.now();
 	}
 
 	public void setup(LocalDate date){
-
 
 		/* patientService.getLegacyAllPatients2(10000, 10000, date);	
 		practitionerService.getLegacyPractitioner(date);
@@ -159,7 +157,6 @@ LocalDateTime ends = LocalDateTime.now();
 		medicalRequestService.saveMedicalRequestThread(); 
 		diagnosisService.migrateDiagReportThread(5000);
 		observationService.migrateObservationThread(5000);   */
-
 	}
 
 }
