@@ -116,7 +116,7 @@ InvoiceService invoiceService;
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 
-mig.migration();
+setup(date);
 
 LocalDateTime ends = LocalDateTime.now();
 
@@ -124,9 +124,9 @@ LocalDateTime ends = LocalDateTime.now();
 	}
 
 	public void setup(LocalDate date){
+		practitionerService.getLegacyPractitioner(date);
 
 		/* patientService.getLegacyAllPatients2(10000, 10000, date);	
-		practitionerService.getLegacyPractitioner(date);
 		visitService.getLegacyVisit(20000, date);
 		encounterService.getLegacyEncounters(10000,date);
 		allergyService.getLegacyAllergies(1000,date);
@@ -151,7 +151,7 @@ LocalDateTime ends = LocalDateTime.now();
 		chargeItemService.chargeThread(5000);
 		noteService.noteThread(4000);
 		serviceRequestService.migrateThread(3000); */
-		invoiceService.migrateinvoiceThread(3000);
+	///	invoiceService.migrateinvoiceThread(3000);
 	/* 	dService.migrationThread(5000);
 		diagnosisService.migrateDiagReportThread(5000);
 		medicalRequestService.saveMedicalRequestThread(); 
