@@ -121,12 +121,12 @@ public class MigrationCron {
         //visitMigration.updateVisit(maxDate, date.toString());
       //  encounterService.updateEncounter(maxDate, date.toString());
         //allergyService.update(maxDate, date.toString());
-        referalService.updateReferral(maxDate, date.toString());
-        diagnosisService.updateDiagReports(maxDate, date.toString());
-        dService.updateDianosis(maxDate, date.toString());
-        medicalRequestService.updateMedicalRequest(maxDate, date.toString());
-        chargeItemService.updateChargeItems(maxDate, date.toString());
-        invoiceService.updateInvoices(maxDate, date.toString());
+       // referalService.updateReferral(maxDate, date.toString());
+        //diagnosisService.updateDiagReports(maxDate, date.toString());
+        //dService.updateDianosis(maxDate, date.toString());
+        //medicalRequestService.updateMedicalRequest(maxDate, date.toString());
+        //chargeItemService.updateChargeItems(maxDate, date.toString());
+        //invoiceService.updateInvoices(maxDate, date.toString());
         noteService.updateNotes(maxDate, date.toString());
         observationService.updateObservations(maxDate, date.toString());
         serviceRequestService.updateServiceRequest(maxDate, date.toString());
