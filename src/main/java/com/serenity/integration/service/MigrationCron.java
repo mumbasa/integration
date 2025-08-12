@@ -119,9 +119,9 @@ public class MigrationCron {
         patientMigrationService.patientUpdate(maxDate, date.toString()); */
        // practitionerService.updatePractitioners(maxDate, date.toString()); 
         //visitMigration.updateVisit(maxDate, date.toString());
-        encounterService.updateEncounter(maxDate, date.toString());
-        allergyService.update(maxDate, date.toString());
-        referalService.updateReferral(maxDate, date.toString());
+      //  encounterService.updateEncounter(maxDate, date.toString());
+        //allergyService.update(maxDate, date.toString());
+        //referalService.updateReferral(maxDate, date.toString());
         diagnosisService.updateDiagReports(maxDate, date.toString());
         dService.updateDianosis(maxDate, date.toString());
         medicalRequestService.updateMedicalRequest(maxDate, date.toString());
