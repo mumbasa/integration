@@ -115,8 +115,8 @@ InvoiceService invoiceService;
 	LocalDate date= LocalDate.now().minusDays(2);
 	System.err.println(date +" is ...");
 
-setup(date);
-//mig.migration();
+//setup(date);
+mig.migration();
 
 LocalDateTime ends = LocalDateTime.now();
 
@@ -150,9 +150,9 @@ LocalDateTime ends = LocalDateTime.now();
 		referalService.migrateReferalThread(1000);
 		chargeItemService.chargeThread(5000);
 		noteService.noteThread(4000);*/
-		serviceRequestService.getLegacyRequest(3000,date);
+		//serviceRequestService.getLegacyRequest(3000,date);
 
-		serviceRequestService.migrateThread(5000); 
+		//serviceRequestService.migrateThread(5000); 
 	//invoiceService.migrateinvoiceThread(5000);
 	/* 	dService.migrationThread(5000);
 		diagnosisService.migrateDiagReportThread(5000);

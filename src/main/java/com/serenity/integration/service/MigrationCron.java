@@ -109,13 +109,13 @@ public class MigrationCron {
         medicalRequestService.getLegacyRequest2(maxDate, date);
         chargeItemService.getLegacyChargeItem(2000, maxDate, date); */
     //    invoiceService.getLegacyChargeItem(4000, maxDate, date);
-        observationService.getLegacyObservations(5000, maxDate, date);
-        noteService.getLegacyVisitNotesEncounters(5000, maxDate, date);
-        noteService.getLegacyCarePlan(30000, maxDate, date);
-        noteService.getLegacyEncounters(20000, maxDate, date);
+        observationService.getLegacyObservations(1000, maxDate, date);
+        noteService.getLegacyVisitNotesEncounters(1000, maxDate, date);
+        noteService.getLegacyCarePlan(1000, maxDate, date);
+        noteService.getLegacyEncounters(1000, maxDate, date);
      //   serviceRequestService.getLegacyRequest(maxDate, date);
 
-        patientMigrationService.patientUpdate(maxDate, date.toString()); 
+      /*   patientMigrationService.patientUpdate(maxDate, date.toString()); 
        practitionerService.updatePractitioners(maxDate, date.toString()); 
        visitMigration.updateVisit(maxDate, date.toString());
       encounterService.updateEncounter(maxDate, date.toString());
@@ -127,7 +127,7 @@ public class MigrationCron {
         chargeItemService.updateChargeItems(maxDate, date.toString());
        // invoiceService.updateInvoices(maxDate, date.toString());
         noteService.updateNotes(maxDate, date.toString());
-        observationService.updateObservations(maxDate, date.toString());
+        observationService.updateObservations(maxDate, date.toString()); */
        // serviceRequestService.updateServiceRequest(maxDate, date.toString());
  
         long stop = System.currentTimeMillis();
