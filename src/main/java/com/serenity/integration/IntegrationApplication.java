@@ -112,11 +112,11 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
-	LocalDate date= LocalDate.now().minusDays(1);
+	LocalDate date= LocalDate.now().minusDays(2);
 	System.err.println(date +" is ...");
 
 setup(date);
-mig.migration();
+//mig.migration();
 
 LocalDateTime ends = LocalDateTime.now();
 

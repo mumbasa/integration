@@ -100,13 +100,18 @@ order by sr.id asc
                     request.setEncounterId(encounterId);
                 }
                 String patientMrNumber = set.getString("patient_id");
+                 request.setPatientId(patientMrNumber);
                 if (patientMrNumber != null) {
+                    try{
                     request.setPatientFullName(mps.get(patientMrNumber).getFullName());
                     request.setPatientMobile(mps.get(patientMrNumber).getMobile());
                     request.setPatientGender(mps.get(patientMrNumber).getGender());
                     request.setPatientMrNumber(mps.get(patientMrNumber).getMrNumber());
-                    request.setPatientId(mps.get(patientMrNumber).getUuid());
                     request.setPatientBirthDate((mps.get(patientMrNumber).getBirthDate()));
+                    }catch(Exception e){
+                        System.err.println();
+                        e.printStackTrace();
+                    }
  
                 }
                 request.setCreatedAt(set.getString("created_at"));
