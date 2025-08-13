@@ -401,7 +401,6 @@ now(),0.0
         public void setValues(PreparedStatement ps, int i) throws SQLException {
             // TODO Auto-generated method stub
            PatientInvoice intolerance = invoices.get(i);
-       
            ps.setString(1,intolerance.getCreatedAt());
            ps.setString(2,   "opd");
            ps.setString(3,     intolerance.getUuid());

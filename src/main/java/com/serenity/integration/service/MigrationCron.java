@@ -98,17 +98,17 @@ public class MigrationCron {
         System.err.println(date + " is ...");
 
         LocalDateTime ends = LocalDateTime.now();
-        patientService.getLegacyAllPatients2(maxDate, date);
-        practitionerService.getLegacyPractitioner(maxDate, date);
-        visitService.getLegacyVisit(maxDate, date);
+      //  patientService.getLegacyAllPatients2(maxDate, date);
+     //   practitionerService.getLegacyPractitioner(maxDate, date);
+       /*  visitService.getLegacyVisit(maxDate, date);
         encounterService.getLegacyEncounters(maxDate, date);
         allergyService.getLegacyAllergies(maxDate, date);
         referalService.getLegacyReferral(1000, maxDate, date);
         dService.getLegacyDiagnosis(1000, maxDate, date);
         diagnosisService.getLegacyDiagnosticReport(1000, maxDate, date);
         medicalRequestService.getLegacyRequest2(maxDate, date);
-        chargeItemService.getLegacyChargeItem(2000, maxDate, date);
-        invoiceService.getLegacyChargeItem(4000, maxDate, date);
+        chargeItemService.getLegacyChargeItem(2000, maxDate, date); */
+    //    invoiceService.getLegacyChargeItem(4000, maxDate, date);
         observationService.getLegacyObservations(5000, maxDate, date);
         noteService.getLegacyVisitNotesEncounters(5000, maxDate, date);
         noteService.getLegacyCarePlan(30000, maxDate, date);
@@ -125,7 +125,7 @@ public class MigrationCron {
         dService.updateDianosis(maxDate, date.toString());
         medicalRequestService.updateMedicalRequest(maxDate, date.toString());
         chargeItemService.updateChargeItems(maxDate, date.toString());
-        invoiceService.updateInvoices(maxDate, date.toString());
+       // invoiceService.updateInvoices(maxDate, date.toString());
         noteService.updateNotes(maxDate, date.toString());
         observationService.updateObservations(maxDate, date.toString());
         serviceRequestService.updateServiceRequest(maxDate, date.toString());

@@ -18,10 +18,9 @@ public class PatientInvoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+   
     @Column(nullable = false, unique = true)
     private String uuid;
-
     private String patientId;
     private String patientName;
     private String patientMrNumber;
