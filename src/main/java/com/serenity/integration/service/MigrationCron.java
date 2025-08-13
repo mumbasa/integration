@@ -113,7 +113,7 @@ public class MigrationCron {
         noteService.getLegacyVisitNotesEncounters(5000, maxDate, date);
         noteService.getLegacyCarePlan(30000, maxDate, date);
         noteService.getLegacyEncounters(20000, maxDate, date);
-        serviceRequestService.getLegacyRequest(maxDate, date);
+     //   serviceRequestService.getLegacyRequest(maxDate, date);
 
         patientMigrationService.patientUpdate(maxDate, date.toString()); 
        practitionerService.updatePractitioners(maxDate, date.toString()); 
@@ -128,7 +128,7 @@ public class MigrationCron {
        // invoiceService.updateInvoices(maxDate, date.toString());
         noteService.updateNotes(maxDate, date.toString());
         observationService.updateObservations(maxDate, date.toString());
-        serviceRequestService.updateServiceRequest(maxDate, date.toString());
+       // serviceRequestService.updateServiceRequest(maxDate, date.toString());
  
         long stop = System.currentTimeMillis();
         System.err.println((stop - start) / 6000 + " time taken to finish");
