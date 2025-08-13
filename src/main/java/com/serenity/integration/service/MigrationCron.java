@@ -109,7 +109,7 @@ public class MigrationCron {
         medicalRequestService.getLegacyRequest2(maxDate, date);
         chargeItemService.getLegacyChargeItem(2000, maxDate, date); */
     //    invoiceService.getLegacyChargeItem(4000, maxDate, date);
-        observationService.getLegacyObservations(1000, maxDate, date);
+     //   observationService.getLegacyObservations(1000, maxDate, date);
         noteService.getLegacyVisitNotesEncounters(1000, maxDate, date);
         noteService.getLegacyCarePlan(1000, maxDate, date);
         noteService.getLegacyEncounters(1000, maxDate, date);
