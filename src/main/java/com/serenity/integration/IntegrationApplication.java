@@ -112,11 +112,15 @@ InvoiceService invoiceService;
 	public void coke() {
 		logger.info("Starting import");
 		long start = System.currentTimeMillis();
-	LocalDate date= LocalDate.now().minusDays(1);
+	LocalDate date= LocalDate.now().minusDays(2);
 	System.err.println(date +" is ...");
+
+	invoiceService.generateInvoices();
+	invoiceService.migrateinvoiceThread(5000);
 //
 //serviceRequestService.migrateThread(5000);
-mig.migration();
+//mig.migration();
+//invoiceService.updateInvoices(date.toString());
 //invoiceService.migrateinvoiceThread(5000);
 //invoiceService.updateInvoices("2025-08-11","2025-08-13");
 LocalDateTime ends = LocalDateTime.now();

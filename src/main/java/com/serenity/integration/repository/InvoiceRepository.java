@@ -19,5 +19,8 @@ public interface InvoiceRepository extends JpaRepository<PatientInvoice,Long>{
 @Query(value="SELECT * FROM patient_invoice where  createdat::date >?1 and createdat::date <=?2  order by id",nativeQuery = true)
 List<PatientInvoice> findUpdates(LocalDate localDate, LocalDate localDate2);
 
+@Query(value="SELECT * FROM patient_invoice where  createdat::date =?  order by id",nativeQuery = true)
+List<PatientInvoice> findUpdates(LocalDate localDate);
+
 Optional<PatientInvoice> findByUuid(String uuid);
 }

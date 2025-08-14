@@ -98,7 +98,7 @@ public class MigrationCron {
         System.err.println(date + " is ...");
 
         LocalDateTime ends = LocalDateTime.now();
-        /* patientService.getLegacyAllPatients2(maxDate, date);
+        patientService.getLegacyAllPatients2(maxDate, date);
         practitionerService.getLegacyPractitioner(maxDate, date);
         visitService.getLegacyVisit(maxDate, date);
         encounterService.getLegacyEncounters(maxDate, date);
@@ -112,10 +112,10 @@ public class MigrationCron {
         observationService.getLegacyObservations(1000, maxDate, date);
         noteService.getLegacyVisitNotesEncounters(1000, maxDate, date);
         noteService.getLegacyCarePlan(1000, maxDate, date);
-        noteService.getLegacyEncounters(1000, maxDate, date); */
-        serviceRequestService.getLegacyRequest("2025-08-10", date);
+        noteService.getLegacyEncounters(1000, maxDate, date); 
+        serviceRequestService.getLegacyRequest(maxDate, date);
 
-        /* patientMigrationService.patientUpdate(maxDate, date.toString()); 
+         patientMigrationService.patientUpdate(maxDate, date.toString()); 
        practitionerService.updatePractitioners(maxDate, date.toString()); 
        visitMigration.updateVisit(maxDate, date.toString());
       encounterService.updateEncounter(maxDate, date.toString());
@@ -127,7 +127,7 @@ public class MigrationCron {
         chargeItemService.updateChargeItems(maxDate, date.toString());
          invoiceService.updateInvoices(maxDate, date.toString());
         noteService.updateNotes(maxDate, date.toString());
-        observationService.updateObservations(maxDate, date.toString());  */
+        observationService.updateObservations(maxDate, date.toString());  
        serviceRequestService.updateServiceRequest(maxDate, date.toString());
  
         long stop = System.currentTimeMillis();
