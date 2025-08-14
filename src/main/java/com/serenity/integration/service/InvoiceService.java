@@ -706,7 +706,7 @@ SELECT
     ci.updatedat,
     ci.invoiceid,
     ci.visitid
-FROM public.charge_item ci ';
+FROM public.charge_item ci ;
         """;
     vectorJdbcTemplate.execute(sql);
 
