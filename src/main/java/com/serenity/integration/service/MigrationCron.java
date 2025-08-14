@@ -108,7 +108,7 @@ public class MigrationCron {
         diagnosisService.getLegacyDiagnosticReport(1000, maxDate, date);
         medicalRequestService.getLegacyRequest2(maxDate, date);
         chargeItemService.getLegacyChargeItem(2000, maxDate, date); 
-    //    invoiceService.getLegacyChargeItem(4000, maxDate, date);
+        invoiceService.generateInvoices(date);
         observationService.getLegacyObservations(1000, maxDate, date);
         noteService.getLegacyVisitNotesEncounters(1000, maxDate, date);
         noteService.getLegacyCarePlan(1000, maxDate, date);
@@ -125,7 +125,7 @@ public class MigrationCron {
         dService.updateDianosis(maxDate, date.toString());
         medicalRequestService.updateMedicalRequest(maxDate, date.toString());
         chargeItemService.updateChargeItems(maxDate, date.toString());
-       // invoiceService.updateInvoices(maxDate, date.toString());
+         invoiceService.updateInvoices(maxDate, date.toString());
         noteService.updateNotes(maxDate, date.toString());
         observationService.updateObservations(maxDate, date.toString()); 
        // serviceRequestService.updateServiceRequest(maxDate, date.toString());

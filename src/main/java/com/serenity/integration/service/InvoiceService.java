@@ -573,4 +573,86 @@ GROUP BY
     }
 
 
+
+    public void generateInvoices(LocalDate date){
+String sql = String.format("""
+     INSERT INTO public.patient_invoice (
+    id,
+    createdat,
+    currency,
+    externalid,
+    externalsystem,
+    managingorganizationid,
+    patientbirthdate,
+    patientgender,
+    patientid,
+    patientmobile,
+    patientmrnumber,
+    patientname,
+    payerid,
+    payername,
+    payertype,
+    paymentmethod,
+    updatedat,
+    "uuid",
+    visitid
+)
+SELECT
+    ci.id,
+    ci.createdat,
+    ci.currency,
+    ci.serialnumber AS externalid,
+    'opd' AS externalsystem,
+    '161380e9-22d3-4627-a97f-0f918ce3e4a9' AS managingorganizationid,
+    ci.patientbirthdate,
+    ci.patientgender,
+    ci.patientid,
+    ci.patientmobile,
+    ci.patientmrnumber,
+    ci.patientname,
+    ci.payerid,
+    ci.payername,
+    CASE 
+        WHEN LOWER(ci.paymentmethod) = 'cash' THEN 'SELF'
+        ELSE 'ORGANISATION'
+    END AS payertype,
+    ci.paymentmethod,
+    ci.updatedat,
+    ci.invoiceid,
+    ci.visitid
+FROM public.charge_item ci where date(createdat)='%s';
+        """,date.toString());
+    vectorJdbcTemplate.execute(sql);
+
+    sql ="""
+            WITH ranked AS (
+  SELECT ctid, ROW_NUMBER() OVER (PARTITION BY uuid ORDER BY id) AS rn
+  FROM patient_invoice   
+)
+DELETE FROM patient_invoice
+WHERE ctid IN (
+  SELECT ctid FROM ranked WHERE rn > 1
+);
+            """;
+  vectorJdbcTemplate.execute(sql);
+
+  sql ="""
+          
+update patient_invoice pi2 
+set amountpaid =0
+where pi2.amountpaid  is null;
+
+            """;
+              vectorJdbcTemplate.execute(sql);
+
+               sql ="""
+       update patient_invoice pi2 
+set paymentmethod ='cash',payertype='SELF'
+where pi2.payerid is null;
+            """;
+              vectorJdbcTemplate.execute(sql);
+
+    }
+
+
 }

@@ -817,10 +817,10 @@ where e.created_at::date <= ?
                   encounter.setServiceProviderName("Nyaho Medical Centre");
                   encounters.add(encounter);
               }
-              logger.info("adding encounter");
           }
           encounterNoteRepository.saveAll(encounters);
-  
+                logger.info("adding encounter");
+
   
       }
       cleanvisitNOte();
