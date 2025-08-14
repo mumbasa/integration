@@ -115,7 +115,7 @@ InvoiceService invoiceService;
 	LocalDate date= LocalDate.now().minusDays(1);
 	System.err.println(date +" is ...");
 //
-serviceRequestService.migrateThread(5000);
+//serviceRequestService.migrateThread(5000);
 mig.migration();
 //invoiceService.migrateinvoiceThread(5000);
 //invoiceService.updateInvoices("2025-08-11","2025-08-13");
